@@ -1,0 +1,511 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f3f5f8;
+  --foreground: #142033;
+  --surface-border: rgba(255, 255, 255, 0.45);
+  --text-muted: #64748b;
+  --accent-start: #58a9ff;
+  --accent-end: #4f8cff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --color-black: #0c1929;
+}
+
+html {
+  background:
+    radial-gradient(circle at 15% 10%, rgba(200, 220, 248, 0.5), transparent 30%),
+    radial-gradient(circle at 85% 90%, rgba(255, 230, 240, 0.4), transparent 30%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8), transparent 100%),
+    #eef2f6;
+  background-attachment: fixed;
+  color-scheme: light;
+}
+
+body {
+  background: transparent;
+  color: var(--foreground);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+body {
+  background: transparent;
+  color: var(--foreground);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.text-slate-400 {
+  color: lab(100 0 0);
+}
+
+button {
+  cursor: pointer;
+}
+
+a,
+button,
+input {
+  transition:
+    background-color 250ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 250ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 250ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 300ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+::selection {
+  background: rgba(125, 211, 252, 0.4);
+  color: #0c1929;
+}
+
+.app-shell {
+  background: #f3f5f8 !important;
+  position: relative;
+  isolation: isolate;
+}
+
+@layer components {
+  .glass-panel {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow:
+      0 10px 40px -10px rgba(12, 25, 41, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8),
+      inset 0 -1px 0 rgba(12, 25, 41, 0.02);
+    backdrop-filter: blur(20px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    border-radius: 28px;
+  }
+
+  .glass-panel-strong {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.4) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow:
+      0 16px 48px -12px rgba(12, 25, 41, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(32px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(32px) saturate(150%);
+    border-radius: 32px;
+  }
+
+  .glass-chip {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow:
+      0 4px 12px rgba(12, 25, 41, 0.03),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(16px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    color: #0c1929;
+    border-radius: 9999px;
+  }
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.719);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  color: #0c1929;
+}
+
+.glass-input::placeholder {
+  color: rgba(100, 116, 139, 0.72);
+}
+
+.glass-input:focus {
+  outline: none;
+  border-color: rgba(96, 165, 250, 0.42);
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.12);
+}
+
+.glass-button {
+  background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+  box-shadow:
+    0 12px 30px rgba(79, 140, 255, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32);
+  color: white;
+}
+
+.glass-button:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 16px 38px rgba(79, 140, 255, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.38);
+}
+
+.ambient-divider {
+  border-color: rgba(226, 232, 240, 0.75);
+}
+
+.grid-glow {
+  position: relative;
+}
+
+.grid-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(180deg, rgba(12, 25, 41, 0.55), transparent 88%);
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.floating-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(14px);
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+.skeleton-pulse {
+  animation: skeletonPulse 1.6s ease-in-out infinite;
+}
+
+.skeleton-surface {
+  background: linear-gradient(90deg, rgba(226, 232, 240, 0.9), rgba(241, 245, 249, 0.95), rgba(226, 232, 240, 0.9));
+  background-size: 200% 100%;
+}
+
+@keyframes skeletonPulse {
+  0% {
+    opacity: 0.82;
+    background-position: 200% 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.82;
+    background-position: -200% 0;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   HERO SPLIT-SCREEN LAYOUT
+   ═══════════════════════════════════════════ */
+
+.hero-split-layout {
+  grid-template-columns: minmax(360px, 0.5fr) minmax(0, 0.5fr);
+  height: 100%;
+  overflow: hidden;
+  gap: 0;
+  padding: 0;
+}
+
+@media (min-width: 1200px) {
+  .hero-split-layout {
+    display: grid;
+  }
+}
+
+/* ─ Left panel: no rounding, content scrolls ─ */
+.hero-left-panel {
+  position: relative;
+  z-index: 2;
+  border-radius: 0;
+  background: #fff;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-left-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 28px 20px 20px;
+  overflow: hidden;
+}
+
+.hero-headline {
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: clamp(3rem, 4vw, 4.5rem);
+  font-weight: 500;
+  line-height: 1.05;
+  color: #0c1929;
+  letter-spacing: -0.04em;
+}
+
+/* Scrollable card area — only this part scrolls */
+.hero-card-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.25) transparent;
+}
+
+.hero-card-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.hero-card-scroll::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 9999px;
+}
+
+/* ─ Right panel: no rounding, no scroll ─ */
+.hero-right-panel {
+  position: relative;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.hero-right-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top,
+      rgba(12, 25, 41, 0.72) 0%,
+      rgba(12, 25, 41, 0.28) 35%,
+      rgba(12, 25, 41, 0.06) 65%,
+      rgba(12, 25, 41, 0.15) 100%);
+  pointer-events: none;
+}
+
+/* ─ Glassmorphism elements on right panel ─ */
+.hero-glass-card {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 8px 32px rgba(12, 25, 41, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  border-radius: 18px;
+}
+
+.hero-glass-bar {
+  -webkit-backdrop-filter: blur(27px);
+  backdrop-filter: blur(27px);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.hero-search-btn {
+  -webkit-backdrop-filter: blur(27px);
+  backdrop-filter: blur(27px);
+  background: #0c1929a8;
+  border: solid 3px white;
+  color: white;
+}
+
+.hero-glass-chip {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+}
+
+.hero-dark-glass {
+  background: rgba(255, 255, 255, 0.9);
+  border: solid 4px rgba(255, 255, 255, 0.8);
+}
+
+.featured-card-hover {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.featured-card-hover:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: 0 25px 50px -12px rgba(12, 25, 41, 0.15) !important;
+}
+
+.left-10 {
+  left: calc(var(--spacing) * 15);
+}
+
+.top-10 {
+  top: calc(var(--spacing) * 25);
+}
+
+/* ─ Animations ─ */
+.hero-glass-card {
+  animation: floatIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.3s;
+}
+
+@keyframes floatIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.hero-search-bar {
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.15s;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUpModal {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+.mobile-modal-animate {
+  animation: slideUpModal 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideDownModal {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(100%);
+  }
+}
+
+.mobile-modal-close {
+  animation: slideDownModal 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInBackdrop {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOutBackdrop {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.mobile-backdrop-animate {
+  animation: fadeInBackdrop 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.mobile-backdrop-close {
+  animation: fadeOutBackdrop 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ─ Responsive: stack on mobile ─ */
+@media (max-width: 1200px) {
+
+  .hero-left-panel {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .hero-left-inner {
+    height: auto;
+    overflow: visible;
+    padding: 20px;
+  }
+
+  .hero-card-scroll {
+    flex: none;
+    overflow: visible;
+    min-height: 0;
+  }
+
+  .hero-right-panel {
+    min-height: 500px;
+  }
+
+  .hero-headline {
+    font-size: 2.8rem;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .hero-headline {
+    font-size: 2.2rem;
+  }
+
+  .hero-left-inner {
+    padding: 16px;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   MOBILE DISCOVERY — full-bleed app layout
+   ═══════════════════════════════════════════ */
+
+.mobile-discovery {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  background: #f5f6f8;
+}
+
+/* Full-bleed hero: 58vh tall, relative so absolute children work */
+.mobile-hero {
+  position: relative;
+  min-height: 340px;
+  max-height: 520px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Big headline inside the hero */
+.mobile-hero-headline {
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: clamp(2rem, 8vw, 2.6rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+
+/* White sheet that holds listings */
+.mobile-sheet {
+  background: #fff;
+  border-radius: 28px 28px 0 0;
+  margin-top: -24px;
+  flex: 1;
+  padding: 24px 16px 0;
+  position: relative;
+  z-index: 5;
+  box-shadow: 0 -4px 24px rgba(12, 25, 41, 0.08);
+}

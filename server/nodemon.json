@@ -1,0 +1,10 @@
+{
+  "ignore": [
+    "*.log",
+    "output.json",
+    "output2.json",
+    "output_included.json",
+    "tmp_*.json",
+    "api_dumps/*"
+  ]
+}

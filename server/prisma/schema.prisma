@@ -1,0 +1,333 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- ENUMS ---
+
+enum Role {
+  ADMIN
+  STAFF
+  OWNER
+  PROPERTY_MANAGER
+  SUPER_ADMIN
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CHECKED_IN
+  CHECKED_OUT
+  CANCELLED
+}
+
+enum BlockStatus {
+  AVAILABLE
+  BLOCKED
+  BOOKED
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum TaskType {
+  CLEANING
+  MAINTENANCE
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  ISSUED
+  PAID
+  VOID
+}
+
+// --- PHASE 1 MODELS ---
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  phone        String?   @unique
+  password     String?
+  otpCode      String?
+  otpExpiresAt DateTime?
+  role         Role      @default(STAFF)
+  displayName  String?
+  bio          String?
+  avatarUrl    String?
+  isHost       Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  propertiesManaged Property[]        @relation("PropertyManager")
+  operationalTasks  OperationalTask[] @relation("TaskAssignee")
+  ownerStatements   OwnerStatement[]
+}
+
+model Property {
+  id                   String    @id @default(uuid())
+  externalId           String?   @unique
+  title                String
+  nickname             String?
+  description          String?
+  address              String
+  location             String?
+  neighborhood         String?
+  thumbnailUrl         String?
+  images               String?   // JSON-encoded array of image URLs
+  pricePerNight        Float
+  capacity             Int
+  bedrooms             Int
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  lastWebhookTimestamp DateTime?
+
+  managerId String?
+  manager   User?   @relation("PropertyManager", fields: [managerId], references: [id])
+
+  shortTermPolicyId String?
+  shortTermPolicy   CancellationPolicy? @relation("ShortTermPolicy", fields: [shortTermPolicyId], references: [id])
+
+  longTermPolicyId String?
+  longTermPolicy   CancellationPolicy? @relation("LongTermPolicy", fields: [longTermPolicyId], references: [id])
+
+  reservations   Reservation[]
+  calendarNodes  CalendarNode[]
+  messageThreads MessageThread[]
+  tasks          OperationalTask[]
+  smartLockCodes SmartLockCode[]
+  ratePlans      RatePlan[]
+  journalEntries JournalEntry[]
+}
+
+model GuestProfile {
+  id           String    @id @default(uuid())
+  firstName    String
+  lastName     String
+  email        String    @unique
+  phone        String?
+  otpCode      String?
+  otpExpiresAt DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  reservations   Reservation[]
+  messageThreads MessageThread[]
+}
+
+model Reservation {
+  id                    String            @id @default(uuid())
+  startDate             DateTime
+  endDate               DateTime
+  status                ReservationStatus @default(PENDING)
+  totalPrice            Float
+  selectedNonRefundable Boolean           @default(false)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  externalId            String?           @unique
+  lastWebhookTimestamp  DateTime?
+
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+
+  guestId String
+  guest   GuestProfile @relation(fields: [guestId], references: [id], onDelete: Cascade)
+
+  timeBlocks     TimeBlock[]
+  tasks          OperationalTask[]
+  smartLockCodes SmartLockCode[]
+  transactions   Transaction[]
+  invoices       Invoice[]
+  messageThread  MessageThread?
+}
+
+// --- PHASE 2 MODELS ---
+
+model CalendarNode {
+  id         String   @id @default(uuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+
+  timeBlocks TimeBlock[]
+}
+
+model TimeBlock {
+  id             String       @id @default(uuid())
+  calendarNodeId String
+  calendarNode   CalendarNode @relation(fields: [calendarNodeId], references: [id])
+
+  startDate DateTime
+  endDate   DateTime
+  status    BlockStatus @default(AVAILABLE)
+
+  reservationId String?
+  reservation   Reservation? @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+}
+
+model MessageThread {
+  id         String   @id @default(uuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+
+  guestId String
+  guest   GuestProfile @relation(fields: [guestId], references: [id], onDelete: Cascade)
+
+  reservationId String?      @unique
+  reservation   Reservation? @relation(fields: [reservationId], references: [id])
+
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  telegramTopicId Int? @unique
+}
+
+model Message {
+  id       String        @id @default(uuid())
+  threadId String
+  thread   MessageThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  senderRole    String  // e.g., 'GUEST', 'HOST', 'SYSTEM'
+  content       String
+  isReadByAdmin Boolean  @default(false)
+  createdAt     DateTime @default(now())
+}
+
+model OperationalTask {
+  id         String   @id @default(uuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+
+  type   TaskType
+  status TaskStatus @default(PENDING)
+
+  assigneeId String?
+  assignee   User?   @relation("TaskAssignee", fields: [assigneeId], references: [id])
+
+  reservationId String?
+  reservation   Reservation? @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SmartLockCode {
+  id        String   @id @default(uuid())
+  code      String
+  expiresAt DateTime
+
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+
+  reservationId String?
+  reservation   Reservation? @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
+
+// --- PHASE 3 MODELS ---
+
+model Transaction {
+  id              String            @id @default(uuid())
+  amount          Float
+  currency        String            @default("CAD")
+  status          TransactionStatus @default(PENDING)
+  paymentMethodId String?
+
+  reservationId String
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  invoiceId String?
+  invoice   Invoice? @relation(fields: [invoiceId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Invoice {
+  id     String        @id @default(uuid())
+  amount Float
+  status InvoiceStatus @default(DRAFT)
+  pdfUrl String?
+
+  reservationId String
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  transactions Transaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RatePlan {
+  id         String   @id @default(uuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+
+  name      String
+  basePrice Float
+  rules     String // JSON mapping for dynamic pricing rules
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model JournalEntry {
+  id            String   @id @default(uuid())
+  creditAccount String
+  debitAccount  String
+  amount        Float
+
+  propertyId String?
+  property   Property? @relation(fields: [propertyId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model OwnerStatement {
+  id      String @id @default(uuid())
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id])
+
+  periodStart   DateTime
+  periodEnd     DateTime
+  totalRevenue  Float
+  managementFee Float
+  netPayout     Float
+
+  createdAt DateTime @default(now())
+}
+
+// --- CANCELLATION POLICY ENGINE ---
+
+model CancellationPolicy {
+  id                              String   @id @default(uuid())
+  name                            String   @unique
+  type                            String   @default("SHORT_TERM") // SHORT_TERM or LONG_TERM
+  fullRefundDaysPrior             Int
+  partialRefundDaysPrior          Int
+  partialRefundPercentage         Int
+  bookingGracePeriodHours         Int      @default(24)
+  offerNonRefundableDiscount      Boolean  @default(false)
+  nonRefundableDiscountPercentage Int      @default(10)
+  createdAt                       DateTime @default(now())
+  updatedAt                       DateTime @updatedAt
+
+  propertiesShort Property[] @relation("ShortTermPolicy")
+  propertiesLong  Property[] @relation("LongTermPolicy")
+}

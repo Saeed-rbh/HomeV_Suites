@@ -1,0 +1,3 @@
+*.log
+scratch/
+server/config/firebase-service-account.json

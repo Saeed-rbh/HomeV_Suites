@@ -1,0 +1,19 @@
+node_modules
+
+# Environment variables — never commit
+.env
+
+# Log files
+*.log
+logs/
+
+# Temporary / scratch files
+tmp_*
+output*.json
+raw_*.json
+global_availability.json
+api_dumps/
+
+# SQLite development database (use a real DB in production)
+prisma/dev.db
+prisma/dev.db-journal

@@ -1,0 +1,214 @@
+const express = require('express');
+const router = express.Router();
+const prisma = require('../db');
+const { protect: auth } = require('../middleware/auth');
+const multer = require('multer');
+const path = require('path');
+const { normalizePhone } = require('../utils/phoneUtils');
+
+// Multer config for staff avatar uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, path.join(__dirname, '..', 'uploads', 'avatars')),
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname);
+        cb(null, `staff-${Date.now()}${ext}`);
+    }
+});
+const upload = multer({
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        const allowed = ['.jpg', '.jpeg', '.png', '.webp'];
+        cb(null, allowed.includes(path.extname(file.originalname).toLowerCase()));
+    }
+});
+
+// Middleware to strictly enforce that the requester is an ADMIN
+const requireAdmin = async (req, res, next) => {
+    try {
+        if (!req.user || req.user.role !== 'ADMIN') {
+            return res.status(403).json({ msg: 'Access denied: Requires Admin privileges' });
+        }
+        next();
+    } catch (err) {
+        console.error('Role middleware error:', err);
+        res.status(500).send('Server Error');
+    }
+};
+
+// @route   GET api/admin/staff
+// @desc    Get all staff members authorized as ADMIN
+router.get('/staff', auth, requireAdmin, async (req, res) => {
+    try {
+        const staff = await prisma.user.findMany({
+            where: { role: 'ADMIN' },
+            select: {
+                id: true,
+                email: true,
+                phone: true,
+                displayName: true,
+                avatarUrl: true,
+                isHost: true,
+                createdAt: true,
+            }
+        });
+        res.json(staff);
+    } catch (err) {
+        console.error('Get Staff Error:', err.message);
+        res.status(500).json({ error: 'Server Error: ' + err.message });
+    }
+});
+
+
+
+// @route   POST api/admin/staff
+// @desc    Add a new staff member
+router.post('/staff', auth, requireAdmin, async (req, res) => {
+    const { email, phone, firstName, lastName } = req.body;
+    
+    if (!email && !phone) {
+        return res.status(400).json({ msg: 'Must provide either email or phone number' });
+    }
+
+    const normalizedPhone = normalizePhone(phone);
+
+    try {
+        // Attempt to find existing user first
+        let existingUser = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    ...(email ? [{ email }] : []),
+                    ...(normalizedPhone ? [{ phone: normalizedPhone }] : [])
+                ]
+            }
+        });
+
+        if (existingUser) {
+            // Upgrade role if existing user found
+            await prisma.user.update({
+                where: { id: existingUser.id },
+                data: { role: 'ADMIN' }
+            });
+            return res.json({ msg: 'Existing user was upgraded to ADMIN.' });
+        }
+
+        // Validate generated email if they only passed a phone number
+        const newEmail = email || `${phone.replace(/\D/g, '')}@placeholder.com`;
+
+        // Check if placeholder email already exists natively to avoid unique constraint
+        const checkEmail = await prisma.user.findUnique({ where: { email: newEmail } });
+        if (checkEmail) {
+            await prisma.user.update({
+                where: { id: checkEmail.id },
+                data: { role: 'ADMIN', phone: phone || null }
+            });
+            return res.json({ msg: 'Existing profile upgraded to ADMIN.' });
+        }
+
+        await prisma.user.create({
+            data: {
+                email: newEmail,
+                phone: normalizedPhone || null,
+                password: 'legacy_not_used', // Unneeded since they log in with Magic codes!
+                role: 'ADMIN'
+            }
+        });
+
+        res.json({ msg: 'New administrator added successfully.' });
+    } catch (err) {
+        console.error('Add Staff Error:', err.message);
+        res.status(500).json({ error: 'Server Error: ' + err.message });
+    }
+});
+
+// @route   DELETE api/admin/staff/:id
+// @desc    Revoke admin access safely
+router.delete('/staff/:id', auth, requireAdmin, async (req, res) => {
+    const staffId = req.params.id;
+
+    // Prevent deleting yourself
+    if (staffId === req.user.id) {
+        return res.status(400).json({ msg: 'Cannot delete your own account.' });
+    }
+
+    try {
+        // Ensure we don't delete the last admin
+        const adminCount = await prisma.user.count({
+            where: { role: 'ADMIN' }
+        });
+
+        if (adminCount <= 1) {
+            return res.status(400).json({ msg: 'Cannot remove the last remaining administrator. The system must always have at least one authorized admin.' });
+        }
+
+        await prisma.user.delete({
+            where: { id: staffId }
+        });
+
+        res.json({ msg: 'Admin privileges revoked.' });
+    } catch (err) {
+        console.error('Revoke Staff Error:', err.message);
+        res.status(500).json({ error: 'Server Error: ' + err.message });
+    }
+});
+
+// @route   PUT api/admin/staff/:id
+// @desc    Update staff member details (displayName, etc.)
+router.put('/staff/:id', auth, requireAdmin, async (req, res) => {
+    try {
+        const { displayName } = req.body;
+        const user = await prisma.user.update({
+            where: { id: req.params.id },
+            data: { 
+                ...(displayName !== undefined && { displayName })
+            },
+            select: { id: true, displayName: true }
+        });
+        res.json(user);
+    } catch (err) {
+        console.error('Update Staff Error:', err.message);
+        res.status(500).json({ error: 'Server Error: ' + err.message });
+    }
+});
+
+// @route   POST api/admin/staff/:id/avatar
+// @desc    Upload avatar for a specific staff member
+router.post('/staff/:id/avatar', auth, requireAdmin, upload.single('avatar'), async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+        const avatarUrl = `/uploads/avatars/${req.file.filename}`;
+        const user = await prisma.user.update({
+            where: { id: req.params.id },
+            data: { avatarUrl },
+            select: { id: true, avatarUrl: true }
+        });
+        res.json(user);
+    } catch (err) {
+        console.error('Avatar Upload Error:', err.message);
+        res.status(500).json({ error: 'Server Error: ' + err.message });
+    }
+});
+
+// @route   PUT api/admin/staff/:id/host
+// @desc    Designate a staff member as the responsible host
+router.put('/staff/:id/host', auth, requireAdmin, async (req, res) => {
+    try {
+        // Remove isHost from all other users first
+        await prisma.user.updateMany({
+            where: { isHost: true },
+            data: { isHost: false }
+        });
+        // Set the selected user as host
+        const user = await prisma.user.update({
+            where: { id: req.params.id },
+            data: { isHost: true },
+            select: { id: true, isHost: true }
+        });
+        res.json({ msg: 'Host designation updated.', user });
+    } catch (err) {
+        console.error('Set Host Error:', err.message);
+        res.status(500).json({ error: 'Server Error: ' + err.message });
+    }
+});
+
+module.exports = router;

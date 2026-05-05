@@ -1,0 +1,337 @@
+import { Suspense } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import {
+  BriefcaseBusiness,
+  CarFront,
+  ChevronLeft,
+  Dumbbell,
+  KeyRound,
+  MapPin,
+  ShieldCheck,
+  Star,
+  Trees,
+  UtensilsCrossed,
+  WashingMachine,
+  Wifi,
+  Wind,
+} from "lucide-react";
+import ListingBookingSection from "@/components/ListingBookingSection";
+import EditableBookingSummary from "@/components/EditableBookingSummary";
+import ListingGallery from "@/components/ListingGallery";
+import { buildBookingQuery, calculatePriceBreakdown, formatCurrency, formatDateRange, normalizeBooking } from "@/lib/booking";
+import { getListingByIdDynamic } from "@/lib/server-fetch";
+import FavoriteButton from "@/components/FavoriteButton";
+import ListingAmenities from "@/components/ListingAmenities";
+import ExpandableText from "@/components/ExpandableText";
+import ListingThingsToKnow from "@/components/ListingThingsToKnow";
+import ListingMapWrapper from "@/components/ListingMapWrapper";
+
+const amenityIcons = {
+  wifi: Wifi,
+  kitchen: UtensilsCrossed,
+  workspace: BriefcaseBusiness,
+  parking: CarFront,
+  laundry: WashingMachine,
+  selfCheckIn: KeyRound,
+  airConditioning: Wind,
+  elevator: ShieldCheck,
+  gym: Dumbbell,
+  balcony: Trees,
+  patio: Trees,
+};
+
+const amenityLabels = {
+  wifi: "Fast WiFi",
+  kitchen: "Chef kitchen",
+  workspace: "Dedicated workspace",
+  parking: "On-site parking",
+  laundry: "In-suite laundry",
+  selfCheckIn: "Self check-in",
+  airConditioning: "Air conditioning",
+  elevator: "Elevator access",
+  gym: "Building gym",
+  balcony: "Private balcony",
+  patio: "Outdoor patio",
+};
+
+const amenityDescriptions = {
+  wifi: "500 Mbps fiber — password on the entry card",
+  kitchen: "Full-size appliances, cookware, and pantry essentials",
+  workspace: "Dedicated desk with monitor-height shelf and fast Wi-Fi",
+  parking: "1 reserved underground spot, included with your stay",
+  laundry: "In-suite washer & dryer — detergent provided",
+  selfCheckIn: "Smart lock with personal access code — no key exchange needed",
+  airConditioning: "Central A/C with individual room controls",
+  elevator: "Building elevator — step-free access throughout",
+  gym: "Building fitness centre, open 24 hours, no charge",
+  balcony: "Private outdoor terrace with seating and city views",
+  patio: "Ground-floor outdoor patio, fully furnished",
+};
+
+function StarRating({ rating }) {
+  return (
+    <span className="inline-flex items-center gap-0.5">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <Star
+          key={star}
+          className={`h-3.5 w-3.5 ${star <= Math.round(rating)
+            ? "fill-amber-400 text-amber-400"
+            : "text-slate-300"
+            }`}
+        />
+      ))}
+    </span>
+  );
+}
+
+export default async function ListingPage({ params, searchParams }) {
+  const { id } = await params;
+  const resolvedSearchParams = await searchParams;
+
+  // Directly fetch from backend 
+  let listing = await getListingByIdDynamic(id);
+
+  if (!listing) {
+    notFound();
+  }
+
+  const booking = normalizeBooking(resolvedSearchParams);
+  const breakdown = calculatePriceBreakdown(listing, booking.checkIn, booking.checkOut, booking.guests);
+
+  console.log(`[Diagnostic] Listing page rendering. blockedDates array length: ${listing.blockedDates?.length}`);
+
+  return (
+    <>
+      {/* --- MOBILE LAYOUT --- */}
+      <div className="block lg:hidden min-h-screen bg-white pb-[100px]">
+        {/* Full-bleed gallery + Floating Nav */}
+        <div className="relative">
+          <ListingGallery listing={listing} />
+          <div className="absolute top-6 left-5 z-20">
+            <Link href="/" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 backdrop-blur shadow-sm border border-slate-200">
+              <ChevronLeft className="h-5 w-5 text-[#0c1929]" />
+            </Link>
+          </div>
+        </div>
+
+        {/* Content Below Hero */}
+        <div className="relative z-10 -mt-6 rounded-t-[32px] bg-white px-5 pt-8 pb-12 flex flex-col gap-8 shadow-[0_-8px_16px_rgba(0,0,0,0.05)]">
+          {/* Title & Basics */}
+          <div className="text-center flex flex-col items-center">
+            <h1 className="text-[28px] font-bold tracking-tight text-[#222222] leading-[1.15] mb-3 px-2">
+              {listing.title}
+            </h1>
+            <div className="text-[15px] text-slate-600 mb-1">
+              Entire home in {listing.neighborhood || listing.location}
+            </div>
+            <div className="flex flex-wrap justify-center items-center gap-1.5 text-[15px] text-slate-600">
+              <span>{listing.maxGuests} guests</span>
+              <span>·</span>
+              <span>{listing.bedrooms} bedroom{listing.bedrooms === 1 ? '' : 's'}</span>
+              <span>·</span>
+              <span>{listing.baths} bath{listing.baths === 1 ? '' : 's'}</span>
+            </div>
+          </div>
+
+          <div className="h-px w-full bg-slate-200" />
+
+          {/* Host Info */}
+          <div className="flex items-center gap-4">
+             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0c1929] text-white font-bold text-lg shrink-0">
+               {listing.host?.[0] || "H"}
+             </div>
+             <div>
+               <h2 className="font-semibold text-[#0c1929] text-[16px]">Hosted by {listing.host}</h2>
+               <p className="text-sm text-slate-500">Superhost · {listing.hostSince || "Joined 2021"}</p>
+             </div>
+          </div>
+
+          <div className="h-px w-full bg-slate-200" />
+
+          {/* Description */}
+          <div>
+            <h2 className="text-[18px] font-semibold text-[#0c1929] mb-3">About this space</h2>
+            <ExpandableText text={listing.description} maxLines={4} />
+          </div>
+
+          <div className="h-px w-full bg-slate-200" />
+
+          {/* Amenities */}
+          <div>
+             <ListingAmenities
+                amenities={listing.amenities}
+                amenityLabels={amenityLabels}
+                amenityDescriptions={amenityDescriptions}
+             />
+          </div>
+
+          <div className="h-px w-full bg-slate-200" />
+
+          {/* Reviews */}
+          {listing.guestReviews && listing.guestReviews.length > 0 && (
+            <>
+              <div className="h-px w-full bg-slate-200" />
+              <div className="flex items-center gap-2 mb-4">
+                <Star className="h-5 w-5 fill-[#0c1929] text-[#0c1929]" />
+                <span className="text-xl font-bold text-[#0c1929]">{listing.rating} · {listing.reviews} reviews</span>
+              </div>
+              <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 hide-scrollbar -mx-5 px-5 pb-4">
+                {listing.guestReviews.slice(0, 4).map((review, i) => (
+                  <div key={i} className="w-[85vw] max-w-[320px] shrink-0 snap-center rounded-[20px] border border-slate-200 bg-white p-5 shadow-sm">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0c1929] text-sm font-bold text-white">
+                        {review.avatar}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="text-sm font-semibold text-[#0c1929]">{review.author}</p>
+                          <p className="text-xs text-[#0c1929] shrink-0">{review.date}</p>
+                        </div>
+                        <StarRating rating={review.rating} />
+                      </div>
+                    </div>
+                    <p className="mt-3 text-sm leading-6 text-[#0c1929] line-clamp-4">{review.text}</p>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          <div className="h-px w-full bg-slate-200" />
+
+          {/* Location / Things To Know */}
+          <ListingMapWrapper latitude={listing.latitude} longitude={listing.longitude} />
+          <ListingThingsToKnow 
+            thingsToKnow={listing.thingsToKnow} 
+            checkIn={booking.checkIn} 
+            cancellationDays={listing.cancellationDays}
+            cancellationDescription={listing.cancellationDescription}
+            cancellationPolicy={listing.cancellationPolicy}
+          />
+
+          <div className="h-px w-full bg-slate-200" />
+
+          {/* Inline Calendar and Sticky Bar Portal for Mobile */}
+          <ListingBookingSection
+              listing={listing}
+              initialCheckIn={booking.checkIn}
+              initialCheckOut={booking.checkOut}
+              initialGuests={booking.guests}
+              initialNonRefundable={booking.nonRefundable}
+              cancellationPolicy={listing.cancellationPolicy}
+              layout="mobile"
+          />
+        </div>
+      </div>
+
+      {/* --- DESKTOP LAYOUT --- */}
+      <div className="hidden lg:block min-h-screen bg-white px-4 pb-16 pt-6 md:px-6">
+      <div className="mx-auto max-w-[1600px]">
+        <div className="mt-5 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#0c1929]">{listing.neighborhood}</p>
+            <div className="mt-2">
+              <h1 className="text-4xl font-medium tracking-tight text-[#0c1929] md:text-5xl">{listing.title}</h1>
+            </div>
+            <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-[#0c1929]">
+              <span>{listing.maxGuests} guests max</span>
+              <span>{listing.bedrooms} bedroom{listing.bedrooms === 1 ? '' : 's'}</span>
+              <span>{listing.baths} bath{listing.baths === 1 ? '' : 's'}</span>
+              <span className="inline-flex items-center gap-1">
+                <MapPin className="h-4 w-4" />
+                {listing.location}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <ListingGallery listing={listing} />
+
+        <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1fr)_430px]">
+          <div className="space-y-8">
+            <section className="rounded-[24px] border border-slate-200 bg-white p-7 md:p-8">
+              <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#0c1929]">About this stay</p>
+              <h2 className="mt-3 font-medium tracking-tight text-[#0c1929]">
+                Hosted by {listing.host} in {listing.neighborhood}
+              </h2>
+              <div className="mt-5">
+                <ExpandableText text={listing.description} maxLines={4} />
+              </div>
+            </section>
+
+            <ListingAmenities
+              amenities={listing.amenities}
+              amenityLabels={amenityLabels}
+              amenityDescriptions={amenityDescriptions}
+            />
+
+            <ListingBookingSection
+              listing={listing}
+              initialCheckIn={booking.checkIn}
+              initialCheckOut={booking.checkOut}
+              initialGuests={booking.guests}
+              initialNonRefundable={booking.nonRefundable}
+              cancellationPolicy={listing.cancellationPolicy}
+              layout="desktop"
+            />
+
+            {/* Reviews Section */}
+            {listing.guestReviews && listing.guestReviews.length > 0 && (
+              <section id="reviews" className="rounded-[24px] border border-slate-200 bg-white p-7 md:p-8">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#0c1929]">Guest Reviews</p>
+                  <div className="flex items-center gap-2">
+                    <StarRating rating={listing.rating} />
+                    <span className="text-sm font-semibold text-[#0c1929]">{listing.rating} · {listing.reviews} reviews</span>
+                  </div>
+                </div>
+                <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                  {listing.guestReviews.slice(0, 4).map((review, i) => (
+                    <div key={i} className="rounded-[20px] border border-slate-200 bg-slate-50/50 p-5">
+                      <div className="flex items-start gap-3">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0c1929] text-sm font-bold text-white">
+                          {review.avatar}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="text-sm font-semibold text-[#0c1929]">{review.author}</p>
+                            <p className="text-xs text-[#0c1929] shrink-0">{review.date}</p>
+                          </div>
+                          <StarRating rating={review.rating} />
+                        </div>
+                      </div>
+                      <p className="mt-3 text-sm leading-7 text-[#0c1929]">{review.text}</p>
+                    </div>
+                  ))}
+                </div>
+                {listing.guestReviews.length > 4 && (
+                  <p className="mt-4 text-sm text-[#0c1929] text-center">
+                    And {listing.reviews - 4} more reviews averaging {listing.rating} ★
+                  </p>
+                )}
+              </section>
+            )}
+
+            {/* Things To Know Section */}
+            <ListingMapWrapper latitude={listing.latitude} longitude={listing.longitude} />
+            <ListingThingsToKnow 
+              thingsToKnow={listing.thingsToKnow} 
+              checkIn={booking.checkIn} 
+              cancellationDays={listing.cancellationDays}
+              cancellationDescription={listing.cancellationDescription}
+              cancellationPolicy={listing.cancellationPolicy}
+            />
+          </div>
+
+          <aside className="lg:sticky lg:top-6 self-start">
+            {/* Portal target — ListingBookingSection portals the sidebar card here */}
+            <div id="listing-booking-sidebar" />
+          </aside>
+        </div>
+      </div>
+    </div>
+    </>
+  );
+}
