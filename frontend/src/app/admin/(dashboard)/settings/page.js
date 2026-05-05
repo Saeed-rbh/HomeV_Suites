@@ -15,7 +15,7 @@ export default function SettingsPage() {
 
     useEffect(() => {
         const token = localStorage.getItem("adminToken");
-        fetch("http://localhost:5000/api/admin/profile", {
+        fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/admin/profile", {
             headers: { Authorization: `Bearer ${token}` }
         })
             .then(r => r.json())
@@ -35,7 +35,7 @@ export default function SettingsPage() {
         setSaved(false);
         const token = localStorage.getItem("adminToken");
         try {
-            const res = await fetch("http://localhost:5000/api/admin/profile", {
+            const res = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/admin/profile", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ displayName, bio, phone })
@@ -60,7 +60,7 @@ export default function SettingsPage() {
         const formData = new FormData();
         formData.append("avatar", file);
         try {
-            const res = await fetch("http://localhost:5000/api/admin/profile/avatar", {
+            const res = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/admin/profile/avatar", {
                 method: "POST",
                 headers: { Authorization: `Bearer ${token}` },
                 body: formData
@@ -84,7 +84,7 @@ export default function SettingsPage() {
     }
 
     const avatarSrc = profile.avatarUrl
-        ? `http://localhost:5000${profile.avatarUrl}`
+        ? `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${profile.avatarUrl}`
         : null;
 
     return (

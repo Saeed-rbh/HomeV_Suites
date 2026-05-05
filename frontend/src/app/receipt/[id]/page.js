@@ -20,7 +20,7 @@ export default function ReceiptPage() {
       return;
     }
 
-    fetch("http://localhost:5000/api/guests/me/reservations", {
+    fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/guests/me/reservations", {
       headers: { "Authorization": `Bearer ${token}` }
     })
       .then(res => res.json())

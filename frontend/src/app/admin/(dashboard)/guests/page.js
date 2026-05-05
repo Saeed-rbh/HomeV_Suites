@@ -20,7 +20,7 @@ export default function GuestsModule() {
     const fetchGuests = async () => {
       try {
         const token = localStorage.getItem("adminToken");
-        const res = await fetch("http://localhost:5000/api/guests", {
+        const res = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/guests", {
           headers: {
             "x-auth-token": token,
             "Authorization": `Bearer ${token}`
@@ -61,7 +61,7 @@ export default function GuestsModule() {
   const handleDeleteGuest = async (id) => {
     try {
       const token = localStorage.getItem("adminToken");
-      const res = await fetch(`http://localhost:5000/api/guests/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + ''}/guests/${id}`, {
         method: "DELETE",
         headers: {
           "x-auth-token": token,

@@ -65,7 +65,7 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
     try {
       if (loginMethod === "email") {
         // Step 1: Check if user exists
-        const checkRes = await fetch("http://localhost:5000/api/auth/check-user", {
+        const checkRes = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/auth/check-user", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ identifier })
@@ -74,7 +74,7 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
 
         if (checkData.exists) {
           // Existing user → send OTP directly
-          const res = await fetch("http://localhost:5000/api/auth/request-email-otp", {
+          const res = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/auth/request-email-otp", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: identifier })
@@ -90,7 +90,7 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
       } else {
         // Phone login: check first
         const rawPhone = `${countryCode}${identifier.replace(/\D/g, "")}`;
-        const checkRes = await fetch("http://localhost:5000/api/auth/check-user", {
+        const checkRes = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/auth/check-user", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ identifier: rawPhone })
@@ -125,7 +125,7 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
 
       if (loginMethod === "phone") {
         // Register via the new API, then send Firebase SMS too
-        const res = await fetch("http://localhost:5000/api/auth/create-guest-and-send-otp", {
+        const res = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/auth/create-guest-and-send-otp", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ firstName: regFirstName, lastName: regLastName, email: regEmail, phone: regPhoneRaw })
@@ -140,7 +140,7 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
         setStep(2);
       } else {
         // Email registration
-        const res = await fetch("http://localhost:5000/api/auth/create-guest-and-send-otp", {
+        const res = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/auth/create-guest-and-send-otp", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ firstName: regFirstName, lastName: regLastName, email: regEmail, phone: regPhoneRaw })
@@ -181,7 +181,7 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
         ? { idToken, identifier: `${countryCode}${identifier.replace(/\D/g, "")}` }
         : { otp: otpValue, identifier: emailToVerify };
 
-      const res = await fetch("http://localhost:5000/api/auth/verify-otp", {
+      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)

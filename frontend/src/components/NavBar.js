@@ -374,7 +374,7 @@ function AccountButton() {
 
     // Attempt to get a fresh name from the server (fixes stale "Guest" fallback)
     const tokenKey = guestToken ? "guestToken" : "adminToken";
-    fetch("http://localhost:5000/api/auth/me", {
+    fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/auth/me", {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(r => r.ok ? r.json() : null)

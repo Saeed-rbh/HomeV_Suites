@@ -16,7 +16,7 @@ export default function StripeWrapper({ children, listingId, checkIn, checkOut, 
     
     const fetchClientSecret = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/stripe/create-payment-intent", {
+        const response = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/stripe/create-payment-intent", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ listingId, checkIn, checkOut, guests, selectedNonRefundable, currency }),

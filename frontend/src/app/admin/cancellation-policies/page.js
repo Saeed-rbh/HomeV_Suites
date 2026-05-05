@@ -36,7 +36,7 @@ export default function CancellationPoliciesPage() {
   const fetchPolicies = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/cancellation-policies", {
+      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/cancellation-policies", {
         headers: { "Authorization": `Bearer ${localStorage.getItem('adminToken')}` }
       });
       const data = await res.json();
@@ -78,7 +78,7 @@ export default function CancellationPoliciesPage() {
   const confirmDelete = async () => {
     if (!deletePolicyId) return;
     try {
-      await fetch(`http://localhost:5000/api/cancellation-policies/${deletePolicyId}`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + ''}/cancellation-policies/${deletePolicyId}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${localStorage.getItem('adminToken')}` }
       });
@@ -94,7 +94,7 @@ export default function CancellationPoliciesPage() {
   const confirmApplyAll = async (type) => {
     if (!policyToApply) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/cancellation-policies/${policyToApply.id}/apply-all`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + ''}/cancellation-policies/${policyToApply.id}/apply-all`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -147,8 +147,8 @@ export default function CancellationPoliciesPage() {
     try {
       const isEditing = !!editingPolicy;
       const url = isEditing 
-        ? `http://localhost:5000/api/cancellation-policies/${editingPolicy.id}`
-        : "http://localhost:5000/api/cancellation-policies";
+        ? `${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + ''}/cancellation-policies/${editingPolicy.id}`
+        : (process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/cancellation-policies";
       
       const payload = {
         ...formData,

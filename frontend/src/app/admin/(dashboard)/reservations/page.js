@@ -11,7 +11,7 @@ export default function ReservationsModule() {
 
   async function loadReservations() {
     try {
-      const res = await fetch('http://localhost:5000/api/guests/reservations/all', {
+      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '/guests/reservations/all', {
         headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
       });
       const data = await res.json();
@@ -69,7 +69,7 @@ export default function ReservationsModule() {
       if (!confirm(`Are you sure you want to completely cancel and remove the reservation for ${guestName}?`)) return;
       
       try {
-          const res = await fetch(`http://localhost:5000/api/reservations/${id}`, { method: 'DELETE' });
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + ''}/reservations/${id}`, { method: 'DELETE' });
           if (res.ok) {
               setList(prev => prev.filter(b => b.id !== id));
               setSelectedReservation(null);

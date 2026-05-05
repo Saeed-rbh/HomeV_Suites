@@ -19,8 +19,8 @@ export default function MultiHostCalendar() {
 
     useEffect(() => {
         Promise.all([
-            fetch('http://localhost:5000/api/properties').then(res => res.json()),
-            fetch('http://localhost:5000/api/reservations').then(res => res.json())
+            fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '/properties').then(res => res.json()),
+            fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '/reservations').then(res => res.json())
         ])
         .then(([propsRes, resRes]) => {
             if (propsRes.success && propsRes.data) {

@@ -399,7 +399,7 @@ export default function DiscoveryView() {
   }, []);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/properties')
+    fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '/properties')
       .then(res => res.json())
       .then(payload => {
         const data = payload.data || [];

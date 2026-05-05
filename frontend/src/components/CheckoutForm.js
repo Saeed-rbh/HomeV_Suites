@@ -96,7 +96,7 @@ export default function CheckoutForm({ listingId, checkIn, checkOut, guests, sel
       const headers = { "Content-Type": "application/json" };
       if (token) headers["Authorization"] = `Bearer ${token}`;
 
-      const res = await fetch("http://localhost:5000/api/reservations", {
+      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/reservations", {
         method: "POST",
         headers,
         body: JSON.stringify(payload)

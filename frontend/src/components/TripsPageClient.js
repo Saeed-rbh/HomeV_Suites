@@ -117,7 +117,7 @@ export default function TripsPageClient() {
 
   async function fetchReservations(activeToken) {
     try {
-      const res = await fetch("http://localhost:5000/api/guests/me/reservations", {
+      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/guests/me/reservations", {
         headers: { "Authorization": `Bearer ${activeToken}` }
       });
       if (res.ok) {

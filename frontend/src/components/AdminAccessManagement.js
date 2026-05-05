@@ -38,7 +38,7 @@ export default function AdminAccessManagement() {
   const fetchStaff = async () => {
     try {
       const token = localStorage.getItem("adminToken");
-      const res = await fetch("http://localhost:5000/api/admin/staff", {
+      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/admin/staff", {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (!res.ok) {
@@ -69,7 +69,7 @@ export default function AdminAccessManagement() {
     setSuccess("");
     try {
       const token = localStorage.getItem("adminToken");
-      const res = await fetch("http://localhost:5000/api/admin/staff", {
+      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/admin/staff", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -97,7 +97,7 @@ export default function AdminAccessManagement() {
     setError("");
     try {
       const token = localStorage.getItem("adminToken");
-      const res = await fetch(`http://localhost:5000/api/admin/staff/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + ''}/admin/staff/${id}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });
@@ -118,7 +118,7 @@ export default function AdminAccessManagement() {
     const formData = new FormData();
     formData.append("avatar", file);
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/staff/${userId}/avatar`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + ''}/admin/staff/${userId}/avatar`, {
         method: "POST",
         headers: { "Authorization": `Bearer ${token}` },
         body: formData
@@ -136,7 +136,7 @@ export default function AdminAccessManagement() {
   const handleUpdateName = async (userId) => {
     const token = localStorage.getItem("adminToken");
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/staff/${userId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + ''}/admin/staff/${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify({ displayName: tempName })
@@ -155,7 +155,7 @@ export default function AdminAccessManagement() {
   const handleSetHost = async (userId) => {
     const token = localStorage.getItem("adminToken");
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/staff/${userId}/host`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + ''}/admin/staff/${userId}/host`, {
         method: "PUT",
         headers: { "Authorization": `Bearer ${token}` }
       });
@@ -311,7 +311,7 @@ export default function AdminAccessManagement() {
                       <div className="relative group/avatar">
                         {user.avatarUrl ? (
                           <img
-                            src={`http://localhost:5000${user.avatarUrl}`}
+                            src={`${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${user.avatarUrl}`}
                             alt={user.displayName || "Admin"}
                             className="h-12 w-12 rounded-full object-cover border-2 border-slate-200"
                           />

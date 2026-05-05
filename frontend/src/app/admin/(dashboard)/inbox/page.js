@@ -18,7 +18,7 @@ export default function InboxModule() {
 
     const fetchThreads = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/messaging/threads', {
+            const res = await fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '/messaging/threads', {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
             });
             const data = await res.json();
@@ -82,7 +82,7 @@ export default function InboxModule() {
         setActiveThreadId(id);
 
         try {
-            await fetch(`http://localhost:5000/api/messaging/threads/${id}/read`, {
+            await fetch(`${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + ''}/messaging/threads/${id}/read`, {
                 method: 'PUT',
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
             });
@@ -103,7 +103,7 @@ export default function InboxModule() {
         } : t));
 
         try {
-            await fetch(`http://localhost:5000/api/messaging/threads/${activeThread.id}/messages`, {
+            await fetch(`${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + ''}/messaging/threads/${activeThread.id}/messages`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

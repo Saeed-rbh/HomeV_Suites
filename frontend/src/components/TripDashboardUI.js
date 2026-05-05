@@ -30,7 +30,7 @@ export default function TripDashboardUI({ listing, reservation }) {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/admin/profile/public")
+    fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/admin/profile/public")
       .then(r => r.json())
       .then(data => { if (data.success && data.data) setHostProfile(data.data); })
       .catch(() => { });
@@ -42,7 +42,7 @@ export default function TripDashboardUI({ listing, reservation }) {
     if (!reservation?.id) return;
     const token = localStorage.getItem("guestToken");
 
-    fetch(`http://localhost:5000/api/messaging/reservation/${reservation.id}/messages`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + ''}/messaging/reservation/${reservation.id}/messages`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(r => r.json())
@@ -55,7 +55,7 @@ export default function TripDashboardUI({ listing, reservation }) {
             createdAt: m.createdAt
           })));
 
-          socket = io("http://localhost:5000");
+          socket = io(((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')) + "");
           socket.emit("join_thread", data.threadId);
           socket.on("receive_message", (msg) => {
             setMessages(prev => {
@@ -82,7 +82,7 @@ export default function TripDashboardUI({ listing, reservation }) {
     setMessages(prev => [...prev, { text, sender: "me", createdAt: new Date().toISOString() }]);
     const token = localStorage.getItem("guestToken");
     try {
-      await fetch(`http://localhost:5000/api/messaging/reservation/${reservation.id}/messages`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + ''}/messaging/reservation/${reservation.id}/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ senderRole: "GUEST", content: text })
@@ -91,7 +91,7 @@ export default function TripDashboardUI({ listing, reservation }) {
   };
 
   const hostName = hostProfile.displayName || listing?.host || "Your Host";
-  const hostAvatar = hostProfile.avatarUrl ? `http://localhost:5000${hostProfile.avatarUrl}` : null;
+  const hostAvatar = hostProfile.avatarUrl ? `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}${hostProfile.avatarUrl}` : null;
 
   const Avatar = ({ size = 40 }) => (
     hostAvatar
@@ -557,7 +557,7 @@ export default function TripDashboardUI({ listing, reservation }) {
                   )}
                 </div>
                 <div className="space-y-3 pt-2">
-                  <button onClick={async () => { try { const res = await fetch(`http://localhost:5000/api/reservations/${reservation.id}`, { method: "DELETE" }); if (res.ok) { setActiveModal(null); window.location.reload(); } } catch (e) { console.error(e); } }} className="w-full rounded-2xl bg-red-600 py-4 text-sm font-bold text-white hover:bg-red-700 transition">
+                  <button onClick={async () => { try { const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + ''}/reservations/${reservation.id}`, { method: "DELETE" }); if (res.ok) { setActiveModal(null); window.location.reload(); } } catch (e) { console.error(e); } }} className="w-full rounded-2xl bg-red-600 py-4 text-sm font-bold text-white hover:bg-red-700 transition">
                     Yes, cancel reservation
                   </button>
                   <button onClick={() => setActiveModal(null)} className="w-full rounded-2xl border border-zinc-200 py-4 text-sm font-bold text-[#0c1929] hover:bg-zinc-50 transition">
