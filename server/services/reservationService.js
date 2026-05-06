@@ -1,4 +1,5 @@
 const prisma = require('../db');
+const crypto = require('crypto');
 const telegramService = require('./telegramService');
 const { unblockCalendarDates, updateV2Booking } = require('./uplistingService');
 const stripe = require('../utils/stripeClient');
@@ -17,24 +18,29 @@ const createReservation = async (data, paymentIntentId = null) => {
   });
   if (overlap) throw new Error('Property is not available for the selected dates.');
 
-  const reservation = await prisma.$transaction(async (tx) => {
-    const res = await tx.reservation.create({ data });
-    
-    if (paymentIntentId) {
-      await tx.transaction.create({
+  const reservationId = crypto.randomUUID();
+  const queries = [
+    prisma.reservation.create({ 
+      data: { ...data, id: reservationId } 
+    })
+  ];
+
+  if (paymentIntentId) {
+    queries.push(
+      prisma.transaction.create({
         data: {
-          amount: res.totalPrice,
+          amount: data.totalPrice,
           currency: 'CAD',
           status: 'COMPLETED',
           paymentMethodId: paymentIntentId,  // legacy
           stripeIntentId: paymentIntentId,   // typed field
-          reservationId: res.id
+          reservationId: reservationId
         }
-      });
-    }
-    
-    return res;
-  });
+      })
+    );
+  }
+
+  const [reservation] = await prisma.$transaction(queries);
 
   return reservation;
 };

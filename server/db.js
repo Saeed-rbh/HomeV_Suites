@@ -5,19 +5,14 @@ if (!process.env.DATABASE_URL) {
 }
 
 const { PrismaClient } = require('@prisma/client');
-const { Pool, neonConfig } = require('@neondatabase/serverless');
-const { PrismaNeon } = require('@prisma/adapter-neon');
-const ws = require('ws');
+const { PrismaNeonHTTP } = require('@prisma/adapter-neon');
 
 if (!process.env.DATABASE_URL) {
   throw new Error('DATABASE_URL environment variable is not set');
 }
 
-// Enable WebSocket for Neon to support interactive transactions ($transaction)
-neonConfig.webSocketConstructor = ws;
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const adapter = new PrismaNeon(pool);
-
+// Use HTTP adapter as it is more reliable in many serverless environments
+const adapter = new PrismaNeonHTTP(process.env.DATABASE_URL);
 const prisma = new PrismaClient({ adapter });
 
 module.exports = prisma;
