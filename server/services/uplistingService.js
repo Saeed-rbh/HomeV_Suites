@@ -78,9 +78,6 @@ const postPropertyData = async (propertyId, endpoint, body = {}) => {
  * @param {string} checkOut    - YYYY-MM-DD check-out date (NOT blocked — guests leave this day)
  */
 const blockCalendarDates = async (propertyId, checkIn, checkOut) => {
-  console.log(`[Uplisting API] 🛑 Writing to calendar is temporarily disabled. Would have blocked: ${checkIn} → ${checkOut} for property ${propertyId}`);
-  return;
-
   // Build the list of night-dates to block (check-in inclusive, check-out exclusive)
   const dates = [];
   const d = new Date(checkIn + 'T00:00:00Z');
@@ -112,9 +109,6 @@ const blockCalendarDates = async (propertyId, checkIn, checkOut) => {
  * @param {string} checkOut    - YYYY-MM-DD check-out date
  */
 const unblockCalendarDates = async (propertyId, checkIn, checkOut) => {
-  console.log(`[Uplisting API] 🛑 Writing to calendar is temporarily disabled. Would have unblocked: ${checkIn} → ${checkOut} for property ${propertyId}`);
-  return;
-
   const dates = [];
   const d = new Date(checkIn + 'T00:00:00Z');
   const end = new Date(checkOut + 'T00:00:00Z');

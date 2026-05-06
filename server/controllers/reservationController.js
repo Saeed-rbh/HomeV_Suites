@@ -60,6 +60,8 @@ const createReservation = async (req, res) => {
     // date doesn't snap backwards a day when rendered in local time (e.g. EDT) on the admin UI.
     if (data.startDate) data.startDate = new Date(data.startDate + 'T12:00:00.000Z').toISOString();
     if (data.endDate)   data.endDate   = new Date(data.endDate   + 'T12:00:00.000Z').toISOString();
+    
+    const numGuests = req.body.numberOfGuests || req.body.guests || 1;
 
     const paymentIntentId = data.paymentIntentId;
 
@@ -154,6 +156,7 @@ const createReservation = async (req, res) => {
     // 3b. Push booking to Uplisting via V2 API so it appears on the Uplisting calendar
     //     and syncs across all connected OTA channels (Airbnb, VRBO, Booking.com, etc.).
     //     Falls back to the legacy calendar-block if the V2 call fails.
+    console.log(`[Reservation] 🔄 Syncing reservation ${reservation.id} to Uplisting...`);
     try {
       const blockPropId = (
         await prisma.property.findUnique({ where: { id: data.propertyId }, select: { externalId: true } })
@@ -180,7 +183,7 @@ const createReservation = async (req, res) => {
           guestName:      fullName,
           guestEmail:     dbGuest?.email,
           guestPhone:     dbGuest?.phone,
-          numberOfGuests: reservation.numberOfGuests || undefined
+          numberOfGuests: numGuests
         }).then(async (uplistingResponse) => {
           const uplistingBookingId = uplistingResponse?.data?.id;
 
