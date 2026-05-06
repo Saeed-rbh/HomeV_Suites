@@ -175,18 +175,19 @@ const createReservation = async (req, res) => {
           ? [dbGuest.firstName, dbGuest.lastName].filter(Boolean).join(' ')
           : undefined;
 
-        // Fire-and-forget: don't block the response on the Uplisting call.
-        createV2Booking({
-          propertyId:     blockPropId,
-          checkIn:        rawCheckIn,
-          checkOut:       rawCheckOut,
-          guestName:      fullName,
-          guestEmail:     dbGuest?.email,
-          guestPhone:     dbGuest?.phone,
-          firstName:      dbGuest?.firstName,
-          lastName:       dbGuest?.lastName,
-          numberOfGuests: numGuests
-        }).then(async (uplistingResponse) => {
+        console.log(`[Reservation] 🔄 Syncing reservation ${reservation.id} to Uplisting (Property: ${blockPropId})...`);
+        try {
+          const uplistingResponse = await createV2Booking({
+            propertyId:     blockPropId,
+            checkIn:        rawCheckIn,
+            checkOut:       rawCheckOut,
+            guestName:      fullName,
+            guestEmail:     dbGuest?.email,
+            guestPhone:     dbGuest?.phone,
+            firstName:      dbGuest?.firstName,
+            lastName:       dbGuest?.lastName,
+            numberOfGuests: numGuests
+          });
           const uplistingBookingId = uplistingResponse?.data?.id;
 
           // Persist the Uplisting booking ID to the local Reservation record
@@ -217,15 +218,13 @@ const createReservation = async (req, res) => {
               console.warn(`[Reservation] ⚠ Could not attach custom attributes to Uplisting booking ${uplistingBookingId}:`, patchErr.message);
             }
           }
-        }).catch(err => {
-          console.error('[Reservation] ⚠ Uplisting V2 booking push FAILED — falling back to calendar block', err.message);
+        } catch (err) {
+          console.error('[Reservation] ❌ Uplisting V2 booking push FAILED — falling back to legacy calendar block. Error:', err.message);
           // Fallback: block the calendar dates manually if the V2 booking call failed
-          blockCalendarDates(blockPropId, rawCheckIn, rawCheckOut).catch(blockErr =>
+          await blockCalendarDates(blockPropId, rawCheckIn, rawCheckOut).catch(blockErr =>
             console.error('[Reservation] ⚠ Fallback Uplisting calendar block ALSO FAILED — double-booking risk!', blockErr.message)
           );
-        });
-
-        console.log(`[Reservation] 🚀 Triggered Uplisting V2 booking: property=${blockPropId} ${rawCheckIn}→${rawCheckOut}`);
+        }
       } else {
         console.warn('[Reservation] ⚠ Could not determine property ID or dates for Uplisting V2 booking push');
       }
