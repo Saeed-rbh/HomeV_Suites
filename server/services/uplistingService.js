@@ -195,7 +195,8 @@ const createV2Booking = async ({ propertyId, checkIn, checkOut, guestName, guest
   } catch (error) {
     console.error('[Uplisting V2] ❌ POST /v2/bookings FAILED');
     console.error(`[Uplisting V2] Status: ${error.response?.status || 'N/A'}`);
-    console.error(`[Uplisting V2] Response: ${JSON.stringify(error.response?.data || error.message)}`);
+    console.error(`[Uplisting V2] Full Error Body: ${JSON.stringify(error.response?.data || error.message)}`);
+    console.error(`[Uplisting V2] Request Body Sent: ${JSON.stringify(body)}`);
     throw error;
   }
 };
