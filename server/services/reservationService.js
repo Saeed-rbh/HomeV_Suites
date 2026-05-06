@@ -1,7 +1,7 @@
 const prisma = require('../db');
 const crypto = require('crypto');
 const telegramService = require('./telegramService');
-const { unblockCalendarDates, updateV2Booking } = require('./uplistingService');
+const { unblockCalendarDates, updateV2Booking, blockCalendarDates } = require('./uplistingService');
 const stripe = require('../utils/stripeClient');
 
 const createReservation = async (data, paymentIntentId = null) => {
@@ -186,11 +186,26 @@ const updateReservationStatus = async (id, status) => {
               const rawCheckIn = fullRes.startDate.toISOString().split('T')[0];
               const rawCheckOut = fullRes.endDate.toISOString().split('T')[0];
               const blockPropId = fullRes.property.externalId || fullRes.property.id;
-              unblockCalendarDates(blockPropId, rawCheckIn, rawCheckOut).catch(err => 
-                  console.error('[ReservationService] ⚠ Failed to unblock dates on Uplisting:', err.message)
-              );
+
+              // Fetch the full reservation to get the uplistingBookingId
+              const resWithBookingId = await prisma.reservation.findUnique({ where: { id } });
+              const uplistingBookingId = resWithBookingId?.uplistingBookingId;
+
+              if (uplistingBookingId) {
+                  // Cancel the V2 booking in Uplisting — this removes it from the calendar properly
+                  console.log(`[ReservationService] 🔄 Cancelling Uplisting V2 booking: ${uplistingBookingId}`);
+                  updateV2Booking(uplistingBookingId, { status: 'cancelled' }).catch(err =>
+                      console.error('[ReservationService] ⚠ Failed to cancel Uplisting V2 booking:', err.message)
+                  );
+              } else {
+                  // Fallback: if no Uplisting booking ID stored, just unblock the calendar dates
+                  console.warn(`[ReservationService] ⚠ No uplistingBookingId found for reservation ${id} — falling back to unblockCalendarDates`);
+                  unblockCalendarDates(blockPropId, rawCheckIn, rawCheckOut).catch(err =>
+                      console.error('[ReservationService] ⚠ Failed to unblock dates on Uplisting:', err.message)
+                  );
+              }
           } catch (e) {
-              console.error('[ReservationService] ⚠ Error preparing Uplisting unblock:', e.message);
+              console.error('[ReservationService] ⚠ Error preparing Uplisting cancellation:', e.message);
           }
       }
   }
