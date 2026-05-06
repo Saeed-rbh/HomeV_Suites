@@ -1,19 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Mail, Phone, MapPin, Instagram, Facebook, Twitter, Youtube, Linkedin, MessageCircle, Link as LinkIcon, Send } from "lucide-react";
+import { Mail, Phone, MapPin, MessageCircle, Link as LinkIcon, Send, Globe } from "lucide-react";
 import Link from "next/link";
 
-// Helper to render the right icon for social platforms
+// Helper to render an icon for social platforms
 const getSocialIcon = (platform) => {
     switch (platform.toLowerCase()) {
-        case "instagram": return <Instagram className="w-5 h-5" />;
-        case "facebook": return <Facebook className="w-5 h-5" />;
-        case "twitter/x": return <Twitter className="w-5 h-5" />;
-        case "youtube": return <Youtube className="w-5 h-5" />;
-        case "linkedin": return <Linkedin className="w-5 h-5" />;
         case "whatsapp": return <MessageCircle className="w-5 h-5" />;
-        default: return <LinkIcon className="w-5 h-5" />;
+        default: return <Globe className="w-5 h-5" />;
     }
 };
 
