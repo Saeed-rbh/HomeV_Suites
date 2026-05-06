@@ -19,15 +19,14 @@ const createReservation = async (data, paymentIntentId = null) => {
   if (overlap) throw new Error('Property is not available for the selected dates.');
 
   const reservationId = crypto.randomUUID();
-  const queries = [
-    prisma.reservation.create({ 
-      data: { ...data, id: reservationId } 
-    })
-  ];
+  
+  const reservation = await prisma.reservation.create({ 
+    data: { ...data, id: reservationId } 
+  });
 
   if (paymentIntentId) {
-    queries.push(
-      prisma.transaction.create({
+    try {
+      await prisma.transaction.create({
         data: {
           amount: data.totalPrice,
           currency: 'CAD',
@@ -36,11 +35,15 @@ const createReservation = async (data, paymentIntentId = null) => {
           stripeIntentId: paymentIntentId,   // typed field
           reservationId: reservationId
         }
-      })
-    );
+      });
+    } catch (err) {
+      console.error('[ReservationService] Transaction creation failed, rolling back reservation:', err.message);
+      await prisma.reservation.delete({ where: { id: reservationId } }).catch(e => 
+        console.error('[ReservationService] CRITICAL: Failed to rollback reservation:', e.message)
+      );
+      throw err;
+    }
   }
-
-  const [reservation] = await prisma.$transaction(queries);
 
   return reservation;
 };
