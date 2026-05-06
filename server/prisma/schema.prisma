@@ -4,9 +4,11 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
+
 
 // --- ENUMS ---
 
@@ -334,4 +336,12 @@ model CancellationPolicy {
 
   propertiesShort Property[] @relation("ShortTermPolicy")
   propertiesLong  Property[] @relation("LongTermPolicy")
+}
+
+// --- SITE SETTINGS (key-value store for contact info, social links, etc.) ---
+
+model SiteSetting {
+  key       String   @id          // e.g. "contact_email", "social_links"
+  value     String   @db.Text     // JSON string for complex values like social link arrays
+  updatedAt DateTime @updatedAt
 }

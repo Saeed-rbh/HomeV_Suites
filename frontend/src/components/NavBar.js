@@ -589,7 +589,7 @@ export default function NavBar() {
             )}
             
             <div className="hidden md:block mr-1">
-              <Link href="/login" className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-semibold text-[#0c1929] transition hover:border-slate-300 hover:shadow-sm">
+              <Link href="/contact" className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-semibold text-[#0c1929] transition hover:border-slate-300 hover:shadow-sm">
                 Contact Us
               </Link>
             </div>

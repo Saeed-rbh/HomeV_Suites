@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import {
     LayoutDashboard, Users, DollarSign, CalendarDays,
     MessageSquare, CheckSquare, Building2, LogOut,
-    CalendarRange, ShieldCheck, BookOpen, ChevronRight, Settings
+    CalendarRange, ShieldCheck, BookOpen, ChevronRight, Settings, Globe
 } from 'lucide-react';
 
 export default function AdminSidebar() {
@@ -47,6 +47,7 @@ export default function AdminSidebar() {
                 { name: 'Guests', icon: Users, path: '/admin/guests' },
                 { name: 'Admin Team', icon: ShieldCheck, path: '/admin/team' },
                 { name: 'Policies', icon: Settings, path: '/admin/cancellation-policies' },
+                { name: 'Contact & Social', icon: Globe, path: '/admin/site-settings' },
             ]
         }
     ];

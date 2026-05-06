@@ -101,6 +101,9 @@ try {
   app.use('/api/accounting', require('./routes/accountingRoutes'));
   app.use('/api/stripe', require('./routes/stripeRoutes'));
 
+  // Site settings (contact info, social links) — public GET, admin PUT
+  app.use('/api/settings', require('./routes/settingsRoutes'));
+
   // Webhooks
   app.use('/api/webhooks', require('./routes/webhookRoutes'));
 
@@ -109,6 +112,7 @@ try {
 
   // Admin profile routes
   app.use('/api/admin/profile', require('./routes/profileRoutes'));
+
 
   // Static file serving for uploaded assets (avatars etc.)
   const path = require('path');
