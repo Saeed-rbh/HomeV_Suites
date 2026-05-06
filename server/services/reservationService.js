@@ -17,20 +17,24 @@ const createReservation = async (data, paymentIntentId = null) => {
   });
   if (overlap) throw new Error('Property is not available for the selected dates.');
 
-  const reservation = await prisma.reservation.create({ data });
-
-  if (paymentIntentId) {
-    await prisma.transaction.create({
-      data: {
-        amount: reservation.totalPrice,
-        currency: 'CAD',
-        status: 'COMPLETED',
-        paymentMethodId: paymentIntentId,  // legacy
-        stripeIntentId: paymentIntentId,   // typed field
-        reservationId: reservation.id
-      }
-    });
-  }
+  const reservation = await prisma.$transaction(async (tx) => {
+    const res = await tx.reservation.create({ data });
+    
+    if (paymentIntentId) {
+      await tx.transaction.create({
+        data: {
+          amount: res.totalPrice,
+          currency: 'CAD',
+          status: 'COMPLETED',
+          paymentMethodId: paymentIntentId,  // legacy
+          stripeIntentId: paymentIntentId,   // typed field
+          reservationId: res.id
+        }
+      });
+    }
+    
+    return res;
+  });
 
   return reservation;
 };
