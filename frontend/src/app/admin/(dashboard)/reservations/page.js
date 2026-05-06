@@ -27,7 +27,8 @@ export default function ReservationsModule() {
           const start = new Date(r.startDate);
           const end = new Date(r.endDate);
           let status = 'Upcoming';
-          if (end < now) status = 'Completed';
+          if (r.status === 'CANCELLED') status = 'Cancelled';
+          else if (end < now) status = 'Completed';
           else if (start <= now && end >= now) status = 'Checked In';
           return {
             id: r.id,

@@ -168,8 +168,9 @@ export default function TripsPageClient() {
   }
 
   const now = new Date();
-  const upcoming = reservations.filter(r => new Date(r.endDate) >= now).sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-  const past = reservations.filter(r => new Date(r.endDate) < now).sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+  const activeReservations = reservations.filter(r => r.status !== 'CANCELLED');
+  const upcoming = activeReservations.filter(r => new Date(r.endDate) >= now).sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+  const past = activeReservations.filter(r => new Date(r.endDate) < now).sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
 
   return (
     <div className="min-h-screen px-4 pb-20 pt-10 md:px-8" style={{ background: 'linear-gradient(160deg, #f8fafc 0%, #f1f5f9 100%)' }}>
