@@ -9,11 +9,11 @@ const { normalizePhone } = require('../utils/phoneUtils');
 const { sendOtpEmail } = require('../services/mailService');
 const validate = require('../middleware/validate');
 const { requestOtpSchema, verifyOtpSchema, createGuestOtpSchema } = require('../schemas/authSchema');
-const { otpRequestLimiter, otpVerifyLimiter } = require('../middleware/rateLimiter');
+const { otpRequestLimiter, otpVerifyLimiter, apiLimiter } = require('../middleware/rateLimiter');
 
 // @route   POST api/auth/check-user
 // @desc    Check if an email or phone belongs to an existing user/guest
-router.post('/check-user', async (req, res) => {
+router.post('/check-user', apiLimiter, async (req, res) => {
     const { identifier } = req.body;
     if (!identifier) return res.status(400).json({ msg: 'Identifier required' });
     const normalizedPhone = normalizePhone(identifier);

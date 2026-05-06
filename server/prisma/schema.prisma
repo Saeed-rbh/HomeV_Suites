@@ -120,7 +120,7 @@ model GuestProfile {
   firstName    String
   lastName     String
   email        String    @unique
-  phone        String?
+  phone        String?   @unique
   otpCode      String?
   otpExpiresAt DateTime?
   createdAt    DateTime  @default(now())
@@ -139,7 +139,8 @@ model Reservation {
   selectedNonRefundable Boolean           @default(false)
   createdAt             DateTime          @default(now())
   updatedAt             DateTime          @updatedAt
-  externalId            String?           @unique
+  externalId            String?           @unique  // Uplisting booking ID (from webhooks)
+  uplistingBookingId    String?           @unique  // Uplisting V2 booking ID (from direct POST /v2/bookings)
   lastWebhookTimestamp  DateTime?
 
   propertyId String
@@ -247,7 +248,10 @@ model Transaction {
   amount          Float
   currency        String            @default("CAD")
   status          TransactionStatus @default(PENDING)
-  paymentMethodId String?
+  paymentMethodId String?           // Legacy field — use stripeIntentId going forward
+
+  stripeIntentId  String?           // Stripe PaymentIntent ID (pi_xxx)
+  stripeRefundId  String?           // Stripe Refund ID (re_xxx) — populated after a refund
 
   reservationId String
   reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)

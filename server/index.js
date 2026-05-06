@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -16,11 +17,12 @@ const { Server } = require('socket.io');
 const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
 
-const CORS_WHITELIST = [
-  process.env.FRONTEND_URL,
-  'http://localhost:3000',
-  'http://localhost:3001'
-].filter(Boolean);
+let CORS_WHITELIST = [process.env.FRONTEND_URL].filter(Boolean);
+
+// Strip localhost from CORS whitelist when running in production
+if (process.env.NODE_ENV !== 'production') {
+  CORS_WHITELIST.push('http://localhost:3000', 'http://localhost:3001');
+}
 
 const io = new Server(server, {
   cors: {
@@ -51,11 +53,21 @@ require('./services/automations')(io);
 require('./services/imapListener').startIMAPListener();
 require('./services/telegramListener').startTelegramListener(io);
 
+app.use(helmet()); // Adds basic HTTP security headers
 app.use(cors({
   origin: CORS_WHITELIST,
   credentials: true,
 }));
 app.use(express.json());
+
+// ── Global Rate Limiter ───────────────────────────────────────────────────────
+// 100 requests per minute per IP across all /api routes.
+// Webhooks are excluded because they originate from Uplisting's servers (not user IPs).
+const { apiLimiter: globalApiLimiter } = require('./middleware/rateLimiter');
+app.use('/api', (req, res, next) => {
+  if (req.path.startsWith('/webhooks')) return next(); // exclude webhook path
+  return globalApiLimiter(req, res, next);
+});
 
 try {
   // Health check
@@ -68,7 +80,11 @@ try {
 
   // Phase 1 Routes — registered before auth to ensure they are always available
   const propertyController = require('./controllers/propertyController');
-  app.post('/api/properties/sync', propertyController.syncProperties);
+  const { protect: authMiddleware } = require('./middleware/auth');
+  const { authorize } = require('./middleware/auth');
+  const { apiLimiter } = require('./middleware/rateLimiter');
+  // Admin-only: triggers a full Uplisting property pull. Rate-limited + auth-guarded.
+  app.post('/api/properties/sync', apiLimiter, authMiddleware, authorize('ADMIN', 'SUPER_ADMIN'), propertyController.syncProperties);
   app.use('/api/properties', require('./routes/propertyRoutes'));
   app.use('/api/guests', require('./routes/guestRoutes'));
   app.use('/api/reservations', require('./routes/reservationRoutes'));

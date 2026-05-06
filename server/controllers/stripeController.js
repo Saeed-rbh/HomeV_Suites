@@ -1,4 +1,4 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const stripe = require('../utils/stripeClient');
 const { getInternalPropertyById } = require('./propertyController');
 const { calculatePriceBreakdown } = require('../utils/pricingCalculator');
 

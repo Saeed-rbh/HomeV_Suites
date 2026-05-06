@@ -182,8 +182,23 @@ const createReservation = async (req, res) => {
           guestPhone:     dbGuest?.phone,
           numberOfGuests: reservation.numberOfGuests || undefined
         }).then(async (uplistingResponse) => {
-          // Attach HomEV custom attributes to the Uplisting booking record
           const uplistingBookingId = uplistingResponse?.data?.id;
+
+          // Persist the Uplisting booking ID to the local Reservation record
+          // so we can reference it later for cancellations/modifications.
+          if (uplistingBookingId) {
+            try {
+              await prisma.reservation.update({
+                where: { id: reservation.id },
+                data: { uplistingBookingId: String(uplistingBookingId) }
+              });
+              console.log(`[Reservation] 💾 Saved uplistingBookingId=${uplistingBookingId} → reservation ${reservation.id}`);
+            } catch (saveErr) {
+              console.warn(`[Reservation] ⚠ Could not save uplistingBookingId to DB:`, saveErr.message);
+            }
+          }
+
+          // Attach HomEV custom attributes to the Uplisting booking record
           if (uplistingBookingId && paymentIntentId) {
             try {
               await updateV2Booking(uplistingBookingId, {
@@ -251,38 +266,13 @@ const { fetchGlobalData } = require('../services/uplistingService');
 
 const getReservations = async (req, res) => {
   try {
-    const response = await fetchGlobalData('/bookings');
-    const uplistingBookings = response.data.data || response.data;
-    
-    const reservations = uplistingBookings.map(item => {
-      const attr = item.attributes || item;
-      return {
-        id: item.id || 'RES-RANDOM',
-        guestName: attr.guest_name || 'Uplisting Guest',
-        propertyId: item.relationships?.property?.data?.id || 'Unknown',
-        checkInDate: attr.check_in || 'N/A',
-        checkOutDate: attr.check_out || 'N/A',
-        totalPrice: attr.price || 0,
-        status: attr.status === 'confirmed' ? 'Upcoming' : 'Pending',
-        adults: attr.adults || 1,
-        children: attr.children || 0,
-        channel: attr.channel || 'Direct',
-        createdAt: attr.created_at,
-        email: attr.guest_email || 'No Email',
-        phone: attr.guest_phone || 'No Phone',
-        notes: attr.notes || ''
-      };
-    });
-    
+    // Return all reservations from the local database. 
+    // This unifies website-sourced bookings and webhook-synced bookings.
+    const reservations = await reservationService.getReservations(req.query);
     res.status(200).json({ success: true, data: reservations });
   } catch (error) {
-    console.error("Direct Proxy Failed, falling back to DB", error.message);
-    try {
-      const reservations = await reservationService.getReservations(req.query);
-      res.status(200).json({ success: true, data: reservations });
-    } catch (dbErr) {
-      res.status(400).json({ success: false, error: dbErr.message });
-    }
+    console.error('[getReservations]', error.message);
+    res.status(400).json({ success: false, error: error.message });
   }
 };
 

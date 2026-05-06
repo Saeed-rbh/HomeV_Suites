@@ -1,7 +1,7 @@
 const prisma = require('../db');
 const telegramService = require('./telegramService');
-const { unblockCalendarDates } = require('./uplistingService');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { unblockCalendarDates, updateV2Booking } = require('./uplistingService');
+const stripe = require('../utils/stripeClient');
 
 const createReservation = async (data, paymentIntentId = null) => {
   // Guard: check for overlapping confirmed reservations on the same property
@@ -25,7 +25,8 @@ const createReservation = async (data, paymentIntentId = null) => {
         amount: reservation.totalPrice,
         currency: 'CAD',
         status: 'COMPLETED',
-        paymentMethodId: paymentIntentId,
+        paymentMethodId: paymentIntentId,  // legacy
+        stripeIntentId: paymentIntentId,   // typed field
         reservationId: reservation.id
       }
     });
@@ -43,14 +44,30 @@ const upsertReservation = async (data) => {
     }
   }
 
+  // Whitelist fields to avoid Prisma errors from unexpected webhook payload keys
+  const safeData = {
+    externalId: data.externalId,
+    uplistingBookingId: data.uplistingBookingId,
+    startDate: data.startDate,
+    endDate: data.endDate,
+    status: data.status,
+    totalPrice: data.totalPrice,
+    selectedNonRefundable: data.selectedNonRefundable,
+    propertyId: data.propertyId,
+    guestId: data.guestId,
+    lastWebhookTimestamp: data.lastWebhookTimestamp
+  };
+  // Remove undefined keys so they don't overwrite existing db data
+  Object.keys(safeData).forEach(key => safeData[key] === undefined && delete safeData[key]);
+
   if (data.externalId) {
     return await prisma.reservation.upsert({
       where: { externalId: data.externalId },
-      update: data,
-      create: data
+      update: safeData,
+      create: safeData
     });
   } else {
-    return await prisma.reservation.create({ data });
+    return await prisma.reservation.create({ data: safeData });
   }
 };
 
@@ -109,15 +126,18 @@ const processRefundIfApplicable = async (reservationId) => {
   if (refundPercentage > 0) {
     const refundAmountCents = Math.round((transaction.amount * (refundPercentage / 100)) * 100);
     try {
-      await stripe.refunds.create({
+      const refund = await stripe.refunds.create({
         payment_intent: transaction.paymentMethodId,
         amount: refundAmountCents,
       });
       await prisma.transaction.update({
         where: { id: transaction.id },
-        data: { status: 'REFUNDED' }
+        data: {
+          status: 'REFUNDED',
+          stripeRefundId: refund.id  // persist refund ID for audit trail
+        }
       });
-      console.log(`[Stripe] Refunded $${refundAmountCents / 100} for reservation ${reservationId}`);
+      console.log(`[Stripe] Refunded $${refundAmountCents / 100} for reservation ${reservationId} — refund ID: ${refund.id}`);
     } catch (err) {
       console.error('[Stripe] Refund failed:', err.message);
     }
