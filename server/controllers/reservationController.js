@@ -183,6 +183,8 @@ const createReservation = async (req, res) => {
           guestName:      fullName,
           guestEmail:     dbGuest?.email,
           guestPhone:     dbGuest?.phone,
+          firstName:      dbGuest?.firstName,
+          lastName:       dbGuest?.lastName,
           numberOfGuests: numGuests
         }).then(async (uplistingResponse) => {
           const uplistingBookingId = uplistingResponse?.data?.id;
@@ -207,7 +209,9 @@ const createReservation = async (req, res) => {
               await updateV2Booking(uplistingBookingId, {
                 homev_payment_source:   'stripe',
                 homev_stripe_intent_id: paymentIntentId,
-                homev_booking_origin:   'website'
+                homev_booking_origin:   'website',
+                homev_guest_email:      dbGuest?.email,
+                homev_guest_phone:      dbGuest?.phone
               });
             } catch (patchErr) {
               console.warn(`[Reservation] ⚠ Could not attach custom attributes to Uplisting booking ${uplistingBookingId}:`, patchErr.message);

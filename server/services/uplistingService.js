@@ -148,7 +148,7 @@ const unblockCalendarDates = async (propertyId, checkIn, checkOut) => {
  * @param {number} [params.numberOfGuests] - Number of guests
  * @returns {Promise<object>} Uplisting API response
  */
-const createV2Booking = async ({ propertyId, checkIn, checkOut, guestName, guestEmail, guestPhone, numberOfGuests } = {}) => {
+const createV2Booking = async ({ propertyId, checkIn, checkOut, guestName, guestEmail, guestPhone, firstName, lastName, numberOfGuests } = {}) => {
   console.log(`[Uplisting V2] 📡 POST /v2/bookings — property: ${propertyId} | ${checkIn} → ${checkOut}`);
 
   if (!propertyId || !checkIn || !checkOut) {
@@ -164,6 +164,8 @@ const createV2Booking = async ({ propertyId, checkIn, checkOut, guestName, guest
         ...(guestName      && { guest_name: guestName }),
         ...(guestEmail     && { guest_email: guestEmail }),
         ...(guestPhone     && { guest_phone: guestPhone }),
+        ...(firstName      && { first_name: firstName }),
+        ...(lastName       && { last_name: lastName }),
         ...(numberOfGuests && { number_of_guests: numberOfGuests })
       },
       relationships: {
