@@ -1,7 +1,7 @@
 const prisma = require('../db');
 const crypto = require('crypto');
 const telegramService = require('./telegramService');
-const { unblockCalendarDates, updateV2Booking, blockCalendarDates } = require('./uplistingService');
+const { unblockCalendarDates, updateV2Booking, cancelV2Booking, blockCalendarDates } = require('./uplistingService');
 const stripe = require('../utils/stripeClient');
 
 const createReservation = async (data, paymentIntentId = null) => {
@@ -192,9 +192,10 @@ const updateReservationStatus = async (id, status) => {
               const uplistingBookingId = resWithBookingId?.uplistingBookingId;
 
               if (uplistingBookingId) {
-                  // Cancel the V2 booking in Uplisting — this removes it from the calendar properly
+                  // Cancel the V2 booking in Uplisting — this removes it from the calendar properly.
+                  // Uses PATCH /v2/bookings/:id { status: 'cancelled' } since DELETE returns 405.
                   console.log(`[ReservationService] 🔄 Cancelling Uplisting V2 booking: ${uplistingBookingId}`);
-                  updateV2Booking(uplistingBookingId, { status: 'cancelled' }).catch(err =>
+                  cancelV2Booking(uplistingBookingId).catch(err =>
                       console.error('[ReservationService] ⚠ Failed to cancel Uplisting V2 booking:', err.message)
                   );
               } else {
@@ -233,11 +234,20 @@ const deleteReservation = async (id) => {
           const rawCheckIn = fullRes.startDate.toISOString().split('T')[0];
           const rawCheckOut = fullRes.endDate.toISOString().split('T')[0];
           const blockPropId = fullRes.property.externalId || fullRes.property.id;
-          unblockCalendarDates(blockPropId, rawCheckIn, rawCheckOut).catch(err => 
-              console.error('[ReservationService] ⚠ Failed to unblock dates on Uplisting:', err.message)
-          );
+          
+          if (fullRes.uplistingBookingId) {
+              console.log(`[ReservationService] 🔄 Cancelling Uplisting V2 booking during deletion: ${fullRes.uplistingBookingId}`);
+              cancelV2Booking(fullRes.uplistingBookingId).catch(err =>
+                  console.error('[ReservationService] ⚠ Failed to cancel Uplisting V2 booking during deletion:', err.message)
+              );
+          } else {
+              console.log(`[ReservationService] 🔓 No uplistingBookingId; unblocking dates for property ${blockPropId}`);
+              unblockCalendarDates(blockPropId, rawCheckIn, rawCheckOut).catch(err => 
+                  console.error('[ReservationService] ⚠ Failed to unblock dates on Uplisting:', err.message)
+              );
+          }
       } catch (e) {
-          console.error('[ReservationService] ⚠ Error preparing Uplisting unblock:', e.message);
+          console.error('[ReservationService] ⚠ Error preparing Uplisting cleanup:', e.message);
       }
   }
 

@@ -76,13 +76,19 @@ export default function CheckoutForm({ listingId, checkIn, checkOut, guests, sel
       // If redirect was required, the browser will navigate away here.
       // If we reach this point, payment succeeded without a redirect (e.g., standard card).
 
-      // 2. Create the reservation in our backend
+      // 2. Create the reservation in our backend.
+      // Use the exact Stripe-charged amount (paymentIntent.amount is in cents) so the
+      // DB record always matches what Stripe collected — never a frontend-computed guess.
+      const chargedTotal = paymentIntent?.amount != null
+        ? paymentIntent.amount / 100
+        : (totalPrice || 0);
+
       const payload = {
         startDate: new Date(checkIn).toISOString(),
         endDate: new Date(checkOut).toISOString(),
         propertyId: listingId,
         selectedNonRefundable: !!selectedNonRefundable,
-        totalPrice: totalPrice || 1000,
+        totalPrice: chargedTotal,
         paymentIntentId: paymentIntent?.id
       };
 

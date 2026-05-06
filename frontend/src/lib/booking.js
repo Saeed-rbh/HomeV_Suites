@@ -105,8 +105,9 @@ export function calculatePriceBreakdown(listing, checkIn, checkOut, guests = 1, 
 
   const discountAmount = Math.round(bundledSubtotal * (discountPercentage / 100));
 
-  const customDiscount = listing?.siteSettings?.direct_booking_discount;
-  const directBookingDiscountPercentage = customDiscount !== undefined && customDiscount !== "" ? Number(customDiscount) : 5;
+  // Direct booking discount — tiered to match server's pricingCalculator.js exactly.
+  // Short stays (<28 nights): 5% | Long stays (≥28 nights): 8%
+  const directBookingDiscountPercentage = nights >= 28 ? 8 : 5;
   const directBookingDiscountCaption = "Direct Booking Discount";
   const directBookingDiscountAmount = Math.round(bundledSubtotal * (directBookingDiscountPercentage / 100));
 

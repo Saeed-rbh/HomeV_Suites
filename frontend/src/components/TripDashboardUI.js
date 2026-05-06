@@ -557,7 +557,19 @@ export default function TripDashboardUI({ listing, reservation }) {
                   )}
                 </div>
                 <div className="space-y-3 pt-2">
-                  <button onClick={async () => { try { const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + ''}/reservations/${reservation.id}`, { method: "DELETE" }); if (res.ok) { setActiveModal(null); window.location.reload(); } } catch (e) { console.error(e); } }} className="w-full rounded-2xl bg-red-600 py-4 text-sm font-bold text-white hover:bg-red-700 transition">
+                  <button onClick={async () => {
+                    try {
+                      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + ''}/reservations/${reservation.id}/status`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ status: "CANCELLED" })
+                      });
+                      if (res.ok) {
+                        setIsCancelled(true);
+                        setActiveModal(null);
+                      }
+                    } catch (e) { console.error(e); }
+                  }} className="w-full rounded-2xl bg-red-600 py-4 text-sm font-bold text-white hover:bg-red-700 transition">
                     Yes, cancel reservation
                   </button>
                   <button onClick={() => setActiveModal(null)} className="w-full rounded-2xl border border-zinc-200 py-4 text-sm font-bold text-[#0c1929] hover:bg-zinc-50 transition">

@@ -222,9 +222,11 @@ const updateV2Booking = async (bookingId, attributes = {}) => {
     throw new Error('[Uplisting V2] updateV2Booking requires a bookingId.');
   }
 
+  // JSON:API PATCH requires the id field inside data
   const body = {
     data: {
       type: 'bookings',
+      id: String(bookingId),
       attributes
     }
   };
@@ -235,6 +237,40 @@ const updateV2Booking = async (bookingId, attributes = {}) => {
     return result.data;
   } catch (error) {
     console.error(`[Uplisting V2] ❌ PATCH /v2/bookings/${bookingId} FAILED`);
+    console.error(`[Uplisting V2] Status: ${error.response?.status || 'N/A'}`);
+    console.error(`[Uplisting V2] Response: ${JSON.stringify(error.response?.data || error.message)}`);
+    throw error;
+  }
+};
+
+/**
+ * Cancel a V2 booking in Uplisting by setting status to 'cancelled'.
+ * Uses PATCH /v2/bookings/:id — DELETE returns 405 on the V2 endpoint.
+ *
+ * @param {string|number} bookingId - Uplisting V2 booking ID
+ * @returns {Promise<object>} Uplisting API response
+ */
+const cancelV2Booking = async (bookingId) => {
+  console.log(`[Uplisting V2] 📡 Cancelling booking ${bookingId} via PATCH /v2/bookings/${bookingId}`);
+
+  if (!bookingId) {
+    throw new Error('[Uplisting V2] cancelV2Booking requires a bookingId.');
+  }
+
+  const body = {
+    data: {
+      type: 'bookings',
+      id: String(bookingId),
+      attributes: { status: 'cancelled' }
+    }
+  };
+
+  try {
+    const result = await globalLimiter.schedule(() => getClient('v2').patch(`/v2/bookings/${bookingId}`, body));
+    console.log(`[Uplisting V2] ✅ Booking ${bookingId} cancelled — HTTP ${result.status}`);
+    return result.data;
+  } catch (error) {
+    console.error(`[Uplisting V2] ❌ Cancel booking ${bookingId} FAILED`);
     console.error(`[Uplisting V2] Status: ${error.response?.status || 'N/A'}`);
     console.error(`[Uplisting V2] Response: ${JSON.stringify(error.response?.data || error.message)}`);
     throw error;
@@ -348,6 +384,7 @@ module.exports = {
   unblockCalendarDates,
   createV2Booking,
   updateV2Booking,
+  cancelV2Booking,
   listCustomBookingAttributes,
   createCustomBookingAttribute
 };

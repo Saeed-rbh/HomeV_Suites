@@ -2,10 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronLeft, Star } from "lucide-react";
-import CheckoutForm from "@/components/CheckoutForm";
-import StripeWrapper from "@/components/StripeWrapper";
+import CheckoutClient from "@/components/CheckoutClient";
 import ListingBookingSection from "@/components/ListingBookingSection";
-import { buildBookingQuery, calculatePriceBreakdown, formatCurrency, formatDateRange, normalizeBooking } from "@/lib/booking";
+import { buildBookingQuery, formatCurrency, formatDateRange, normalizeBooking } from "@/lib/booking";
 import { getListingByIdDynamic } from "@/lib/server-fetch";
 
 export const metadata = {
@@ -13,6 +12,28 @@ export const metadata = {
   description: "Complete your HomEV reservation securely. Review your stay details and pay with Stripe.",
   robots: { index: false, follow: false },
 };
+
+/**
+ * Fetch the authoritative price breakdown from the server.
+ * This is the exact amount that will be charged by Stripe, so it's used
+ * for display AND passed down to CheckoutForm as the stored totalPrice.
+ */
+async function fetchServerBreakdown(listingId, checkIn, checkOut, guests, selectedNonRefundable) {
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+    const res = await fetch(`${apiUrl}/stripe/preview-price`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ listingId, checkIn, checkOut, guests, selectedNonRefundable }),
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.success ? data : null;
+  } catch {
+    return null;
+  }
+}
 
 export default async function CheckoutPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
@@ -24,8 +45,19 @@ export default async function CheckoutPage({ searchParams }) {
     notFound();
   }
 
-  const isNonRefundable = resolvedSearchParams.nonRefundable === 'true';
-  const breakdown = calculatePriceBreakdown(listing, booking.checkIn, booking.checkOut, booking.guests, isNonRefundable);
+  const isNonRefundable = resolvedSearchParams.nonRefundable === "true";
+
+  // Fetch the server-authoritative breakdown so the page displays the exact Stripe charge.
+  // Falls back to 0 if the server is unavailable — StripeWrapper will also return the total
+  // via onAmountConfirmed so the displayed price will self-correct after mount.
+  const serverPrice = await fetchServerBreakdown(
+    listing.id,
+    booking.checkIn,
+    booking.checkOut,
+    booking.guests,
+    isNonRefundable
+  );
+  const serverTotal = serverPrice?.total ?? 0;
 
   return (
     <div className="min-h-screen bg-[#f3f5f8] px-4 pb-16 pt-6 md:px-6">
@@ -41,24 +73,17 @@ export default async function CheckoutPage({ searchParams }) {
 
         <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_430px]">
           <section className="rounded-[30px] bg-white border border-slate-100 shadow-[0_4px_30px_rgba(12,25,41,0.03)] p-7 md:p-8 self-start">
-
-            <StripeWrapper 
-              listingId={listing.id} 
-              checkIn={booking.checkIn} 
-              checkOut={booking.checkOut} 
-              guests={booking.guests} 
+            {/* CheckoutClient is a client component — it owns StripeWrapper + CheckoutForm.
+                initialTotal comes from the server; it updates itself once the payment intent
+                confirms the exact charge via onAmountConfirmed. */}
+            <CheckoutClient
+              listingId={listing.id}
+              checkIn={booking.checkIn}
+              checkOut={booking.checkOut}
+              guests={booking.guests}
               selectedNonRefundable={isNonRefundable}
-              currency="cad"
-            >
-              <CheckoutForm 
-                listingId={listing.id} 
-                checkIn={booking.checkIn} 
-                checkOut={booking.checkOut} 
-                guests={booking.guests}
-                selectedNonRefundable={isNonRefundable}
-                totalPrice={breakdown.total}
-              />
-            </StripeWrapper>
+              initialTotal={serverTotal}
+            />
           </section>
 
           <aside className="lg:sticky lg:top-32 self-start space-y-6">
@@ -70,6 +95,7 @@ export default async function CheckoutPage({ searchParams }) {
               initialNonRefundable={isNonRefundable}
               isCheckout={true}
               cancellationPolicy={listing.cancellationPolicy}
+              serverTotal={serverTotal}
             />
           </aside>
         </div>

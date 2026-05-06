@@ -32,7 +32,8 @@ export default function ListingBookingSection({
   initialNonRefundable = false, 
   isCheckout = false, 
   cancellationPolicy,
-  layout = "both" 
+  layout = "both",
+  serverTotal = null,   // Server-authoritative total — overrides frontend calc on checkout page
 }) {
   const [checkIn, setCheckIn] = useState(initialCheckIn || "");
   const [checkOut, setCheckOut] = useState(initialCheckOut || "");
@@ -175,7 +176,9 @@ export default function ListingBookingSection({
     }
   }
 
-  const displayedTotal = breakdown.total;
+  // On the checkout page, use the server-computed total so the sidebar always matches Stripe.
+  // On listing pages (no serverTotal), use the local breakdown for instant interactive feedback.
+  const displayedTotal = (isCheckout && serverTotal != null && serverTotal > 0) ? serverTotal : breakdown.total;
   const nonRefundableAmount = breakdown.nonRefundableDiscountAmount;
 
   const handleCheckInChange = (val) => {

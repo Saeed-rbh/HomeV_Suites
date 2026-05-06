@@ -7,35 +7,48 @@ import { LoaderCircle } from "lucide-react";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
-export default function StripeWrapper({ children, listingId, checkIn, checkOut, guests, selectedNonRefundable, currency = "cad" }) {
+/**
+ * StripeWrapper
+ * Fetches the payment intent from the server and renders an <Elements> provider.
+ *
+ * Props:
+ *   onAmountConfirmed(total: number) — called once the server confirms the exact
+ *   charge amount so parent components can display/store the authoritative total.
+ */
+export default function StripeWrapper({ children, listingId, checkIn, checkOut, guests, selectedNonRefundable, currency = "cad", onAmountConfirmed }) {
   const [clientSecret, setClientSecret] = useState("");
   const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!listingId || !checkIn || !checkOut) return;
-    
+
     const fetchClientSecret = async () => {
       try {
-        const response = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/stripe/create-payment-intent", {
+        const response = await fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + "/stripe/create-payment-intent", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ listingId, checkIn, checkOut, guests, selectedNonRefundable, currency }),
         });
-        
+
         if (!response.ok) {
           throw new Error("Failed to initialize payment.");
         }
-        
+
         const data = await response.json();
         setClientSecret(data.clientSecret);
+
+        // Notify parent with the server-confirmed total (exact amount Stripe will charge)
+        if (data.total != null && typeof onAmountConfirmed === "function") {
+          onAmountConfirmed(data.total);
+        }
       } catch (err) {
         console.error("Stripe initialization error:", err);
         setError(err.message);
       }
     };
-    
+
     fetchClientSecret();
-  }, [listingId, checkIn, checkOut, guests, selectedNonRefundable, currency]);
+  }, [listingId, checkIn, checkOut, guests, selectedNonRefundable, currency, onAmountConfirmed]);
 
   if (error) {
     return (
