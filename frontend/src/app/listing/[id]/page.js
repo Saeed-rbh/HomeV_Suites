@@ -28,6 +28,53 @@ import ExpandableText from "@/components/ExpandableText";
 import ListingThingsToKnow from "@/components/ListingThingsToKnow";
 import ListingMapWrapper from "@/components/ListingMapWrapper";
 
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  const listing = await getListingByIdDynamic(id);
+
+  if (!listing) {
+    return {
+      title: "Listing Not Found",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const title = `${listing.title} in ${listing.neighborhood || listing.location}`;
+  const description = listing.description
+    ? listing.description.slice(0, 160).replace(/\n/g, " ").trim()
+    : `Book ${listing.title} — a premium ${listing.bedrooms}-bedroom stay in ${listing.neighborhood || listing.location}, Toronto. Sleeps up to ${listing.maxGuests} guests.`;
+  const ogImage = listing.images?.[0] || "/hero-villa.png";
+  const canonicalUrl = `https://homev.ca/listing/${id}`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: canonicalUrl },
+    openGraph: {
+      title: `${listing.title} | HomEV`,
+      description,
+      url: canonicalUrl,
+      siteName: "HomEV",
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: listing.title,
+        },
+      ],
+      locale: "en_CA",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${listing.title} | HomEV`,
+      description,
+      images: [ogImage],
+    },
+  };
+}
+
 const amenityIcons = {
   wifi: Wifi,
   kitchen: UtensilsCrossed,
@@ -102,8 +149,47 @@ export default async function ListingPage({ params, searchParams }) {
 
   console.log(`[Diagnostic] Listing page rendering. blockedDates array length: ${listing.blockedDates?.length}`);
 
+  // Build JSON-LD structured data for rich snippets
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LodgingBusiness",
+    name: listing.title,
+    description: listing.description,
+    url: `https://homev.ca/listing/${id}`,
+    image: listing.images?.[0] || "/hero-villa.png",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: listing.neighborhood || listing.location,
+      addressRegion: "ON",
+      addressCountry: "CA",
+    },
+    ...(listing.latitude && listing.longitude
+      ? { geo: { "@type": "GeoCoordinates", latitude: listing.latitude, longitude: listing.longitude } }
+      : {}),
+    ...(listing.rating && listing.reviews
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: listing.rating,
+            reviewCount: listing.reviews,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
+    numberOfRooms: listing.bedrooms,
+    amenityFeature: Object.keys(listing.amenities || {})
+      .filter((k) => listing.amenities[k])
+      .map((k) => ({ "@type": "LocationFeatureSpecification", name: amenityLabels[k] || k, value: true })),
+    priceRange: listing.basePrice ? `From CAD ${listing.basePrice}/night` : undefined,
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* --- MOBILE LAYOUT --- */}
       <div className="block lg:hidden min-h-screen bg-white pb-[100px]">
         {/* Full-bleed gallery + Floating Nav */}

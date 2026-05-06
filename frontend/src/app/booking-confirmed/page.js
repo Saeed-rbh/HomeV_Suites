@@ -3,6 +3,13 @@ import { CheckCircle, Calendar, Home, Download } from "lucide-react";
 import { getListingByIdDynamic } from "@/lib/server-fetch";
 import { calculatePriceBreakdown, formatCurrency, formatDateRange, normalizeBooking } from "@/lib/booking";
 
+export const metadata = {
+  title: "Booking Confirmed",
+  description: "Your HomEV stay has been successfully booked. Check your email for your reservation details.",
+  robots: { index: false, follow: false },
+};
+
+
 function generateResId() {
   // Deterministic-looking ID based on date — in a real app this comes from the DB
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";

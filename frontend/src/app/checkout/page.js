@@ -8,6 +8,12 @@ import ListingBookingSection from "@/components/ListingBookingSection";
 import { buildBookingQuery, calculatePriceBreakdown, formatCurrency, formatDateRange, normalizeBooking } from "@/lib/booking";
 import { getListingByIdDynamic } from "@/lib/server-fetch";
 
+export const metadata = {
+  title: "Checkout",
+  description: "Complete your HomEV reservation securely. Review your stay details and pay with Stripe.",
+  robots: { index: false, follow: false },
+};
+
 export default async function CheckoutPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
   const booking = normalizeBooking(resolvedSearchParams);
