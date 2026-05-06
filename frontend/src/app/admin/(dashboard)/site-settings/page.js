@@ -15,7 +15,6 @@ export default function SiteSettingsPage() {
     const [phone, setPhone] = useState("");
     const [address, setAddress] = useState("");
     const [socialLinks, setSocialLinks] = useState([]);
-    const [discount, setDiscount] = useState("5");
 
     useEffect(() => {
         fetchData();
@@ -30,7 +29,6 @@ export default function SiteSettingsPage() {
                 setPhone(data.data.contact_phone || "");
                 setAddress(data.data.contact_address || "");
                 setSocialLinks(data.data.social_links || []);
-                setDiscount(data.data.direct_booking_discount || "5");
             }
         } catch (e) {
             console.error(e);
@@ -55,7 +53,6 @@ export default function SiteSettingsPage() {
                     contact_email: email,
                     contact_phone: phone,
                     contact_address: address,
-                    direct_booking_discount: discount,
                     social_links: socialLinks.filter(link => link.url.trim() !== "")
                 })
             });
@@ -145,26 +142,6 @@ export default function SiteSettingsPage() {
                             placeholder="Toronto, ON, Canada"
                             className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-[#0c1929] focus:ring-1 focus:ring-[#0c1929] transition"
                         />
-                    </div>
-                </div>
-            </div>
-
-            {/* Booking Settings */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                <h2 className="text-lg font-semibold text-[#0c1929] mb-4">Booking Preferences</h2>
-                <div className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-[#0c1929] mb-1.5">Direct Booking Discount (%)</label>
-                        <input
-                            type="number"
-                            min="0"
-                            max="100"
-                            value={discount}
-                            onChange={(e) => setDiscount(e.target.value)}
-                            placeholder="5"
-                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-[#0c1929] focus:ring-1 focus:ring-[#0c1929] transition"
-                        />
-                        <p className="mt-1.5 text-xs text-slate-500">This percentage discount is automatically applied to all direct bookings.</p>
                     </div>
                 </div>
             </div>

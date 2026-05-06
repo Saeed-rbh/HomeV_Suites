@@ -11,6 +11,9 @@ export default function CancellationPoliciesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPolicy, setEditingPolicy] = useState(null);
   
+  const [discount, setDiscount] = useState("5");
+  const [savingDiscount, setSavingDiscount] = useState(false);
+  
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const [policyToApply, setPolicyToApply] = useState(null);
   
@@ -44,6 +47,12 @@ export default function CancellationPoliciesPage() {
         setPolicies(data.data);
         setActiveShortTermPolicyId(data.activeShortTermPolicyId);
         setActiveLongTermPolicyId(data.activeLongTermPolicyId);
+      }
+      
+      const setRes = await fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '/settings');
+      const setData = await setRes.json();
+      if (setData.success && setData.data) {
+          setDiscount(setData.data.direct_booking_discount || "5");
       }
     } catch (e) {
       console.error(e);
@@ -120,6 +129,30 @@ export default function CancellationPoliciesPage() {
       console.error(e);
       showToast("Failed to apply policy.", "error");
     }
+  };
+
+  const handleSaveDiscount = async () => {
+    setSavingDiscount(true);
+    try {
+        const res = await fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '/settings', {
+            method: "PUT",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem('adminToken')}`
+            },
+            body: JSON.stringify({
+                direct_booking_discount: discount
+            })
+        });
+        const data = await res.json();
+        if (data.success) {
+            showToast("Global booking discount updated.");
+        }
+    } catch (e) {
+        console.error(e);
+        showToast("Failed to update discount.", "error");
+    }
+    setSavingDiscount(false);
   };
 
   const handleRowClick = (policy) => {
@@ -199,6 +232,39 @@ export default function CancellationPoliciesPage() {
             </div>
           ) : (
             <>
+              {/* Global Booking Preferences */}
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8">
+                <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
+                  <h3 className="text-lg font-semibold text-[#0c1929]">Global Booking Preferences</h3>
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center gap-6">
+                    <div className="flex-1 max-w-md">
+                      <label className="block text-sm font-medium text-[#0c1929] mb-1.5">Direct Booking Discount (%)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        value={discount}
+                        onChange={(e) => setDiscount(e.target.value)}
+                        className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0c1929] text-sm"
+                      />
+                      <p className="mt-1.5 text-xs text-slate-500">Automatically applied to all direct bookings across all properties.</p>
+                    </div>
+                    <div className="mt-6">
+                      <button
+                        onClick={handleSaveDiscount}
+                        disabled={savingDiscount}
+                        className="flex items-center gap-2 bg-[#0c1929] hover:bg-[#152b47] text-white px-5 py-2.5 rounded-xl font-medium transition-colors shadow-sm disabled:opacity-70"
+                      >
+                        {savingDiscount ? <RefreshCw className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
+                        {savingDiscount ? "Saving..." : "Save Discount"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Short Term Table */}
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
