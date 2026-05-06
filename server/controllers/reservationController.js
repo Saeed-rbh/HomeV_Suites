@@ -42,11 +42,14 @@ const createReservation = async (req, res) => {
       data.email = authGuest.email; // Used by downstream logic if needed
     }
 
-    // Extract plain YYYY-MM-DD strings from incoming date fields
+    // Extract plain YYYY-MM-DD strings from incoming date fields.
+    // We check every possible naming convention used by the frontend.
     const getPlainDate = (d) => d ? (d.includes('T') ? d.split('T')[0] : d) : null;
     
-    let plainCheckIn = getPlainDate(data.checkInDate) || getPlainDate(data.startDate);
-    let plainCheckOut = getPlainDate(data.checkOutDate) || getPlainDate(data.endDate);
+    let plainCheckIn = getPlainDate(data.checkIn) || getPlainDate(data.checkInDate) || getPlainDate(data.startDate);
+    let plainCheckOut = getPlainDate(data.checkOut) || getPlainDate(data.checkOutDate) || getPlainDate(data.endDate);
+
+    console.log(`[Reservation] 🛡 Inbound Checkout Request: Guest=${data.email}, Property=${data.propertyId}, Dates=${plainCheckIn}→${plainCheckOut}`);
 
     data.startDate = plainCheckIn;
     data.endDate = plainCheckOut;
