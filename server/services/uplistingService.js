@@ -154,9 +154,20 @@ const unblockCalendarDates = async (propertyId, checkIn, checkOut) => {
  * @param {string} [params.guestEmail]  - Guest email (required for automated messages)
  * @param {string} [params.guestPhone]  - Guest phone number
  * @param {number} [params.numberOfGuests] - Number of guests
+ * @param {number} [params.totalPrice]     - Total amount charged (e.g. 768.00)
+ * @param {number} [params.accommodationTotal] - Base nightly subtotal
+ * @param {number} [params.cleaningFee]    - Cleaning fee amount
+ * @param {number} [params.totalTaxes]     - Total tax amount
+ * @param {object} [params.customAttributes] - Additional custom attributes (e.g. { homev_payment_source: 'stripe' })
  * @returns {Promise<object>} Uplisting API response
  */
-const createV2Booking = async ({ propertyId, checkIn, checkOut, guestName, guestEmail, guestPhone, firstName, lastName, numberOfGuests } = {}) => {
+const createV2Booking = async ({ 
+  propertyId, checkIn, checkOut, 
+  guestName, guestEmail, guestPhone, 
+  firstName, lastName, numberOfGuests,
+  totalPrice, accommodationTotal, cleaningFee, totalTaxes,
+  customAttributes = {}
+} = {}) => {
   console.log(`[Uplisting V2] 📡 POST /v2/bookings — property: ${propertyId} | ${checkIn} → ${checkOut}`);
 
   if (!propertyId || !checkIn || !checkOut) {
@@ -174,7 +185,12 @@ const createV2Booking = async ({ propertyId, checkIn, checkOut, guestName, guest
         ...(guestPhone     && { guest_phone: guestPhone }),
         ...(firstName      && { first_name: firstName }),
         ...(lastName       && { last_name: lastName }),
-        ...(numberOfGuests && { number_of_guests: numberOfGuests })
+        ...(numberOfGuests && { number_of_guests: numberOfGuests }),
+        ...(totalPrice     && { total_price: totalPrice }),
+        ...(accommodationTotal && { accommodation_total: accommodationTotal }),
+        ...(cleaningFee    && { cleaning_fee: cleaningFee }),
+        ...(totalTaxes     && { total_tax: totalTaxes }),
+        ...customAttributes
       },
       relationships: {
         property: {
