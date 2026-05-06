@@ -211,4 +211,79 @@ router.put('/staff/:id/host', auth, requireAdmin, async (req, res) => {
     }
 });
 
+// ── Uplisting V2 Partner Routes ─────────────────────────────────────────────
+
+const { createCustomBookingAttribute, listCustomBookingAttributes, updateV2Booking } = require('../services/uplistingService');
+
+/**
+ * @route   GET api/admin/uplisting/custom-attributes
+ * @desc    List all registered homev_ custom booking attributes in Uplisting.
+ * @access  Admin only
+ */
+router.get('/uplisting/custom-attributes', auth, requireAdmin, async (req, res) => {
+    try {
+        const result = await listCustomBookingAttributes();
+        res.json({ success: true, data: result });
+    } catch (err) {
+        console.error('[Admin] Uplisting list custom attributes failed:', err.message);
+        const status = err.response?.status || 500;
+        res.status(status).json({ success: false, error: err.response?.data || err.message });
+    }
+});
+
+/**
+ * @route   POST api/admin/uplisting/custom-attributes
+ * @desc    Register a new custom booking attribute in Uplisting (homev_ namespace).
+ *          Max 15 attributes per account. Name must start with "homev_".
+ * @access  Admin only
+ * @body    { name: "homev_attribute_name", description: "What this stores" }
+ */
+router.post('/uplisting/custom-attributes', auth, requireAdmin, async (req, res) => {
+    const { name, description } = req.body;
+
+    if (!name || !description) {
+        return res.status(400).json({ error: 'Both "name" and "description" are required.' });
+    }
+
+    if (!name.startsWith('homev_')) {
+        return res.status(400).json({ error: 'Attribute name must start with "homev_" to comply with the Uplisting namespace requirement.' });
+    }
+
+    try {
+        const result = await createCustomBookingAttribute(name, description);
+        res.status(201).json({ success: true, data: result });
+    } catch (err) {
+        console.error('[Admin] Uplisting custom attribute creation failed:', err.message);
+        const status = err.response?.status || 500;
+        res.status(status).json({ success: false, error: err.response?.data || err.message });
+    }
+});
+
+/**
+ * @route   PATCH api/admin/uplisting/bookings/:uplistingId
+ * @desc    Manually patch custom attributes onto an existing Uplisting booking.
+ *          Useful for backfilling or correcting attribute values.
+ * @access  Admin only
+ * @body    { homev_payment_source: "stripe", homev_booking_origin: "website", ... }
+ */
+router.patch('/uplisting/bookings/:uplistingId', auth, requireAdmin, async (req, res) => {
+    const { uplistingId } = req.params;
+    const attributes = req.body;
+
+    if (!attributes || Object.keys(attributes).length === 0) {
+        return res.status(400).json({ error: 'Request body must contain at least one attribute to update.' });
+    }
+
+    try {
+        const result = await updateV2Booking(uplistingId, attributes);
+        res.json({ success: true, data: result });
+    } catch (err) {
+        console.error(`[Admin] Uplisting booking ${uplistingId} update failed:`, err.message);
+        const status = err.response?.status || 500;
+        res.status(status).json({ success: false, error: err.response?.data || err.message });
+    }
+});
+
 module.exports = router;
+
+

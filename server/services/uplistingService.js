@@ -27,11 +27,24 @@ propertyLimiters.on("created", (limiter, key) => {
 });
 
 const API_KEY = process.env.UPLISTING_API_KEY;
+const CLIENT_ID = process.env.UPLISTING_CLIENT_ID;
 
+// V1 client — used for calendar, properties, webhooks, etc.
 const apiClient = axios.create({
   baseURL: 'https://connect.uplisting.io',
   headers: {
     'Authorization': `Basic ${Buffer.from(API_KEY).toString('base64')}`,
+    'Content-Type': 'application/json'
+  }
+});
+
+// V2 client — requires the partner X-Uplisting-Client-Id header.
+// Used for: POST /v2/bookings and POST /v2/custom_booking_attributes.
+const apiClientV2 = axios.create({
+  baseURL: 'https://connect.uplisting.io',
+  headers: {
+    'Authorization': `Basic ${Buffer.from(API_KEY).toString('base64')}`,
+    'X-Uplisting-Client-Id': CLIENT_ID,
     'Content-Type': 'application/json'
   }
 });
@@ -122,6 +135,164 @@ const unblockCalendarDates = async (propertyId, checkIn, checkOut) => {
   return postPropertyData(propertyId, `/calendar/${propertyId}`, { calendar: { days: dates } });
 };
 
+// ─────────────────────────────────────────────────────────────
+// V2 Partner Endpoints
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * Create a confirmed booking directly in Uplisting via the V2 API.
+ * This is used for website bookings so they appear on the Uplisting
+ * calendar and sync to all connected OTA channels.
+ *
+ * @param {object} params
+ * @param {string} params.propertyId    - Uplisting external property ID (required)
+ * @param {string} params.checkIn       - ISO8601 date string, e.g. "2025-06-01" (required)
+ * @param {string} params.checkOut      - ISO8601 date string, e.g. "2025-06-05" (required)
+ * @param {string} [params.guestName]   - Guest full name
+ * @param {string} [params.guestEmail]  - Guest email (required for automated messages)
+ * @param {string} [params.guestPhone]  - Guest phone number
+ * @param {number} [params.numberOfGuests] - Number of guests
+ * @returns {Promise<object>} Uplisting API response
+ */
+const createV2Booking = async ({ propertyId, checkIn, checkOut, guestName, guestEmail, guestPhone, numberOfGuests } = {}) => {
+  console.log(`[Uplisting V2] 📡 POST /v2/bookings — property: ${propertyId} | ${checkIn} → ${checkOut}`);
+
+  if (!propertyId || !checkIn || !checkOut) {
+    throw new Error('[Uplisting V2] createV2Booking requires propertyId, checkIn, and checkOut.');
+  }
+
+  // ⚠️ JSON:API format: property must be in `relationships`, NOT in `attributes`.
+  const body = {
+    data: {
+      attributes: {
+        check_in: checkIn,
+        check_out: checkOut,
+        ...(guestName      && { guest_name: guestName }),
+        ...(guestEmail     && { guest_email: guestEmail }),
+        ...(guestPhone     && { guest_phone: guestPhone }),
+        ...(numberOfGuests && { number_of_guests: numberOfGuests })
+      },
+      relationships: {
+        property: {
+          data: {
+            type: 'properties',
+            id: String(propertyId)
+          }
+        }
+      }
+    }
+  };
+
+  try {
+    const result = await globalLimiter.schedule(() => apiClientV2.post('/v2/bookings', body));
+    const uplistingBookingId = result.data?.data?.id;
+    console.log(`[Uplisting V2] ✅ Booking created — status: ${result.status}${uplistingBookingId ? ` | uplisting_id: ${uplistingBookingId}` : ''}`);
+    return result.data;
+  } catch (error) {
+    console.error('[Uplisting V2] ❌ POST /v2/bookings FAILED');
+    console.error(`[Uplisting V2] Status: ${error.response?.status || 'N/A'}`);
+    console.error(`[Uplisting V2] Response: ${JSON.stringify(error.response?.data || error.message)}`);
+    throw error;
+  }
+};
+
+/**
+ * Update an existing Uplisting booking (e.g. attach custom attribute values).
+ * Uses PATCH /v2/bookings/:id with the JSON:API attribute format.
+ *
+ * @param {string|number} bookingId  - Uplisting booking ID (from createV2Booking response)
+ * @param {object}        attributes - Key/value pairs to patch onto the booking
+ * @returns {Promise<object>} Uplisting API response
+ *
+ * @example
+ *   await updateV2Booking('165003', {
+ *     homev_payment_source: 'stripe',
+ *     homev_stripe_intent_id: 'pi_3abc...'
+ *   });
+ */
+const updateV2Booking = async (bookingId, attributes = {}) => {
+  console.log(`[Uplisting V2] 📡 PATCH /v2/bookings/${bookingId}`, attributes);
+
+  if (!bookingId) {
+    throw new Error('[Uplisting V2] updateV2Booking requires a bookingId.');
+  }
+
+  const body = {
+    data: {
+      attributes
+    }
+  };
+
+  try {
+    const result = await globalLimiter.schedule(() => apiClientV2.patch(`/v2/bookings/${bookingId}`, body));
+    console.log(`[Uplisting V2] ✅ Booking ${bookingId} updated — status: ${result.status}`);
+    return result.data;
+  } catch (error) {
+    console.error(`[Uplisting V2] ❌ PATCH /v2/bookings/${bookingId} FAILED`);
+    console.error(`[Uplisting V2] Status: ${error.response?.status || 'N/A'}`);
+    console.error(`[Uplisting V2] Response: ${JSON.stringify(error.response?.data || error.message)}`);
+    throw error;
+  }
+};
+
+/**
+ * List all custom booking attributes registered for this partner account.
+ * GET /v2/custom_booking_attributes
+ *
+ * @returns {Promise<object[]>} Array of registered attribute definitions
+ */
+const listCustomBookingAttributes = async () => {
+  console.log('[Uplisting V2] 📡 GET /v2/custom_booking_attributes');
+  try {
+    const result = await globalLimiter.schedule(() => apiClientV2.get('/v2/custom_booking_attributes'));
+    const attrs = result.data?.data || [];
+    console.log(`[Uplisting V2] ✅ Found ${attrs.length} custom attribute(s)`);
+    return result.data;
+  } catch (error) {
+    console.error('[Uplisting V2] ❌ GET /v2/custom_booking_attributes FAILED');
+    console.error(`[Uplisting V2] Status: ${error.response?.status || 'N/A'}`);
+    console.error(`[Uplisting V2] Response: ${JSON.stringify(error.response?.data || error.message)}`);
+    throw error;
+  }
+};
+
+/**
+ * Register a new custom booking attribute definition under the homev_ namespace.
+ * Maximum 15 attributes per partner account.
+ *
+ * @param {string} name        - Attribute name in snake_case (must start with "homev_")
+ * @param {string} description - Human-readable description of what this attribute stores
+ * @returns {Promise<object>} Uplisting API response (HTTP 201 on success)
+ */
+const createCustomBookingAttribute = async (name, description) => {
+  console.log(`[Uplisting V2] 📡 POST /v2/custom_booking_attributes — name: ${name}`);
+
+  if (!name || !description) {
+    throw new Error('[Uplisting V2] createCustomBookingAttribute requires name and description.');
+  }
+
+  if (!name.startsWith('homev_')) {
+    throw new Error(`[Uplisting V2] Attribute name must start with "homev_" (received: "${name}")`);
+  }
+
+  const body = {
+    data: {
+      attributes: { name, description }
+    }
+  };
+
+  try {
+    const result = await globalLimiter.schedule(() => apiClientV2.post('/v2/custom_booking_attributes', body));
+    console.log(`[Uplisting V2] ✅ Custom attribute "${name}" registered — status: ${result.status}`);
+    return result.data;
+  } catch (error) {
+    console.error(`[Uplisting V2] ❌ POST /v2/custom_booking_attributes FAILED for "${name}"`);
+    console.error(`[Uplisting V2] Status: ${error.response?.status || 'N/A'}`);
+    console.error(`[Uplisting V2] Response: ${JSON.stringify(error.response?.data || error.message)}`);
+    throw error;
+  }
+};
+
 /**
  * Fetch generic non-property specific data
  */
@@ -163,5 +334,9 @@ module.exports = {
   fetchPropertyData,
   postPropertyData,
   blockCalendarDates,
-  unblockCalendarDates
+  unblockCalendarDates,
+  createV2Booking,
+  updateV2Booking,
+  listCustomBookingAttributes,
+  createCustomBookingAttribute
 };

@@ -1,6 +1,6 @@
 const reservationService = require('../services/reservationService');
 const prisma = require('../db');
-const { fetchPropertyData, blockCalendarDates } = require('../services/uplistingService');
+const { fetchPropertyData, blockCalendarDates, createV2Booking, updateV2Booking } = require('../services/uplistingService');
 const jwt = require('jsonwebtoken');
 const { handleError } = require('../utils/errorHandler');
 
@@ -151,30 +151,64 @@ const createReservation = async (req, res) => {
     // 3. Create the reservation
     const reservation = await reservationService.createReservation(data, paymentIntentId);
 
-    // 3b. Block the booked dates in Uplisting to prevent double-booking across
-    //     all connected OTA channels (Airbnb, VRBO, Booking.com, etc.)
-    //     Uses the externalId (Uplisting property ID) if available, falls back to local ID.
+    // 3b. Push booking to Uplisting via V2 API so it appears on the Uplisting calendar
+    //     and syncs across all connected OTA channels (Airbnb, VRBO, Booking.com, etc.).
+    //     Falls back to the legacy calendar-block if the V2 call fails.
     try {
       const blockPropId = (
         await prisma.property.findUnique({ where: { id: data.propertyId }, select: { externalId: true } })
       )?.externalId || data.propertyId;
 
-      // Use the pre-parsed plain YYYY-MM-DD strings
       const rawCheckIn  = req.plainCheckIn;
       const rawCheckOut = req.plainCheckOut;
 
       if (blockPropId && rawCheckIn && rawCheckOut) {
-        // Fire-and-forget: don't block the response waiting for the API call,
-        // but DO log errors so we know if syncing breaks.
-        blockCalendarDates(blockPropId, rawCheckIn, rawCheckOut).catch(err =>
-          console.error('[Reservation] ⚠ Uplisting calendar block FAILED — double-booking risk!', err.message)
-        );
-        console.log(`[Reservation] 🔒 Triggered Uplisting calendar block: property=${blockPropId} ${rawCheckIn}→${rawCheckOut}`);
+        // Gather guest info for the Uplisting booking record
+        const dbGuest = data.guestId
+          ? await prisma.guestProfile.findUnique({ where: { id: data.guestId } })
+          : null;
+
+        const fullName = dbGuest
+          ? [dbGuest.firstName, dbGuest.lastName].filter(Boolean).join(' ')
+          : undefined;
+
+        // Fire-and-forget: don't block the response on the Uplisting call.
+        createV2Booking({
+          propertyId:     blockPropId,
+          checkIn:        rawCheckIn,
+          checkOut:       rawCheckOut,
+          guestName:      fullName,
+          guestEmail:     dbGuest?.email,
+          guestPhone:     dbGuest?.phone,
+          numberOfGuests: reservation.numberOfGuests || undefined
+        }).then(async (uplistingResponse) => {
+          // Attach HomEV custom attributes to the Uplisting booking record
+          const uplistingBookingId = uplistingResponse?.data?.id;
+          if (uplistingBookingId && paymentIntentId) {
+            try {
+              await updateV2Booking(uplistingBookingId, {
+                homev_payment_source:   'stripe',
+                homev_stripe_intent_id: paymentIntentId,
+                homev_booking_origin:   'website'
+              });
+            } catch (patchErr) {
+              console.warn(`[Reservation] ⚠ Could not attach custom attributes to Uplisting booking ${uplistingBookingId}:`, patchErr.message);
+            }
+          }
+        }).catch(err => {
+          console.error('[Reservation] ⚠ Uplisting V2 booking push FAILED — falling back to calendar block', err.message);
+          // Fallback: block the calendar dates manually if the V2 booking call failed
+          blockCalendarDates(blockPropId, rawCheckIn, rawCheckOut).catch(blockErr =>
+            console.error('[Reservation] ⚠ Fallback Uplisting calendar block ALSO FAILED — double-booking risk!', blockErr.message)
+          );
+        });
+
+        console.log(`[Reservation] 🚀 Triggered Uplisting V2 booking: property=${blockPropId} ${rawCheckIn}→${rawCheckOut}`);
       } else {
-        console.warn('[Reservation] ⚠ Could not determine property ID or dates for Uplisting calendar block');
+        console.warn('[Reservation] ⚠ Could not determine property ID or dates for Uplisting V2 booking push');
       }
     } catch (blockErr) {
-      console.error('[Reservation] ⚠ Error initiating Uplisting calendar block:', blockErr.message);
+      console.error('[Reservation] ⚠ Error initiating Uplisting V2 booking push:', blockErr.message);
     }
 
     // 4. Auto-create a MessageThread for this reservation so chat is immediately ready
