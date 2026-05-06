@@ -29,25 +29,33 @@ propertyLimiters.on("created", (limiter, key) => {
 const API_KEY = process.env.UPLISTING_API_KEY;
 const CLIENT_ID = process.env.UPLISTING_CLIENT_ID;
 
-// V1 client — used for calendar, properties, webhooks, etc.
-const apiClient = axios.create({
-  baseURL: 'https://connect.uplisting.io',
-  headers: {
-    'Authorization': `Basic ${Buffer.from(API_KEY).toString('base64')}`,
-    'Content-Type': 'application/json'
-  }
-});
+console.log(`[Uplisting Config] API_KEY loaded: ${API_KEY ? '****' + API_KEY.slice(-4) : 'MISSING'}`);
+console.log(`[Uplisting Config] CLIENT_ID loaded: ${CLIENT_ID ? '****' + CLIENT_ID.slice(-4) : 'MISSING'}`);
 
-// V2 client — requires the partner X-Uplisting-Client-Id header.
-// Used for: POST /v2/bookings and POST /v2/custom_booking_attributes.
-const apiClientV2 = axios.create({
-  baseURL: 'https://connect.uplisting.io',
-  headers: {
-    'Authorization': `Basic ${Buffer.from(API_KEY).toString('base64')}`,
-    'X-Uplisting-Client-Id': CLIENT_ID,
-    'Content-Type': 'application/json'
+// Helper to get an authorized Axios client. 
+// We use a getter to ensure environment variables are loaded and validated at call-time.
+const getClient = (version = 'v1') => {
+  if (!API_KEY) {
+    throw new Error(`[Uplisting] ❌ API_KEY is missing from environment variables.`);
   }
-});
+  
+  const headers = {
+    'Authorization': `Basic ${Buffer.from(API_KEY).toString('base64')}`,
+    'Content-Type': 'application/json'
+  };
+
+  if (version === 'v2') {
+    if (!CLIENT_ID) {
+      throw new Error(`[Uplisting] ❌ CLIENT_ID is missing from environment variables (Required for V2).`);
+    }
+    headers['X-Uplisting-Client-Id'] = CLIENT_ID;
+  }
+
+  return axios.create({
+    baseURL: 'https://connect.uplisting.io',
+    headers
+  });
+};
 
 /**
  * POST property-specific data (e.g. calendar updates) through the property's queue
@@ -56,7 +64,7 @@ const postPropertyData = async (propertyId, endpoint, body = {}) => {
   console.log(`[Uplisting API] 📡 POST ${endpoint} (property: ${propertyId})`);
   try {
     const result = await propertyLimiters.key(propertyId).schedule(() =>
-      apiClient.post(endpoint, body)
+      getClient().post(endpoint, body)
     );
     console.log(`[Uplisting API] ✅ POST ${endpoint} (property: ${propertyId}) — ${result.status}`);
     return result;
@@ -180,7 +188,7 @@ const createV2Booking = async ({ propertyId, checkIn, checkOut, guestName, guest
   };
 
   try {
-    const result = await globalLimiter.schedule(() => apiClientV2.post('/v2/bookings', body));
+    const result = await globalLimiter.schedule(() => getClient('v2').post('/v2/bookings', body));
     const uplistingBookingId = result.data?.data?.id;
     console.log(`[Uplisting V2] ✅ Booking created — status: ${result.status}${uplistingBookingId ? ` | uplisting_id: ${uplistingBookingId}` : ''}`);
     return result.data;
@@ -215,12 +223,13 @@ const updateV2Booking = async (bookingId, attributes = {}) => {
 
   const body = {
     data: {
+      type: 'bookings',
       attributes
     }
   };
 
   try {
-    const result = await globalLimiter.schedule(() => apiClientV2.patch(`/v2/bookings/${bookingId}`, body));
+    const result = await globalLimiter.schedule(() => getClient('v2').patch(`/v2/bookings/${bookingId}`, body));
     console.log(`[Uplisting V2] ✅ Booking ${bookingId} updated — status: ${result.status}`);
     return result.data;
   } catch (error) {
@@ -240,7 +249,7 @@ const updateV2Booking = async (bookingId, attributes = {}) => {
 const listCustomBookingAttributes = async () => {
   console.log('[Uplisting V2] 📡 GET /v2/custom_booking_attributes');
   try {
-    const result = await globalLimiter.schedule(() => apiClientV2.get('/v2/custom_booking_attributes'));
+    const result = await globalLimiter.schedule(() => getClient('v2').get('/v2/custom_booking_attributes'));
     const attrs = result.data?.data || [];
     console.log(`[Uplisting V2] ✅ Found ${attrs.length} custom attribute(s)`);
     return result.data;
@@ -273,12 +282,13 @@ const createCustomBookingAttribute = async (name, description) => {
 
   const body = {
     data: {
+      type: 'custom_booking_attributes',
       attributes: { name, description }
     }
   };
 
   try {
-    const result = await globalLimiter.schedule(() => apiClientV2.post('/v2/custom_booking_attributes', body));
+    const result = await globalLimiter.schedule(() => getClient('v2').post('/v2/custom_booking_attributes', body));
     console.log(`[Uplisting V2] ✅ Custom attribute "${name}" registered — status: ${result.status}`);
     return result.data;
   } catch (error) {
@@ -295,7 +305,9 @@ const createCustomBookingAttribute = async (name, description) => {
 const fetchGlobalData = async (endpoint, params = {}) => {
   console.log(`[Uplisting API] 📡 GET ${endpoint}`, Object.keys(params).length ? params : '');
   try {
-    const result = await globalLimiter.schedule(() => apiClient.get(endpoint, { params }));
+    const result = await globalLimiter.schedule(() =>
+      getClient().get(endpoint, { params })
+    );
     console.log(`[Uplisting API] ✅ GET ${endpoint} — ${result.status} (${(result.data?.data || result.data || []).length || '?'} items)`);
     return result;
   } catch (error) {
@@ -312,7 +324,9 @@ const fetchGlobalData = async (endpoint, params = {}) => {
 const fetchPropertyData = async (propertyId, endpoint, params = {}) => {
   console.log(`[Uplisting API] 📡 GET ${endpoint} (property: ${propertyId})`, Object.keys(params).length ? params : '');
   try {
-    const result = await propertyLimiters.key(propertyId).schedule(() => apiClient.get(endpoint, { params }));
+    const result = await propertyLimiters.key(propertyId).schedule(() =>
+      getClient().get(endpoint, { params })
+    );
     console.log(`[Uplisting API] ✅ GET ${endpoint} (property: ${propertyId}) — ${result.status}`);
     return result;
   } catch (error) {
