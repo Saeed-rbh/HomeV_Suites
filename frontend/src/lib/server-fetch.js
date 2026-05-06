@@ -9,6 +9,15 @@ export async function getListingByIdDynamic(id) {
     const p = payload.data;
     if (!p) return null;
 
+    let siteSettings = {};
+    try {
+      const settingsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/settings`, { cache: 'no-store' });
+      if (settingsRes.ok) {
+        const sd = await settingsRes.json();
+        if (sd.success) siteSettings = sd.data;
+      }
+    } catch (e) {}
+
     // Format check-in/out times as human readable strings
     const formatTime = (hour) => {
       if (hour == null) return null;
@@ -71,6 +80,7 @@ export async function getListingByIdDynamic(id) {
     // Map database shape to Frontend specific shape seamlessly
     return {
       ...p,
+      siteSettings,
       neighborhood: p.city || "Toronto",
       location: `${p.city || 'Toronto'}, ${p.state || 'Ontario'}`,
       latitude: p.latitude || 43.6703,
