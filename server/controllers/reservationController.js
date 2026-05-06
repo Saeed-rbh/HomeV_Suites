@@ -2,7 +2,6 @@ const reservationService = require('../services/reservationService');
 const prisma = require('../db');
 const { fetchPropertyData, blockCalendarDates, createV2Booking, updateV2Booking } = require('../services/uplistingService');
 const jwt = require('jsonwebtoken');
-const { calculatePriceBreakdown } = require('../utils/pricingCalculator');
 const { handleError } = require('../utils/errorHandler');
 
 const createReservation = async (req, res) => {
@@ -181,23 +180,8 @@ const createReservation = async (req, res) => {
         const firstNameVal = guestNameVal?.split(' ')[0] || (authGuest?.firstName || 'Guest');
         const lastNameVal  = guestNameVal?.split(' ').slice(1).join(' ') || (authGuest?.lastName || 'User');
 
-        // 📊 Calculate a full price breakdown to sync with Uplisting
-        // This ensures Uplisting sees the same Total, Cleaning Fee, and Taxes that Stripe charged.
-        let pricingBreakdown = null;
-        try {
-          pricingBreakdown = calculatePriceBreakdown(
-            { ...property, calendarRates: (await prisma.property.findUnique({ where: { id: property.id }, select: { calendarRates: true } }))?.calendarRates || {} },
-            rawCheckIn,
-            rawCheckOut,
-            guestCountVal,
-            !!data.selectedNonRefundable
-          );
-        } catch (calcErr) {
-          console.warn('[Reservation] Pricing breakdown calculation failed for sync:', calcErr.message);
-        }
-
         console.log(`[Reservation] 🔄 Syncing reservation ${reservation.id} to Uplisting...`);
-        console.log(`[Reservation] 📊 Params: Property=${blockPropId}, Dates=${rawCheckIn}→${rawCheckOut}, Guest=${guestNameVal} (${guestEmailVal}), Total=${reservation.totalPrice}`);
+        console.log(`[Reservation] 📊 Params: Property=${blockPropId}, Dates=${rawCheckIn}→${rawCheckOut}, Guest=${guestNameVal} (${guestEmailVal})`);
 
         try {
           const uplistingResponse = await createV2Booking({
@@ -209,16 +193,7 @@ const createReservation = async (req, res) => {
             guestPhone:     guestPhoneVal,
             firstName:      firstNameVal,
             lastName:       lastNameVal,
-            numberOfGuests: guestCountVal,
-            // 💸 Financial Data Sync
-            totalPrice:         reservation.totalPrice, // Use the actual charged amount
-            accommodationTotal: pricingBreakdown ? (pricingBreakdown.subtotalAfterDiscount - (pricingBreakdown.cleaningFee || 0)) : null,
-            cleaningFee:        property.cleaningFee || 0,
-            totalTaxes:         pricingBreakdown ? pricingBreakdown.taxes : null,
-            customAttributes: {
-              homev_payment_source: 'stripe',
-              homev_stripe_intent_id: paymentIntentId || 'direct'
-            }
+            numberOfGuests: guestCountVal
           });
           const uplistingBookingId = uplistingResponse?.data?.id;
 
