@@ -166,27 +166,31 @@ const createReservation = async (req, res) => {
       const rawCheckOut = req.plainCheckOut;
 
       if (blockPropId && rawCheckIn && rawCheckOut) {
-        // Gather guest info for the Uplisting booking record
-        const dbGuest = data.guestId
-          ? await prisma.guestProfile.findUnique({ where: { id: data.guestId } })
-          : null;
+        // Gather guest info for the Uplisting booking record.
+        // We prioritize the request body data (form data) over the DB record to ensure 
+        // reliability if the DB write is still settling.
+        const guestNameVal  = req.body.name || req.body.guestName;
+        const guestEmailVal = req.body.email || req.body.guestEmail;
+        const guestPhoneVal = req.body.phone || req.body.guestPhone;
+        const guestCountVal = Number(req.body.numberOfGuests || req.body.guests || 1);
 
-        const fullName = dbGuest
-          ? [dbGuest.firstName, dbGuest.lastName].filter(Boolean).join(' ')
-          : undefined;
+        const firstNameVal = guestNameVal?.split(' ')[0] || 'Guest';
+        const lastNameVal  = guestNameVal?.split(' ').slice(1).join(' ') || 'User';
 
-        console.log(`[Reservation] 🔄 Syncing reservation ${reservation.id} to Uplisting (Property: ${blockPropId})...`);
+        console.log(`[Reservation] 🔄 Syncing reservation ${reservation.id} to Uplisting...`);
+        console.log(`[Reservation] 📊 Params: Property=${blockPropId}, Dates=${rawCheckIn}→${rawCheckOut}, Guest=${guestNameVal} (${guestEmailVal})`);
+
         try {
           const uplistingResponse = await createV2Booking({
             propertyId:     blockPropId,
             checkIn:        rawCheckIn,
             checkOut:       rawCheckOut,
-            guestName:      fullName,
-            guestEmail:     dbGuest?.email,
-            guestPhone:     dbGuest?.phone,
-            firstName:      dbGuest?.firstName,
-            lastName:       dbGuest?.lastName,
-            numberOfGuests: numGuests
+            guestName:      guestNameVal,
+            guestEmail:     guestEmailVal,
+            guestPhone:     guestPhoneVal,
+            firstName:      firstNameVal,
+            lastName:       lastNameVal,
+            numberOfGuests: guestCountVal
           });
           const uplistingBookingId = uplistingResponse?.data?.id;
 
@@ -211,8 +215,8 @@ const createReservation = async (req, res) => {
                 homev_payment_source:   'stripe',
                 homev_stripe_intent_id: paymentIntentId,
                 homev_booking_origin:   'website',
-                homev_guest_email:      dbGuest?.email,
-                homev_guest_phone:      dbGuest?.phone
+                homev_guest_email:      guestEmailVal,
+                homev_guest_phone:      guestPhoneVal
               });
             } catch (patchErr) {
               console.warn(`[Reservation] ⚠ Could not attach custom attributes to Uplisting booking ${uplistingBookingId}:`, patchErr.message);
