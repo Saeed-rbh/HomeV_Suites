@@ -170,15 +170,15 @@ const createReservation = async (req, res) => {
 
       if (blockPropId && rawCheckIn && rawCheckOut) {
         // Gather guest info for the Uplisting booking record.
-        // We prioritize the request body data (form data) over the DB record to ensure 
-        // reliability if the DB write is still settling.
-        const guestNameVal  = req.body.name || req.body.guestName;
-        const guestEmailVal = req.body.email || req.body.guestEmail;
-        const guestPhoneVal = req.body.phone || req.body.guestPhone;
+        // We prioritize request body data, then fallback to the authenticated guest session,
+        // ensuring we never send undefined fields to Uplisting.
+        const guestNameVal  = req.body.name || req.body.guestName || (authGuest ? [authGuest.firstName, authGuest.lastName].filter(Boolean).join(' ') : 'Guest User');
+        const guestEmailVal = req.body.email || req.body.guestEmail || authGuest?.email || 'guest@example.com';
+        const guestPhoneVal = req.body.phone || req.body.guestPhone || authGuest?.phone || null;
         const guestCountVal = Number(req.body.numberOfGuests || req.body.guests || 1);
 
-        const firstNameVal = guestNameVal?.split(' ')[0] || 'Guest';
-        const lastNameVal  = guestNameVal?.split(' ').slice(1).join(' ') || 'User';
+        const firstNameVal = guestNameVal?.split(' ')[0] || (authGuest?.firstName || 'Guest');
+        const lastNameVal  = guestNameVal?.split(' ').slice(1).join(' ') || (authGuest?.lastName || 'User');
 
         console.log(`[Reservation] 🔄 Syncing reservation ${reservation.id} to Uplisting...`);
         console.log(`[Reservation] 📊 Params: Property=${blockPropId}, Dates=${rawCheckIn}→${rawCheckOut}, Guest=${guestNameVal} (${guestEmailVal})`);
