@@ -156,7 +156,7 @@ export default function TripsPageClient() {
     );
   }
 
-  // If user clicked into a specific booking → show full detail view
+  // If user clicked into a specific booking → show full detail view hi
   if (selected) {
     return (
       <TripDashboardUI
@@ -220,7 +220,7 @@ export default function TripsPageClient() {
                 {past.length}
               </span>
             </h2>
-            
+
             {past.length === 0 ? (
               <div className="rounded-[28px] bg-white/50 border border-dashed border-slate-200 p-8 text-center">
                 <p className="text-[#0c1929] text-sm italic">No past trips yet.</p>
