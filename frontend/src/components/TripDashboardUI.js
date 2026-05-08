@@ -559,14 +559,21 @@ export default function TripDashboardUI({ listing, reservation }) {
                 <div className="space-y-3 pt-2">
                   <button onClick={async () => {
                     try {
-                      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + ''}/reservations/${reservation.id}/status`, {
-                        method: "PATCH",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ status: "CANCELLED" })
+                      const token = localStorage.getItem("guestToken");
+                      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + ''}/guests/me/reservations/${reservation.id}/cancel`, {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                          ...(token ? { "Authorization": `Bearer ${token}` } : {})
+                        }
                       });
                       if (res.ok) {
                         setIsCancelled(true);
                         setActiveModal(null);
+                      } else {
+                        const err = await res.json().catch(() => ({}));
+                        console.error("[Cancel] Failed:", err?.error || res.status);
+                        alert(err?.error || "Failed to cancel reservation. Please try again.");
                       }
                     } catch (e) { console.error(e); }
                   }} className="w-full rounded-2xl bg-red-600 py-4 text-sm font-bold text-white hover:bg-red-700 transition">
