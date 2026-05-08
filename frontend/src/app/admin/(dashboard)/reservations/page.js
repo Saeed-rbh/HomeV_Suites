@@ -75,7 +75,8 @@ export default function ReservationsModule() {
           const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + ''}/reservations/${id}`, { method: 'DELETE' });
           if (res.ok) {
               const cancelled = list.find(b => b.id === id);
-              setList(prev => prev.filter(b => b.id !== id));
+              // Mark as Cancelled in local state — keep it visible in the Cancelled column
+              setList(prev => prev.map(b => b.id === id ? { ...b, status: 'Cancelled' } : b));
               setSelectedReservation(null);
               // Show manual Uplisting action banner if this was an Uplisting booking
               if (cancelled?.uplistingBookingId) {
@@ -104,6 +105,7 @@ export default function ReservationsModule() {
   const upcoming = list.filter(r => r.status === 'Upcoming');
   const checkedIn = list.filter(r => r.status === 'Checked In');
   const completed = list.filter(r => r.status === 'Completed');
+  const cancelled = list.filter(r => r.status === 'Cancelled');
 
   const ReservationCard = ({ res, statusColor }) => (
     <div onClick={() => setSelectedReservation(res)} className="group bg-white/90 backdrop-blur-md rounded-2xl p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-slate-200 cursor-pointer flex flex-col gap-4 relative overflow-hidden">
@@ -238,6 +240,37 @@ export default function ReservationsModule() {
             <div className="flex flex-col gap-3">
               {completed.map(res => <ReservationCard key={res.id} res={res} statusColor="from-slate-500" />)}
               {completed.length === 0 && <p className="text-sm font-medium text-slate-400 text-center py-8">No completed stays</p>}
+            </div>
+          </div>
+
+          {/* CANCELLED COLUMN */}
+          <div className="w-[360px] flex flex-col gap-4 bg-red-50/60 rounded-[24px] p-4 border border-red-100/80 shadow-inner h-full overflow-y-auto hide-scrollbar">
+            <div className="flex items-center justify-between mb-1 px-1">
+              <h2 className="text-[11px] font-black text-[#0c1929] uppercase tracking-[0.15em] flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.6)]"></span>
+                Cancelled
+              </h2>
+              <span className="text-[11px] font-black text-red-400/70 bg-red-100 px-2 py-0.5 rounded-full">{cancelled.length}</span>
+            </div>
+            <div className="flex flex-col gap-3">
+              {cancelled.map(res => (
+                <div key={res.id}>
+                  <ReservationCard res={res} statusColor="from-red-400" />
+                  {res.uplistingBookingId && (
+                    <a
+                      href={`https://app.uplisting.io/calendar/bookings/${res.uplistingBookingId}/details?from=${new Date().toISOString().split('T')[0]}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={e => e.stopPropagation()}
+                      className="mt-1.5 flex items-center gap-1.5 justify-center w-full rounded-xl border border-amber-200 bg-amber-50 hover:bg-amber-100 py-2 text-[11px] font-bold text-amber-700 transition-colors"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                      Cancel in Uplisting dashboard
+                    </a>
+                  )}
+                </div>
+              ))}
+              {cancelled.length === 0 && <p className="text-sm font-medium text-red-300 text-center py-8">No cancellations</p>}
             </div>
           </div>
 
