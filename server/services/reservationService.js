@@ -187,24 +187,28 @@ const updateReservationStatus = async (id, status) => {
               const rawCheckOut = fullRes.endDate.toISOString().split('T')[0];
               const blockPropId = fullRes.property.externalId || fullRes.property.id;
 
-              // Fetch the full reservation to get the uplistingBookingId
               const resWithBookingId = await prisma.reservation.findUnique({ where: { id } });
               const uplistingBookingId = resWithBookingId?.uplistingBookingId;
 
               if (uplistingBookingId) {
-                  // Cancel the V2 booking in Uplisting — this removes it from the calendar properly.
-                  // Uses PATCH /v2/bookings/:id { status: 'cancelled' } since DELETE returns 405.
-                  console.log(`[ReservationService] 🔄 Cancelling Uplisting V2 booking: ${uplistingBookingId}`);
-                  cancelV2Booking(uplistingBookingId).catch(err =>
-                      console.error('[ReservationService] ⚠ Failed to cancel Uplisting V2 booking:', err.message)
-                  );
-              } else {
-                  // Fallback: if no Uplisting booking ID stored, just unblock the calendar dates
-                  console.warn(`[ReservationService] ⚠ No uplistingBookingId found for reservation ${id} — falling back to unblockCalendarDates`);
-                  unblockCalendarDates(blockPropId, rawCheckIn, rawCheckOut).catch(err =>
-                      console.error('[ReservationService] ⚠ Failed to unblock dates on Uplisting:', err.message)
-                  );
+                  // ⚠️  The Uplisting public API does NOT support cancelling bookings programmatically.
+                  // PATCH /v2/bookings/:id only updates custom attributes — it cannot change booking status.
+                  // The booking will remain visible in Uplisting dashboard as 'confirmed'.
+                  // ACTION REQUIRED: Open the direct link below and manually cancel/archive the booking.
+                  const today = new Date().toISOString().split('T')[0];
+                  const uplistingDirectUrl = `https://app.uplisting.io/calendar/bookings/${uplistingBookingId}/details?from=${today}`;
+                  console.warn(`[ReservationService] ⚠ MANUAL ACTION REQUIRED ══════════════════════════════════════════`);
+                  console.warn(`[ReservationService] 👉 Uplisting booking #${uplistingBookingId} must be cancelled manually in the dashboard.`);
+                  console.warn(`[ReservationService] 🔗 Direct link: ${uplistingDirectUrl}`);
+                  console.warn(`[ReservationService] ══════════════════════════════════════════════════════════════════════`);
               }
+
+              // Free up the calendar dates via the V1 calendar API so OTA channels
+              // (Airbnb, Booking.com, VRBO) can accept new bookings for these dates.
+              console.log(`[ReservationService] 🔓 Unblocking calendar dates on property ${blockPropId}: ${rawCheckIn} → ${rawCheckOut}`);
+              unblockCalendarDates(blockPropId, rawCheckIn, rawCheckOut).catch(err =>
+                  console.error('[ReservationService] ⚠ Failed to unblock calendar dates on Uplisting:', err.message)
+              );
           } catch (e) {
               console.error('[ReservationService] ⚠ Error preparing Uplisting cancellation:', e.message);
           }
@@ -236,16 +240,20 @@ const deleteReservation = async (id) => {
           const blockPropId = fullRes.property.externalId || fullRes.property.id;
           
           if (fullRes.uplistingBookingId) {
-              console.log(`[ReservationService] 🔄 Cancelling Uplisting V2 booking during deletion: ${fullRes.uplistingBookingId}`);
-              cancelV2Booking(fullRes.uplistingBookingId).catch(err =>
-                  console.error('[ReservationService] ⚠ Failed to cancel Uplisting V2 booking during deletion:', err.message)
-              );
-          } else {
-              console.log(`[ReservationService] 🔓 No uplistingBookingId; unblocking dates for property ${blockPropId}`);
-              unblockCalendarDates(blockPropId, rawCheckIn, rawCheckOut).catch(err => 
-                  console.error('[ReservationService] ⚠ Failed to unblock dates on Uplisting:', err.message)
-              );
+              // ⚠️  Uplisting API does not support programmatic cancellation.
+              // The booking will remain in Uplisting dashboard as 'confirmed'.
+              const today = new Date().toISOString().split('T')[0];
+              const uplistingDirectUrl = `https://app.uplisting.io/calendar/bookings/${fullRes.uplistingBookingId}/details?from=${today}`;
+              console.warn(`[ReservationService] ⚠ MANUAL ACTION REQUIRED ══════════════════════════════════════════`);
+              console.warn(`[ReservationService] 👉 Uplisting booking #${fullRes.uplistingBookingId} must be cancelled manually in the dashboard.`);
+              console.warn(`[ReservationService] 🔗 Direct link: ${uplistingDirectUrl}`);
+              console.warn(`[ReservationService] ══════════════════════════════════════════════════════════════════════`);
           }
+          // Free up calendar dates via V1 so OTA channels accept new bookings
+          console.log(`[ReservationService] 🔓 Unblocking calendar dates for property ${blockPropId}: ${rawCheckIn} → ${rawCheckOut}`);
+          unblockCalendarDates(blockPropId, rawCheckIn, rawCheckOut).catch(err =>
+              console.error('[ReservationService] ⚠ Failed to unblock dates on Uplisting:', err.message)
+          );
       } catch (e) {
           console.error('[ReservationService] ⚠ Error preparing Uplisting cleanup:', e.message);
       }

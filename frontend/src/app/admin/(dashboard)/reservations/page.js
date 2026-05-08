@@ -1,13 +1,14 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, Briefcase, FilePlus2, MoreHorizontal, X, User, Calendar, CreditCard, Home, Mail, FileText, ArrowRight } from 'lucide-react';
+import { Search, Briefcase, FilePlus2, MoreHorizontal, X, User, Calendar, CreditCard, Home, Mail, FileText, ArrowRight, ExternalLink, AlertTriangle } from 'lucide-react';
 
 export default function ReservationsModule() {
   const router = useRouter();
 
   const [list, setList] = useState([]);
   const [lastCount, setLastCount] = useState(0);
+  const [uplistingActionUrl, setUplistingActionUrl] = useState(null); // set after cancellation
 
   async function loadReservations() {
     try {
@@ -33,6 +34,7 @@ export default function ReservationsModule() {
           return {
             id: r.id,
             reservationId: r.id,
+            uplistingBookingId: r.uplistingBookingId || null,
             guestId: g.id,
             guest: `${g.firstName || ''} ${g.lastName || ''}`.trim() || 'Guest',
             property: p.title || r.propertyId || 'Unknown',
@@ -72,8 +74,14 @@ export default function ReservationsModule() {
       try {
           const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + ''}/reservations/${id}`, { method: 'DELETE' });
           if (res.ok) {
+              const cancelled = list.find(b => b.id === id);
               setList(prev => prev.filter(b => b.id !== id));
               setSelectedReservation(null);
+              // Show manual Uplisting action banner if this was an Uplisting booking
+              if (cancelled?.uplistingBookingId) {
+                  const today = new Date().toISOString().split('T')[0];
+                  setUplistingActionUrl(`https://app.uplisting.io/calendar/bookings/${cancelled.uplistingBookingId}/details?from=${today}`);
+              }
           } else {
               const data = await res.json();
               alert(`Failed to cancel: ${data.error || 'Unknown error'}`);
@@ -147,6 +155,31 @@ export default function ReservationsModule() {
 
   return (
     <div className="h-full flex flex-col relative overflow-hidden">
+      {/* Uplisting Manual Action Banner */}
+      {uplistingActionUrl && (
+        <div className="mb-6 flex items-start gap-4 rounded-2xl border border-amber-300 bg-amber-50 px-5 py-4 shadow-sm shrink-0">
+          <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-amber-900">Manual action required in Uplisting</p>
+            <p className="text-xs font-semibold text-amber-700 mt-0.5 leading-relaxed">
+              The website reservation has been cancelled and the calendar unblocked. You must also manually cancel this booking in the Uplisting dashboard to update the reservation status there.
+            </p>
+            <a
+              href={uplistingActionUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 mt-3 rounded-lg bg-amber-600 hover:bg-amber-700 px-3 py-1.5 text-xs font-bold text-white transition-colors"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              Open booking in Uplisting →
+            </a>
+          </div>
+          <button onClick={() => setUplistingActionUrl(null)} className="text-amber-400 hover:text-amber-600 transition shrink-0 p-1 rounded-lg hover:bg-amber-100">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       <div className="flex justify-between items-center mb-8 shrink-0">
         <h1 className="text-3xl font-bold text-[#0c1929] tracking-tight">Booking Pipeline</h1>
         <div className="flex gap-4">
