@@ -38,7 +38,7 @@ const getClient = (version = 'v1') => {
   if (!API_KEY) {
     throw new Error(`[Uplisting] ❌ API_KEY is missing from environment variables.`);
   }
-  
+
   const headers = {
     'Authorization': `Basic ${Buffer.from(API_KEY).toString('base64')}`,
     'Content-Type': 'application/json'
@@ -91,8 +91,8 @@ const blockCalendarDates = async (propertyId, checkIn, checkOut) => {
   const d = new Date(checkIn + 'T00:00:00Z');
   const end = new Date(checkOut + 'T00:00:00Z');
   while (d < end) {
-    dates.push({ 
-      date: d.toISOString().slice(0, 10), 
+    dates.push({
+      date: d.toISOString().slice(0, 10),
       available: false,
       note: 'Imported from website'
     });
@@ -121,8 +121,8 @@ const unblockCalendarDates = async (propertyId, checkIn, checkOut) => {
   const d = new Date(checkIn + 'T00:00:00Z');
   const end = new Date(checkOut + 'T00:00:00Z');
   while (d < end) {
-    dates.push({ 
-      date: d.toISOString().slice(0, 10), 
+    dates.push({
+      date: d.toISOString().slice(0, 10),
       available: true,
       note: ''
     });
@@ -145,7 +145,7 @@ const unblockCalendarDates = async (propertyId, checkIn, checkOut) => {
  * Create a confirmed booking directly in Uplisting via the V2 API.
  * This is used for website bookings so they appear on the Uplisting
  * calendar and sync to all connected OTA channels.
- *
+ * Hi
  * @param {object} params
  * @param {string} params.propertyId    - Uplisting external property ID (required)
  * @param {string} params.checkIn       - ISO8601 date string, e.g. "2025-06-01" (required)
@@ -156,6 +156,8 @@ const unblockCalendarDates = async (propertyId, checkIn, checkOut) => {
  * @param {number} [params.numberOfGuests] - Number of guests
  * @returns {Promise<object>} Uplisting API response
  */
+
+
 const createV2Booking = async ({ propertyId, checkIn, checkOut, guestName, guestEmail, guestPhone, firstName, lastName, numberOfGuests } = {}) => {
   console.log(`[Uplisting V2] 📡 POST /v2/bookings — property: ${propertyId} | ${checkIn} → ${checkOut}`);
 
@@ -169,11 +171,11 @@ const createV2Booking = async ({ propertyId, checkIn, checkOut, guestName, guest
       attributes: {
         check_in: checkIn,
         check_out: checkOut,
-        ...(guestName      && { guest_name: guestName }),
-        ...(guestEmail     && { guest_email: guestEmail }),
-        ...(guestPhone     && { guest_phone: guestPhone }),
-        ...(firstName      && { first_name: firstName }),
-        ...(lastName       && { last_name: lastName }),
+        ...(guestName && { guest_name: guestName }),
+        ...(guestEmail && { guest_email: guestEmail }),
+        ...(guestPhone && { guest_phone: guestPhone }),
+        ...(firstName && { first_name: firstName }),
+        ...(lastName && { last_name: lastName }),
         ...(numberOfGuests && { number_of_guests: numberOfGuests })
       },
       relationships: {
