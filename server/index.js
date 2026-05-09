@@ -78,8 +78,7 @@ try {
   app.get('/api/health', async (req, res) => {
     try {
       // Basic DB check to ensure DB is alive
-      const { PrismaClient } = require('@prisma/client');
-      const prisma = new PrismaClient();
+      const prisma = require('./db');
       await prisma.$queryRaw`SELECT 1`;
       res.json({ status: 'ok', message: 'Backend and Database are running' });
     } catch (e) {
