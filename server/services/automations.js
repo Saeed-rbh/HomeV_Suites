@@ -7,15 +7,19 @@ module.exports = (io) => {
     // 1. Channel Manager Automations (Airbnb/VRBO <-> Reservations)
     // Fires every 15 minutes. Real sync is driven by Uplisting webhooks (booking_created / booking_updated).
     // TODO: Add active reconciliation logic here if webhook delivery gaps are detected.
+    /*
     cron.schedule('*/15 * * * *', () => {
         console.log('[CRON] Channel sync heartbeat — real booking events handled via webhooks.');
     });
+    */
 
     // 2. Smart Pricing Module
     // Run daily at midnight. TODO: Implement occupancy-based pricing rule evaluation.
+    /*
     cron.schedule('0 0 * * *', () => {
         console.log('[CRON] Daily smart pricing evaluation tick — not yet implemented.');
     });
+    */
 };
 
 // 3. Guest CRM Automation Triggers

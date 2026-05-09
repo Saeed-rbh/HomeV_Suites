@@ -78,6 +78,10 @@ const createReservation = async (req, res) => {
       if (!ALLOWED_RESERVATION_FIELDS.includes(k)) delete data[k];
     });
 
+    if (data.totalPrice === undefined || data.totalPrice <= 0) {
+        return res.status(400).json({ success: false, error: 'Invalid reservation amount.' });
+    }
+
     // 2. Ingest real property data from Uplisting if not already in local DB
     if (data.propertyId) {
       let property = await prisma.property.findFirst({

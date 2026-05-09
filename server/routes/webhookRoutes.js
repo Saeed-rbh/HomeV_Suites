@@ -17,9 +17,9 @@ const verifySignature = (req, res, next) => {
   }
 
   // Uplisting uses HMAC SHA256 of the payload with the Webhook Key
-  const payload = JSON.stringify(req.body);
+  // req.body is now a raw Buffer thanks to express.raw() in index.js
   const hash = crypto.createHmac('sha256', process.env.UPLISTING_WEBHOOK_KEY || 'dev-key')
-                     .update(payload)
+                     .update(req.body)
                      .digest('hex');
 
   if (hash !== signature) {
@@ -123,7 +123,13 @@ router.post('/uplisting', verifySignature, (req, res) => {
   res.status(200).json({ received: true, timestamp });
 
   // ── 2. Log and Process Asynchronously ────────────────────────────────
-  const event = req.body;
+  let event;
+  try {
+      event = JSON.parse(req.body.toString('utf8'));
+  } catch (err) {
+      console.error('[Webhook] Failed to parse raw JSON body:', err.message);
+      return;
+  }
   
   console.log('\n══════════════════════════════════════════════════════════════');
   console.log(`[Webhook] 📨 Incoming Uplisting event at ${timestamp}`);

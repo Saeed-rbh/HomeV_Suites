@@ -19,8 +19,8 @@ const server = http.createServer(app);
 
 let CORS_WHITELIST = [process.env.FRONTEND_URL].filter(Boolean);
 
-// Strip localhost from CORS whitelist when running in production
-if (process.env.NODE_ENV !== 'production') {
+// Add localhost to CORS whitelist only in development
+if (process.env.NODE_ENV === 'development') {
   CORS_WHITELIST.push('http://localhost:3000', 'http://localhost:3001');
 }
 
@@ -58,6 +58,10 @@ app.use(cors({
   origin: CORS_WHITELIST,
   credentials: true,
 }));
+
+// Preserve raw body for webhook signature verification
+app.use('/api/webhooks', express.raw({ type: 'application/json' }));
+
 app.use(express.json());
 
 // ── Global Rate Limiter ───────────────────────────────────────────────────────
@@ -71,8 +75,16 @@ app.use('/api', (req, res, next) => {
 
 try {
   // Health check
-  app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', message: 'Backend is running' });
+  app.get('/api/health', async (req, res) => {
+    try {
+      // Basic DB check to ensure DB is alive
+      const { PrismaClient } = require('@prisma/client');
+      const prisma = new PrismaClient();
+      await prisma.$queryRaw`SELECT 1`;
+      res.json({ status: 'ok', message: 'Backend and Database are running' });
+    } catch (e) {
+      res.status(503).json({ status: 'error', message: 'Database connection failed' });
+    }
   });
 
   // Guesty Proxy routes
@@ -119,11 +131,7 @@ try {
   app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
   // Auth routes — keep last since middleware has compatibility issues in some envs
-  try {
-    app.use('/api/auth', require('./routes/auth'));
-  } catch (authErr) {
-    console.error('Auth route load error (non-fatal):', authErr.message);
-  }
+  app.use('/api/auth', require('./routes/auth'));
 
   app.get('/', (req, res) => {
     res.send('HomEV Backend Service is Running. Access the frontend on http://localhost:3001');

@@ -246,6 +246,13 @@ const updateV2Booking = async (bookingId, attributes = {}) => {
 };
 
 /**
+ * Fetch booking status using V2 client.
+ */
+const getV2BookingStatus = async (bookingId) => {
+  return globalLimiter.schedule(() => getClient('v2').get(`/v2/bookings/${bookingId}`));
+};
+
+/**
  * Cancel a V2 booking in Uplisting by setting status to 'cancelled'.
  * Uses PATCH /v2/bookings/:id — DELETE returns 405 on the V2 endpoint.
  *
@@ -386,6 +393,7 @@ module.exports = {
   unblockCalendarDates,
   createV2Booking,
   updateV2Booking,
+  getV2BookingStatus,
   cancelV2Booking,
   listCustomBookingAttributes,
   createCustomBookingAttribute

@@ -157,6 +157,9 @@ model Reservation {
   transactions   Transaction[]
   invoices       Invoice[]
   messageThread  MessageThread?
+
+  @@index([propertyId])
+  @@index([guestId])
 }
 
 // --- PHASE 2 MODELS ---

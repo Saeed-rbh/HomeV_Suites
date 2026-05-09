@@ -213,22 +213,7 @@ router.put('/staff/:id/host', auth, requireAdmin, async (req, res) => {
 
 // ── Uplisting V2 Partner Routes ─────────────────────────────────────────────
 
-const { createCustomBookingAttribute, listCustomBookingAttributes, updateV2Booking, globalLimiter } = require('../services/uplistingService');
-// Need direct access to the V2-authenticated client for booking status checks
-const axios = require('axios');
-const getUplistingV2Client = () => {
-    const API_KEY = process.env.UPLISTING_API_KEY;
-    const CLIENT_ID = process.env.UPLISTING_CLIENT_ID;
-    if (!API_KEY || !CLIENT_ID) throw new Error('Missing UPLISTING_API_KEY or UPLISTING_CLIENT_ID');
-    return axios.create({
-        baseURL: 'https://connect.uplisting.io',
-        headers: {
-            'Authorization': `Basic ${Buffer.from(API_KEY).toString('base64')}`,
-            'Content-Type': 'application/json',
-            'X-Uplisting-Client-Id': CLIENT_ID
-        }
-    });
-};
+const { createCustomBookingAttribute, listCustomBookingAttributes, updateV2Booking, getV2BookingStatus } = require('../services/uplistingService');
 
 /**
  * @route   GET api/admin/uplisting/bookings/:uplistingId/status
@@ -239,7 +224,7 @@ const getUplistingV2Client = () => {
 router.get('/uplisting/bookings/:uplistingId/status', auth, requireAdmin, async (req, res) => {
     const { uplistingId } = req.params;
     try {
-        const result = await globalLimiter.schedule(() => getUplistingV2Client().get(`/v2/bookings/${uplistingId}`));
+        const result = await getV2BookingStatus(uplistingId);
         const bookingData = result.data?.data;
         const status = bookingData?.attributes?.status || 'unknown';
         // Booking is "active" (still needs manual cancellation) if not already cancelled/archived

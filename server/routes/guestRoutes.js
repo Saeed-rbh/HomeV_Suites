@@ -5,8 +5,19 @@ const { protect: auth } = require('../middleware/auth');
 const prisma = require('../db');
 const { updateReservationStatus } = require('../services/reservationService');
 
+const requireAdmin = async (req, res, next) => {
+    try {
+        if (!req.user || req.user.role !== 'ADMIN') {
+            return res.status(403).json({ msg: 'Access denied: Requires Admin privileges' });
+        }
+        next();
+    } catch (err) {
+        res.status(500).send('Server Error');
+    }
+};
+
 router.get('/me/reservations', auth, guestController.getMyReservations);
-router.get('/reservations/all', guestController.getAllReservations);
+router.get('/reservations/all', auth, requireAdmin, guestController.getAllReservations);
 
 // POST /api/guests/me/reservations/:id/cancel
 // Authenticated guest self-cancellation — verifies ownership before invoking the full
@@ -38,25 +49,15 @@ router.post('/me/reservations/:id/cancel', auth, async (req, res) => {
   }
 });
 
-const requireAdmin = async (req, res, next) => {
-    try {
-        if (!req.user || req.user.role !== 'ADMIN') {
-            return res.status(403).json({ msg: 'Access denied: Requires Admin privileges' });
-        }
-        next();
-    } catch (err) {
-        res.status(500).send('Server Error');
-    }
-};
-
+// Admin routes
 router.route('/')
   .get(auth, requireAdmin, guestController.getGuests)
-  .post(guestController.createGuest);
+  .post(guestController.createGuest); // Used during checkout/signup
 
 router.route('/:id')
-  .get(guestController.getGuestById)
-  .put(guestController.updateGuest)
-  .delete(guestController.deleteGuest);
+  .get(auth, guestController.getGuestById)
+  .put(auth, guestController.updateGuest)
+  .delete(auth, requireAdmin, guestController.deleteGuest);
 
 module.exports = router;
 

@@ -5,23 +5,25 @@ const { unblockCalendarDates, updateV2Booking, cancelV2Booking, blockCalendarDat
 const stripe = require('../utils/stripeClient');
 
 const createReservation = async (data, paymentIntentId = null) => {
-  // Guard: check for overlapping confirmed reservations on the same property
-  const overlap = await prisma.reservation.findFirst({
-    where: {
-      propertyId: data.propertyId,
-      status: { notIn: ['CANCELLED'] },
-      AND: [
-        { startDate: { lt: new Date(data.endDate) } },
-        { endDate:   { gt: new Date(data.startDate) } }
-      ]
-    }
-  });
-  if (overlap) throw new Error('Property is not available for the selected dates.');
-
   const reservationId = crypto.randomUUID();
-  
-  const reservation = await prisma.reservation.create({ 
-    data: { ...data, id: reservationId } 
+
+  // Guard: check for overlapping confirmed reservations using a transaction to prevent race conditions
+  const reservation = await prisma.$transaction(async (tx) => {
+    const overlap = await tx.reservation.findFirst({
+      where: {
+        propertyId: data.propertyId,
+        status: { notIn: ['CANCELLED'] },
+        AND: [
+          { startDate: { lt: new Date(data.endDate) } },
+          { endDate:   { gt: new Date(data.startDate) } }
+        ]
+      }
+    });
+    if (overlap) throw new Error('Property is not available for the selected dates.');
+
+    return await tx.reservation.create({ 
+      data: { ...data, id: reservationId } 
+    });
   });
 
   if (paymentIntentId) {
@@ -74,6 +76,15 @@ const upsertReservation = async (data) => {
   Object.keys(safeData).forEach(key => safeData[key] === undefined && delete safeData[key]);
 
   if (data.externalId) {
+    if (data.uplistingBookingId) {
+        const byUplistingId = await prisma.reservation.findFirst({ where: { uplistingBookingId: data.uplistingBookingId } });
+        if (byUplistingId) {
+            return await prisma.reservation.update({
+                where: { id: byUplistingId.id },
+                data: safeData
+            });
+        }
+    }
     return await prisma.reservation.upsert({
       where: { externalId: data.externalId },
       update: safeData,
@@ -85,8 +96,17 @@ const upsertReservation = async (data) => {
 };
 
 const getReservations = async (filters = {}) => {
+  // Whitelist allowed query parameters to prevent NoSQL injection
+  const allowedFilters = ['status', 'propertyId', 'guestId'];
+  const safeFilters = {};
+  for (const key of allowedFilters) {
+    if (filters[key] !== undefined) {
+      safeFilters[key] = filters[key];
+    }
+  }
+
   return await prisma.reservation.findMany({
-    where: filters,
+    where: safeFilters,
     include: {
       property: { select: { id: true, title: true } },
       guest: { select: { id: true, firstName: true, lastName: true } }
@@ -117,8 +137,8 @@ const processRefundIfApplicable = async (reservationId) => {
 
   if (!fullRes || fullRes.selectedNonRefundable) return;
 
-  const transaction = fullRes.transactions.find(t => t.status === 'COMPLETED' && t.paymentMethodId && t.paymentMethodId.startsWith('pi_'));
-  if (!transaction) return;
+  const transaction = fullRes.transactions.find(t => t.status === 'COMPLETED' && t.stripeIntentId && t.stripeIntentId.startsWith('pi_'));
+  if (!transaction) return; // Not a website booking (e.g. OTA), do not refund via Stripe
 
   const nights = Math.round((new Date(fullRes.endDate) - new Date(fullRes.startDate)) / (1000 * 60 * 60 * 24));
   const policy = (nights >= 28 && fullRes.property.longTermPolicy) 
@@ -153,8 +173,56 @@ const processRefundIfApplicable = async (reservationId) => {
       console.log(`[Stripe] Refunded $${refundAmountCents / 100} for reservation ${reservationId} — refund ID: ${refund.id}`);
     } catch (err) {
       console.error('[Stripe] Refund failed:', err.message);
+      // Notify admin that manual refund is needed
+      try {
+        await telegramService.sendTextMessage(
+            getGroupId(), // assuming getGroupId exists, or we just rely on the general topic
+            `⚠️ STRIPE REFUND FAILED ⚠️\nReservation: ${reservationId}\nAmount: $${refundAmountCents / 100}\nError: ${err.message}\nPlease process manually in Stripe dashboard.`
+        );
+      } catch (telegramErr) {}
     }
   }
+};
+
+const handleCancellationCleanup = async (id) => {
+    const fullRes = await prisma.reservation.findUnique({
+        where: { id },
+        include: { guest: true, property: true }
+    });
+
+    if (fullRes) {
+        telegramService.announceReservationStatusChange(fullRes, fullRes.property, fullRes.guest, 'CANCELLED').catch(e => console.error(e));
+    }
+
+    const thread = await prisma.messageThread.findUnique({ where: { reservationId: id } });
+    if (thread && thread.telegramTopicId) {
+        await telegramService.deleteTopic(thread.telegramTopicId);
+    }
+
+    if (fullRes && fullRes.property) {
+        await processRefundIfApplicable(id);
+        try {
+            const rawCheckIn = fullRes.startDate.toISOString().split('T')[0];
+            const rawCheckOut = fullRes.endDate.toISOString().split('T')[0];
+            const blockPropId = fullRes.property.externalId || fullRes.property.id;
+
+            if (fullRes.uplistingBookingId) {
+                const today = new Date().toISOString().split('T')[0];
+                const uplistingDirectUrl = `https://app.uplisting.io/calendar/bookings/${fullRes.uplistingBookingId}/details?from=${today}`;
+                console.warn(`[ReservationService] ⚠ MANUAL ACTION REQUIRED ══════════════════════════════════════════`);
+                console.warn(`[ReservationService] 👉 Uplisting booking #${fullRes.uplistingBookingId} must be cancelled manually in the dashboard.`);
+                console.warn(`[ReservationService] 🔗 Direct link: ${uplistingDirectUrl}`);
+                console.warn(`[ReservationService] ══════════════════════════════════════════════════════════════════════`);
+            }
+
+            console.log(`[ReservationService] 🔓 Unblocking calendar dates on property ${blockPropId}: ${rawCheckIn} → ${rawCheckOut}`);
+            unblockCalendarDates(blockPropId, rawCheckIn, rawCheckOut).catch(err =>
+                console.error('[ReservationService] ⚠ Failed to unblock calendar dates on Uplisting:', err.message)
+            );
+        } catch (e) {
+            console.error('[ReservationService] ⚠ Error preparing Uplisting cancellation:', e.message);
+        }
+    }
 };
 
 const updateReservationStatus = async (id, status) => {
@@ -165,102 +233,41 @@ const updateReservationStatus = async (id, status) => {
 
   const upperStatus = status.toUpperCase();
   
-  // Announce modification to Telegram General Topic
-  const fullRes = await prisma.reservation.findUnique({
-      where: { id },
-      include: { guest: true, property: true }
-  });
-  if (fullRes) {
-      telegramService.announceReservationStatusChange(fullRes, fullRes.property, fullRes.guest, status).catch(e => console.error(e));
-  }
-
   if (['CANCELLED', 'FINISHED', 'INACTIVE'].includes(upperStatus)) {
-      const thread = await prisma.messageThread.findUnique({ where: { reservationId: id } });
-      if (thread && thread.telegramTopicId) {
-          await telegramService.deleteTopic(thread.telegramTopicId);
-      }
-      
-      if (upperStatus === 'CANCELLED' && fullRes && fullRes.property) {
-          await processRefundIfApplicable(id);
-          try {
-              const rawCheckIn = fullRes.startDate.toISOString().split('T')[0];
-              const rawCheckOut = fullRes.endDate.toISOString().split('T')[0];
-              const blockPropId = fullRes.property.externalId || fullRes.property.id;
-
-              const resWithBookingId = await prisma.reservation.findUnique({ where: { id } });
-              const uplistingBookingId = resWithBookingId?.uplistingBookingId;
-
-              if (uplistingBookingId) {
-                  // ⚠️  The Uplisting public API does NOT support cancelling bookings programmatically.
-                  // PATCH /v2/bookings/:id only updates custom attributes — it cannot change booking status.
-                  // The booking will remain visible in Uplisting dashboard as 'confirmed'.
-                  // ACTION REQUIRED: Open the direct link below and manually cancel/archive the booking.
-                  const today = new Date().toISOString().split('T')[0];
-                  const uplistingDirectUrl = `https://app.uplisting.io/calendar/bookings/${uplistingBookingId}/details?from=${today}`;
-                  console.warn(`[ReservationService] ⚠ MANUAL ACTION REQUIRED ══════════════════════════════════════════`);
-                  console.warn(`[ReservationService] 👉 Uplisting booking #${uplistingBookingId} must be cancelled manually in the dashboard.`);
-                  console.warn(`[ReservationService] 🔗 Direct link: ${uplistingDirectUrl}`);
-                  console.warn(`[ReservationService] ══════════════════════════════════════════════════════════════════════`);
-              }
-
-              // Free up the calendar dates via the V1 calendar API so OTA channels
-              // (Airbnb, Booking.com, VRBO) can accept new bookings for these dates.
-              console.log(`[ReservationService] 🔓 Unblocking calendar dates on property ${blockPropId}: ${rawCheckIn} → ${rawCheckOut}`);
-              unblockCalendarDates(blockPropId, rawCheckIn, rawCheckOut).catch(err =>
-                  console.error('[ReservationService] ⚠ Failed to unblock calendar dates on Uplisting:', err.message)
-              );
-          } catch (e) {
-              console.error('[ReservationService] ⚠ Error preparing Uplisting cancellation:', e.message);
+      if (upperStatus === 'CANCELLED') {
+          await handleCancellationCleanup(id);
+      } else {
+          // Announce and close thread for finished/inactive
+          const fullRes = await prisma.reservation.findUnique({
+              where: { id },
+              include: { guest: true, property: true }
+          });
+          if (fullRes) {
+              telegramService.announceReservationStatusChange(fullRes, fullRes.property, fullRes.guest, status).catch(e => console.error(e));
           }
+          const thread = await prisma.messageThread.findUnique({ where: { reservationId: id } });
+          if (thread && thread.telegramTopicId) {
+              await telegramService.deleteTopic(thread.telegramTopicId);
+          }
+      }
+  } else {
+      const fullRes = await prisma.reservation.findUnique({
+          where: { id },
+          include: { guest: true, property: true }
+      });
+      if (fullRes) {
+          telegramService.announceReservationStatusChange(fullRes, fullRes.property, fullRes.guest, status).catch(e => console.error(e));
       }
   }
   return result;
 };
 
 const deleteReservation = async (id) => {
-  // Announce the deletion
-  const fullRes = await prisma.reservation.findUnique({
-      where: { id },
-      include: { guest: true, property: true }
-  });
-  if (fullRes) {
-      telegramService.announceReservationStatusChange(fullRes, fullRes.property, fullRes.guest, 'CANCELLED').catch(e => console.error(e));
-  }
-
-  const thread = await prisma.messageThread.findUnique({ where: { reservationId: id } });
-  if (thread && thread.telegramTopicId) {
-      await telegramService.deleteTopic(thread.telegramTopicId);
-  }
-
-  if (fullRes && fullRes.property) {
-      await processRefundIfApplicable(id);
-      try {
-          const rawCheckIn = fullRes.startDate.toISOString().split('T')[0];
-          const rawCheckOut = fullRes.endDate.toISOString().split('T')[0];
-          const blockPropId = fullRes.property.externalId || fullRes.property.id;
-          
-          if (fullRes.uplistingBookingId) {
-              // ⚠️  Uplisting API does not support programmatic cancellation.
-              // The booking will remain in Uplisting dashboard as 'confirmed'.
-              const today = new Date().toISOString().split('T')[0];
-              const uplistingDirectUrl = `https://app.uplisting.io/calendar/bookings/${fullRes.uplistingBookingId}/details?from=${today}`;
-              console.warn(`[ReservationService] ⚠ MANUAL ACTION REQUIRED ══════════════════════════════════════════`);
-              console.warn(`[ReservationService] 👉 Uplisting booking #${fullRes.uplistingBookingId} must be cancelled manually in the dashboard.`);
-              console.warn(`[ReservationService] 🔗 Direct link: ${uplistingDirectUrl}`);
-              console.warn(`[ReservationService] ══════════════════════════════════════════════════════════════════════`);
-          }
-          // Free up calendar dates via V1 so OTA channels accept new bookings
-          console.log(`[ReservationService] 🔓 Unblocking calendar dates for property ${blockPropId}: ${rawCheckIn} → ${rawCheckOut}`);
-          unblockCalendarDates(blockPropId, rawCheckIn, rawCheckOut).catch(err =>
-              console.error('[ReservationService] ⚠ Failed to unblock dates on Uplisting:', err.message)
-          );
-      } catch (e) {
-          console.error('[ReservationService] ⚠ Error preparing Uplisting cleanup:', e.message);
-      }
-  }
-
-  return await prisma.reservation.delete({
-    where: { id }
+  // Soft delete instead of hard delete to preserve audit history and transactions
+  await handleCancellationCleanup(id);
+  return await prisma.reservation.update({
+    where: { id },
+    data: { status: 'CANCELLED' }
   });
 };
 
