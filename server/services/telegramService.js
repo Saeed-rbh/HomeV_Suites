@@ -81,7 +81,7 @@ async function sendThreadMessageToTelegram(thread, message) {
     if (!topicId) {
         console.log(`[TelegramService] Creating new topic for Thread ${thread.id}`);
         
-        const propertyTitle = thread.property?.title || 'HomEV';
+        const propertyTitle = thread.property?.nickname || thread.property?.title || 'HomEV';
         const topicTitle = `${senderName} - ${propertyTitle}`;
         
         topicId = await createTopic(topicTitle);
@@ -121,11 +121,27 @@ async function announceNewBooking(reservation, property, guest, thread) {
     if (!getToken() || !getGroupId()) return;
 
     const guestName = `${guest.firstName || ''} ${guest.lastName || ''}`.trim() || 'Guest';
+    const propLabel = property.nickname || property.title || 'HomEV';
     const start = new Date(reservation.startDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
     const end = new Date(reservation.endDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-    
+    const uplistingLink = reservation.uplistingBookingId
+        ? `\n🔗 Uplisting: https://app.uplisting.io/calendar/bookings/${reservation.uplistingBookingId}/details?from=${new Date().toISOString().split('T')[0]}`
+        : '';
+    const contactLine = [
+        guest.email ? `📧 ${guest.email}` : '',
+        guest.phone ? `📞 ${guest.phone}` : ''
+    ].filter(Boolean).join('  ');
+
     // 1. Post to the General (main) topic
-    const generalMsg = `🎉 **New Booking Received!**\nRef: #${reservation.id}\nGuest: ${guestName}\nProperty: ${property.title || 'HomEV'}\nDates: ${start} - ${end}\nPrice: $${reservation.totalPrice || 0}`;
+    const generalMsg = [
+        `🎉 New Booking Received!`,
+        `Guest: ${guestName}`,
+        contactLine,
+        `Property: ${propLabel}`,
+        `Dates: ${start} → ${end}`,
+        `Price: $${reservation.totalPrice || 0}`,
+        uplistingLink
+    ].filter(Boolean).join('\n');
 
     try {
         await axios.post(`${apiUrl()}/sendMessage`, {
@@ -136,38 +152,61 @@ async function announceNewBooking(reservation, property, guest, thread) {
         console.error('[TelegramService] Failed to post general booking alert:', e.response?.data || e.message);
     }
 
-    // 2. Immediately create a dedicated topic for this booking!
-    const topicTitle = `${guestName} - ${property.title || 'HomEV'}`;
+    // 2. Create a dedicated topic for this booking
+    const topicTitle = `${guestName} - ${propLabel}`;
     const topicId = await createTopic(topicTitle);
-    
+
     if (topicId) {
-        // Update DB
         await prisma.messageThread.update({
             where: { id: thread.id },
             data: { telegramTopicId: topicId }
         });
-        
-        // Post context to the new topic
-        let contextMsg = `📝 **Conversation Channel Prepared**\nRef: #${reservation.id}\nGuest: ${guestName}\nProperty: ${property.title || 'HomEV'}\nBooked: ${start} - ${end}\n\n_When the guest sends a message, it will appear here. You can also send a proactive message directly here to reach their dashboard!_`;
-        
+
+        const contextMsg = [
+            `📝 Conversation Channel Prepared`,
+            `Guest: ${guestName}`,
+            contactLine,
+            `Property: ${propLabel}`,
+            `Booked: ${start} → ${end}`,
+            uplistingLink,
+            ``,
+            `_When the guest sends a message it will appear here. You can also reply proactively._`
+        ].filter(l => l !== undefined).join('\n');
+
         await sendTextMessage(topicId, contextMsg);
     }
 }
 
 async function announceReservationStatusChange(reservation, property, guest, newStatus) {
     if (!getToken() || !getGroupId()) return;
-    
-    const guestName = guest ? `${guest.firstName || ''} ${guest.lastName || ''}`.trim() || 'Guest' : 'Unknown Guest';
-    const propTitle = property ? property.title : 'Unknown Property';
 
-    const emoji = ['CANCELLED', 'INACTIVE'].includes(newStatus.toUpperCase()) ? '❌' : '⚠️';
-    
-    const alertMsg = `${emoji} **Reservation Update**\nStatus changed to: **${newStatus.toUpperCase()}**\nRef: #${reservation.id}\nGuest: ${guestName}\nProperty: ${propTitle}`;
+    const guestName = guest ? `${guest.firstName || ''} ${guest.lastName || ''}`.trim() || 'Guest' : 'Unknown Guest';
+    const propLabel = property ? (property.nickname || property.title || 'Unknown Property') : 'Unknown Property';
+    const isCancelled = ['CANCELLED', 'INACTIVE'].includes(newStatus.toUpperCase());
+    const emoji = isCancelled ? '❌' : '⚠️';
+
+    const contactLine = [
+        guest?.email ? `📧 ${guest.email}` : '',
+        guest?.phone ? `📞 ${guest.phone}` : ''
+    ].filter(Boolean).join('  ');
+
+    const uplistingLink = reservation.uplistingBookingId
+        ? `🔗 Uplisting: https://app.uplisting.io/calendar/bookings/${reservation.uplistingBookingId}/details?from=${new Date().toISOString().split('T')[0]}`
+        : '';
+
+    const lines = [
+        `${emoji} Reservation ${newStatus.toUpperCase()}`,
+        `Guest: ${guestName}`,
+        contactLine,
+        `Property: ${propLabel}`,
+        uplistingLink,
+        isCancelled && uplistingLink ? `👆 Please cancel this booking in Uplisting manually.` : ''
+    ].filter(Boolean);
 
     try {
         await axios.post(`${apiUrl()}/sendMessage`, {
             chat_id: getGroupId(),
-            text: alertMsg
+            text: lines.join('\n')
         });
     } catch (e) {
         console.error('[TelegramService] Failed to post status change alert:', e.response?.data || e.message);
