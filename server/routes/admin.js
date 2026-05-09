@@ -213,7 +213,33 @@ router.put('/staff/:id/host', auth, requireAdmin, async (req, res) => {
 
 // ── Uplisting V2 Partner Routes ─────────────────────────────────────────────
 
-const { createCustomBookingAttribute, listCustomBookingAttributes, updateV2Booking } = require('../services/uplistingService');
+const { createCustomBookingAttribute, listCustomBookingAttributes, updateV2Booking, fetchGlobalData } = require('../services/uplistingService');
+
+/**
+ * @route   GET api/admin/uplisting/bookings/:uplistingId/status
+ * @desc    Check live status of an Uplisting booking. Returns { active: true/false, status }
+ *          Used by the admin UI to determine whether to show "Cancel in Uplisting" button.
+ * @access  Admin only
+ */
+router.get('/uplisting/bookings/:uplistingId/status', auth, requireAdmin, async (req, res) => {
+    const { uplistingId } = req.params;
+    try {
+        const result = await fetchGlobalData(`/v2/bookings/${uplistingId}`);
+        const bookingData = result.data?.data;
+        const status = bookingData?.attributes?.status || 'unknown';
+        // Booking is "active" (still needs manual cancellation) if not already cancelled/archived
+        const active = !['cancelled', 'archived', 'declined'].includes(status.toLowerCase());
+        res.json({ success: true, uplistingId, status, active });
+    } catch (err) {
+        // 404 means the booking doesn't exist in Uplisting at all
+        if (err.response?.status === 404) {
+            return res.json({ success: true, uplistingId, status: 'not_found', active: false });
+        }
+        console.error(`[Admin] Uplisting booking ${uplistingId} status check failed:`, err.message);
+        // On any other error, assume active so the button stays visible (fail-safe)
+        res.json({ success: true, uplistingId, status: 'error', active: true });
+    }
+});
 
 /**
  * @route   GET api/admin/uplisting/custom-attributes
