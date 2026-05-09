@@ -51,18 +51,24 @@ async function deleteTopic(topicId) {
     }
 }
 
-async function sendTextMessage(topicId, text) {
+async function sendTextMessage(topicId, text, buttons = null) {
     if (!getToken() || !getGroupId()) return null;
 
+    const payload = {
+        chat_id: getGroupId(),
+        message_thread_id: topicId,
+        text
+    };
+    if (buttons && buttons.length > 0) {
+        payload.reply_markup = {
+            inline_keyboard: buttons  // array of rows, each row is array of {text, url}
+        };
+    }
+
     try {
-        const response = await axios.post(`${apiUrl()}/sendMessage`, {
-            chat_id: getGroupId(),
-            message_thread_id: topicId,
-            text: text
-        });
+        const response = await axios.post(`${apiUrl()}/sendMessage`, payload);
         return response.data.ok;
     } catch (e) {
-        // If topic was deleted or user kicked, handle silently
         console.error('[TelegramService] Failed to send message:', e.response?.data || e.message);
         return false;
     }
@@ -124,13 +130,15 @@ async function announceNewBooking(reservation, property, guest, thread) {
     const propLabel = property.nickname || property.title || 'HomEV';
     const start = new Date(reservation.startDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
     const end = new Date(reservation.endDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-    const uplistingLink = reservation.uplistingBookingId
-        ? `🔗 Uplisting: https://app.uplisting.io/calendar/bookings/${reservation.uplistingBookingId}/details?from=${new Date().toISOString().split('T')[0]}`
-        : '';
     const contactLines = [
         guest.email ? `📧 ${guest.email}` : '',
         guest.phone ? `📞 ${guest.phone}` : ''
     ].filter(Boolean);
+
+    // Build inline button for Uplisting (if booking was synced)
+    const uplistingButtons = reservation.uplistingBookingId ? [[
+        { text: '🔗 View in Uplisting', url: `https://app.uplisting.io/calendar/bookings/${reservation.uplistingBookingId}/details?from=${new Date().toISOString().split('T')[0]}` }
+    ]] : null;
 
     // 1. Post to the General (main) topic
     const generalMsg = [
@@ -139,14 +147,14 @@ async function announceNewBooking(reservation, property, guest, thread) {
         ...contactLines,
         `Property: ${propLabel}`,
         `Dates: ${start} → ${end}`,
-        `Price: $${reservation.totalPrice || 0}`,
-        uplistingLink
-    ].filter(Boolean).join('\n');
+        `Price: $${reservation.totalPrice || 0}`
+    ].join('\n');
 
     try {
         await axios.post(`${apiUrl()}/sendMessage`, {
             chat_id: getGroupId(),
-            text: generalMsg
+            text: generalMsg,
+            ...(uplistingButtons && { reply_markup: { inline_keyboard: uplistingButtons } })
         });
     } catch (e) {
         console.error('[TelegramService] Failed to post general booking alert:', e.response?.data || e.message);
@@ -168,12 +176,11 @@ async function announceNewBooking(reservation, property, guest, thread) {
             ...contactLines,
             `Property: ${propLabel}`,
             `Booked: ${start} → ${end}`,
-            uplistingLink,
             ``,
             `_When the guest sends a message it will appear here. You can also reply proactively._`
         ].filter(l => l !== undefined).join('\n');
 
-        await sendTextMessage(topicId, contextMsg);
+        await sendTextMessage(topicId, contextMsg, uplistingButtons);
     }
 }
 
@@ -190,23 +197,27 @@ async function announceReservationStatusChange(reservation, property, guest, new
         guest?.phone ? `📞 ${guest.phone}` : ''
     ].filter(Boolean);
 
-    const uplistingLink = reservation.uplistingBookingId
-        ? `🔗 Uplisting: https://app.uplisting.io/calendar/bookings/${reservation.uplistingBookingId}/details?from=${new Date().toISOString().split('T')[0]}`
-        : '';
+    // Build inline button row for Uplisting
+    const uplistingButtons = reservation.uplistingBookingId ? [[
+        {
+            text: isCancelled ? '❌ Cancel in Uplisting' : '🔗 View in Uplisting',
+            url: `https://app.uplisting.io/calendar/bookings/${reservation.uplistingBookingId}/details?from=${new Date().toISOString().split('T')[0]}`
+        }
+    ]] : null;
 
     const lines = [
         `${emoji} Reservation ${newStatus.toUpperCase()}`,
         `Guest: ${guestName}`,
         ...contactLines,
         `Property: ${propLabel}`,
-        uplistingLink,
-        isCancelled && uplistingLink ? `👆 Please cancel this booking in Uplisting manually.` : ''
+        isCancelled && uplistingButtons ? `👆 Tap below to cancel this booking in Uplisting.` : ''
     ].filter(Boolean);
 
     try {
         await axios.post(`${apiUrl()}/sendMessage`, {
             chat_id: getGroupId(),
-            text: lines.join('\n')
+            text: lines.join('\n'),
+            ...(uplistingButtons && { reply_markup: { inline_keyboard: uplistingButtons } })
         });
     } catch (e) {
         console.error('[TelegramService] Failed to post status change alert:', e.response?.data || e.message);
