@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { CreditCard, LoaderCircle, ShieldCheck } from "lucide-react";
+import { CreditCard, LoaderCircle, ShieldCheck, AlertCircle, X } from "lucide-react";
 import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
 
 export default function CheckoutForm({ listingId, checkIn, checkOut, guests, selectedNonRefundable, totalPrice }) {
   const [status, setStatus] = useState("idle");
+  const [paymentError, setPaymentError] = useState(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -47,6 +48,7 @@ export default function CheckoutForm({ listingId, checkIn, checkOut, guests, sel
     }
 
     setStatus("processing");
+    setPaymentError(null);
     try {
       // 1. Confirm the payment via Stripe
       const { error: submitError } = await elements.submit();
@@ -122,7 +124,7 @@ export default function CheckoutForm({ listingId, checkIn, checkOut, guests, sel
       router.push(buildConfirmUrl());
     } catch (err) {
       console.error(err);
-      alert(err.message || "Failed to confirm booking. Please try again.");
+      setPaymentError(err.message || "Payment failed. Please check your card details and try again.");
       setStatus("idle");
     }
   }
@@ -198,6 +200,24 @@ export default function CheckoutForm({ listingId, checkIn, checkOut, guests, sel
           </div>
         </div>
       </section>
+
+      {/* ── Payment error banner ── */}
+      {paymentError && (
+        <div className="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 animate-in slide-in-from-top-2 duration-300">
+          <AlertCircle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-red-800 leading-snug">Payment unsuccessful</p>
+            <p className="text-sm text-red-600 mt-0.5 leading-relaxed">{paymentError}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setPaymentError(null)}
+            className="shrink-0 text-red-400 hover:text-red-600 transition p-0.5 rounded-lg hover:bg-red-100"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
 
       <button
         type="submit"
