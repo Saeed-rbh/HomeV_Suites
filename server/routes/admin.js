@@ -213,7 +213,22 @@ router.put('/staff/:id/host', auth, requireAdmin, async (req, res) => {
 
 // ── Uplisting V2 Partner Routes ─────────────────────────────────────────────
 
-const { createCustomBookingAttribute, listCustomBookingAttributes, updateV2Booking, fetchGlobalData } = require('../services/uplistingService');
+const { createCustomBookingAttribute, listCustomBookingAttributes, updateV2Booking, globalLimiter } = require('../services/uplistingService');
+// Need direct access to the V2-authenticated client for booking status checks
+const axios = require('axios');
+const getUplistingV2Client = () => {
+    const API_KEY = process.env.UPLISTING_API_KEY;
+    const CLIENT_ID = process.env.UPLISTING_CLIENT_ID;
+    if (!API_KEY || !CLIENT_ID) throw new Error('Missing UPLISTING_API_KEY or UPLISTING_CLIENT_ID');
+    return axios.create({
+        baseURL: 'https://connect.uplisting.io',
+        headers: {
+            'Authorization': `Basic ${Buffer.from(API_KEY).toString('base64')}`,
+            'Content-Type': 'application/json',
+            'X-Uplisting-Client-Id': CLIENT_ID
+        }
+    });
+};
 
 /**
  * @route   GET api/admin/uplisting/bookings/:uplistingId/status
@@ -224,22 +239,26 @@ const { createCustomBookingAttribute, listCustomBookingAttributes, updateV2Booki
 router.get('/uplisting/bookings/:uplistingId/status', auth, requireAdmin, async (req, res) => {
     const { uplistingId } = req.params;
     try {
-        const result = await fetchGlobalData(`/v2/bookings/${uplistingId}`);
+        const result = await globalLimiter.schedule(() => getUplistingV2Client().get(`/v2/bookings/${uplistingId}`));
         const bookingData = result.data?.data;
         const status = bookingData?.attributes?.status || 'unknown';
         // Booking is "active" (still needs manual cancellation) if not already cancelled/archived
         const active = !['cancelled', 'archived', 'declined'].includes(status.toLowerCase());
+        console.log(`[Admin] Uplisting booking ${uplistingId} status: ${status} (active=${active})`);
         res.json({ success: true, uplistingId, status, active });
     } catch (err) {
-        // 404 means the booking doesn't exist in Uplisting at all
-        if (err.response?.status === 404) {
+        const httpStatus = err.response?.status;
+        const errBody = JSON.stringify(err.response?.data || err.message);
+        console.error(`[Admin] Uplisting booking ${uplistingId} status check failed — HTTP ${httpStatus}: ${errBody}`);
+        // 404 = booking was deleted from Uplisting → no longer active
+        if (httpStatus === 404) {
             return res.json({ success: true, uplistingId, status: 'not_found', active: false });
         }
-        console.error(`[Admin] Uplisting booking ${uplistingId} status check failed:`, err.message);
-        // On any other error, assume active so the button stays visible (fail-safe)
+        // Any other error: fail-safe → assume active so button stays visible
         res.json({ success: true, uplistingId, status: 'error', active: true });
     }
 });
+
 
 /**
  * @route   GET api/admin/uplisting/custom-attributes
