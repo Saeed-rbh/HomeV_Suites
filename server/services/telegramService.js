@@ -125,18 +125,18 @@ async function announceNewBooking(reservation, property, guest, thread) {
     const start = new Date(reservation.startDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
     const end = new Date(reservation.endDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
     const uplistingLink = reservation.uplistingBookingId
-        ? `\n🔗 Uplisting: https://app.uplisting.io/calendar/bookings/${reservation.uplistingBookingId}/details?from=${new Date().toISOString().split('T')[0]}`
+        ? `🔗 Uplisting: https://app.uplisting.io/calendar/bookings/${reservation.uplistingBookingId}/details?from=${new Date().toISOString().split('T')[0]}`
         : '';
-    const contactLine = [
+    const contactLines = [
         guest.email ? `📧 ${guest.email}` : '',
         guest.phone ? `📞 ${guest.phone}` : ''
-    ].filter(Boolean).join('  ');
+    ].filter(Boolean);
 
     // 1. Post to the General (main) topic
     const generalMsg = [
         `🎉 New Booking Received!`,
         `Guest: ${guestName}`,
-        contactLine,
+        ...contactLines,
         `Property: ${propLabel}`,
         `Dates: ${start} → ${end}`,
         `Price: $${reservation.totalPrice || 0}`,
@@ -165,7 +165,7 @@ async function announceNewBooking(reservation, property, guest, thread) {
         const contextMsg = [
             `📝 Conversation Channel Prepared`,
             `Guest: ${guestName}`,
-            contactLine,
+            ...contactLines,
             `Property: ${propLabel}`,
             `Booked: ${start} → ${end}`,
             uplistingLink,
@@ -185,10 +185,10 @@ async function announceReservationStatusChange(reservation, property, guest, new
     const isCancelled = ['CANCELLED', 'INACTIVE'].includes(newStatus.toUpperCase());
     const emoji = isCancelled ? '❌' : '⚠️';
 
-    const contactLine = [
+    const contactLines = [
         guest?.email ? `📧 ${guest.email}` : '',
         guest?.phone ? `📞 ${guest.phone}` : ''
-    ].filter(Boolean).join('  ');
+    ].filter(Boolean);
 
     const uplistingLink = reservation.uplistingBookingId
         ? `🔗 Uplisting: https://app.uplisting.io/calendar/bookings/${reservation.uplistingBookingId}/details?from=${new Date().toISOString().split('T')[0]}`
@@ -197,7 +197,7 @@ async function announceReservationStatusChange(reservation, property, guest, new
     const lines = [
         `${emoji} Reservation ${newStatus.toUpperCase()}`,
         `Guest: ${guestName}`,
-        contactLine,
+        ...contactLines,
         `Property: ${propLabel}`,
         uplistingLink,
         isCancelled && uplistingLink ? `👆 Please cancel this booking in Uplisting manually.` : ''

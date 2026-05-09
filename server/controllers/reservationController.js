@@ -205,6 +205,8 @@ const createReservation = async (req, res) => {
                 where: { id: reservation.id },
                 data: { uplistingBookingId: String(uplistingBookingId) }
               });
+              // Attach the ID to the in-memory object so Telegram can use it immediately
+              reservation.uplistingBookingId = String(uplistingBookingId);
               console.log(`[Reservation] 💾 Saved uplistingBookingId=${uplistingBookingId} → reservation ${reservation.id}`);
             } catch (saveErr) {
               console.warn(`[Reservation] ⚠ Could not save uplistingBookingId to DB:`, saveErr.message);
