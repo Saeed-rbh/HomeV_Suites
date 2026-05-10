@@ -109,7 +109,8 @@ const getReservations = async (filters = {}) => {
     where: safeFilters,
     include: {
       property: { select: { id: true, title: true } },
-      guest: { select: { id: true, firstName: true, lastName: true } }
+      guest: { select: { id: true, firstName: true, lastName: true } },
+      transactions: true
     }
   });
 };

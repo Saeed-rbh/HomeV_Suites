@@ -54,30 +54,63 @@ export default function AdminDashboard() {
 
     useEffect(() => {
         const token = localStorage.getItem('adminToken');
-        fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '/reservations', {
-            headers: { 'Authorization': `Bearer ${token}`, 'x-auth-token': token }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success && data.data) {
-                const raw = data.data;
+        
+        const fetchReservations = fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '/reservations', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        }).then(res => res.json());
+
+        const fetchProperties = fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '/properties', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        }).then(res => res.json());
+
+        Promise.all([fetchReservations, fetchProperties])
+        .then(([resData, propData]) => {
+            if (resData.success && resData.data) {
+                const raw = resData.data;
+                const propertiesCount = (propData.success && propData.data) ? propData.data.length : 1;
+                
                 let sumRevenue = 0, sumGuests = 0, activeCount = 0;
-                let channelCounts = {};
                 let monthsData = Array(12).fill(0);
+                
+                // Occupancy variables for current month
+                const now = new Date();
+                const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+                const totalAvailableNights = (propertiesCount > 0 ? propertiesCount : 1) * daysInMonth;
+                let bookedNightsThisMonth = 0;
 
                 const mapped = raw.map(r => {
-                    sumRevenue += parseFloat(r.totalPrice || 0);
-                    // Since guest count isn't explicitly tracked in Reservation model yet, we default to 1 per booking
-                    sumGuests += 1;
-                    if (r.status && ['Confirmed', 'Upcoming', 'confirmed', 'CONFIRMED', 'CHECKED_IN'].includes(r.status)) activeCount++;
-                    if (r.startDate || r.checkInDate) {
-                        const d = new Date(r.startDate || r.checkInDate);
-                        if (!isNaN(d.getMonth())) monthsData[d.getMonth()] += parseFloat(r.totalPrice || 0);
+                    const isNotCancelled = r.status && r.status.toUpperCase() !== 'CANCELLED';
+                    const isStripePaid = r.transactions && r.transactions.some(t => t.stripeIntentId && t.status === 'COMPLETED');
+                    
+                    if (isNotCancelled) {
+                        // 1. Total Guests: only confirmed/active bookings
+                        sumGuests += 1;
+                        
+                        // 2. Active Bookings count
+                        if (['CONFIRMED', 'CHECKED_IN'].includes(r.status?.toUpperCase())) activeCount++;
+                        
+                        // 3. Occupancy calculation (monthly booked vs empty, both uplisting & website)
+                        const resStart = new Date(r.startDate || r.checkInDate);
+                        const resEnd = new Date(r.endDate || r.checkOutDate);
+                        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+                        const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                        
+                        const overlapStart = resStart > monthStart ? resStart : monthStart;
+                        const overlapEnd = resEnd < monthEnd ? resEnd : monthEnd;
+                        
+                        if (overlapStart < overlapEnd) {
+                            bookedNightsThisMonth += Math.round((overlapEnd - overlapStart) / (1000 * 60 * 60 * 24));
+                        }
                     }
-                    let chnl = r.channel || 'Direct';
-                    if (chnl.toLowerCase() === 'direct') chnl = 'Direct';
-                    else chnl = chnl.charAt(0).toUpperCase() + chnl.slice(1);
-                    channelCounts[chnl] = (channelCounts[chnl] || 0) + 1;
+
+                    // 4. Revenue: Paid from Stripe AND not cancelled
+                    if (isNotCancelled && isStripePaid) {
+                        sumRevenue += parseFloat(r.totalPrice || 0);
+                        if (r.startDate || r.checkInDate) {
+                            const d = new Date(r.startDate || r.checkInDate);
+                            if (!isNaN(d.getMonth())) monthsData[d.getMonth()] += parseFloat(r.totalPrice || 0);
+                        }
+                    }
 
                     return {
                         id: r.id || 'RES-XXX',
@@ -86,29 +119,21 @@ export default function AdminDashboard() {
                         checkIn: r.startDate || r.checkInDate || '',
                         checkOut: r.endDate || r.checkOutDate || '',
                         amount: parseFloat(r.totalPrice || 0),
-                        status: r.status || 'Pending',
-                        channel: r.channel || 'Direct',
+                    status: r.status || 'Pending',
+                        channel: r.channel || (isStripePaid ? 'Website' : 'OTA')
                     };
                 });
 
-                const sourceArr = Object.entries(channelCounts)
-                    .sort((a, b) => b[1] - a[1])
-                    .map(([label, count], idx) => ({
-                        label,
-                        count,
-                        pct: Math.round((count / (raw.length || 1)) * 100),
-                        colors: CHANNEL_COLORS[idx % 5]
-                    }));
-
                 const maxRev = Math.max(...monthsData, 1);
+                const actualOccupancyRate = Math.min(100, Math.round((bookedNightsThisMonth / totalAvailableNights) * 100));
+
                 setTimeline(monthsData.map(v => ({ value: v, height: Math.max(4, Math.round((v / maxRev) * 100)) })));
                 setStats({
                     revenue: `$${sumRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`,
                     activeBookings: activeCount,
                     totalGuests: sumGuests,
-                    occupancy: raw.length > 0 ? `${Math.min(94, Math.round(50 + activeCount * 2))}%` : '—'
+                    occupancy: raw.length > 0 ? `${actualOccupancyRate}%` : '—'
                 });
-                setSources(sourceArr.length > 0 ? sourceArr : [{ label: 'Direct', count: 0, pct: 100, colors: CHANNEL_COLORS[0] }]);
                 setRecentBookings(mapped.slice(0, 10));
             }
         })
