@@ -67,10 +67,11 @@ export default function AdminDashboard() {
 
                 const mapped = raw.map(r => {
                     sumRevenue += parseFloat(r.totalPrice || 0);
-                    sumGuests += (r.adults || 1) + (r.children || 0);
-                    if (r.status && ['Confirmed', 'Upcoming', 'confirmed'].includes(r.status)) activeCount++;
-                    if (r.checkInDate) {
-                        const d = new Date(r.checkInDate);
+                    // Since guest count isn't explicitly tracked in Reservation model yet, we default to 1 per booking
+                    sumGuests += 1;
+                    if (r.status && ['Confirmed', 'Upcoming', 'confirmed', 'CONFIRMED', 'CHECKED_IN'].includes(r.status)) activeCount++;
+                    if (r.startDate || r.checkInDate) {
+                        const d = new Date(r.startDate || r.checkInDate);
                         if (!isNaN(d.getMonth())) monthsData[d.getMonth()] += parseFloat(r.totalPrice || 0);
                     }
                     let chnl = r.channel || 'Direct';
@@ -80,10 +81,10 @@ export default function AdminDashboard() {
 
                     return {
                         id: r.id || 'RES-XXX',
-                        guest: r.guestName || 'Unknown',
-                        property: r.propertyId || 'Unknown',
-                        checkIn: r.checkInDate || '',
-                        checkOut: r.checkOutDate || '',
+                        guest: (r.guest && r.guest.firstName) ? `${r.guest.firstName} ${r.guest.lastName}` : (r.guestName || 'Unknown'),
+                        property: (r.property && r.property.title) ? r.property.title : (r.propertyId || 'Unknown'),
+                        checkIn: r.startDate || r.checkInDate || '',
+                        checkOut: r.endDate || r.checkOutDate || '',
                         amount: parseFloat(r.totalPrice || 0),
                         status: r.status || 'Pending',
                         channel: r.channel || 'Direct',
@@ -116,8 +117,8 @@ export default function AdminDashboard() {
     }, []);
 
     const getStatusStyle = (status) => {
-        if (['Confirmed', 'confirmed'].includes(status)) return 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200';
-        if (['Pending', 'pending'].includes(status)) return 'bg-amber-50 text-amber-700 ring-1 ring-amber-200';
+        if (['Confirmed', 'confirmed', 'CONFIRMED'].includes(status)) return 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200';
+        if (['Pending', 'pending', 'PENDING'].includes(status)) return 'bg-amber-50 text-amber-700 ring-1 ring-amber-200';
         return 'bg-slate-50 text-[#0c1929] ring-1 ring-slate-200';
     };
 
@@ -150,9 +151,9 @@ export default function AdminDashboard() {
             </div>
 
             {/* Charts Row */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6">
                 {/* Revenue Timeline */}
-                <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-2">
                             <BarChart2 className="w-4 h-4 text-[#0c1929]" />
@@ -186,38 +187,7 @@ export default function AdminDashboard() {
                     </div>
                 </div>
 
-                {/* Booking Sources */}
-                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-                    <div className="flex items-center gap-2 mb-6">
-                        <Activity className="w-4 h-4 text-[#0c1929]" />
-                        <h2 className="text-sm font-bold text-[#0c1929]">Booking Sources</h2>
-                    </div>
-                    {loading ? (
-                        <div className="space-y-4">
-                            {[1,2,3].map(i => <div key={i} className="h-8 bg-slate-100 rounded-lg animate-pulse" />)}
-                        </div>
-                    ) : (
-                        <div className="space-y-4">
-                            {sources.map((s, i) => (
-                                <div key={i}>
-                                    <div className="flex items-center justify-between mb-1.5">
-                                        <div className="flex items-center gap-2">
-                                            <span className={`w-2 h-2 rounded-full ${s.colors.bg}`} />
-                                            <span className="text-sm font-semibold text-[#0c1929]">{s.label}</span>
-                                        </div>
-                                        <span className="text-xs font-bold text-[#0c1929]">{s.pct}%</span>
-                                    </div>
-                                    <div className="w-full bg-slate-100 rounded-full h-1.5">
-                                        <div 
-                                            className={`h-1.5 rounded-full ${s.colors.bg}`} 
-                                            style={{ width: `${s.pct}%`, transition: 'width 0.8s ease' }} 
-                                        />
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
+
             </div>
 
             {/* Bookings Table */}

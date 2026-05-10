@@ -4,11 +4,11 @@ const reservationController = require('../controllers/reservationController');
 const { protect, authorize } = require('../middleware/auth');
 
 router.route('/')
-  .get(protect, authorize('ADMIN', 'SUPER_ADMIN'), reservationController.getReservations)
+  .get(protect, authorize('ADMIN', 'SUPER_ADMIN', 'PROPERTY_MANAGER'), reservationController.getReservations)
   .post(reservationController.createReservation);
 
 router.route('/:id')
-  .get(protect, authorize('ADMIN', 'SUPER_ADMIN'), reservationController.getReservationById)
+  .get(protect, authorize('ADMIN', 'SUPER_ADMIN', 'PROPERTY_MANAGER'), reservationController.getReservationById)
   .delete(protect, authorize('ADMIN', 'SUPER_ADMIN'), reservationController.deleteReservation);
 
 router.route('/:id/status')
