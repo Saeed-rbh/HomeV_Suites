@@ -38,10 +38,16 @@ const sendMessage = async (threadId, senderRole, content) => {
 };
 
 const markAsReadByAdmin = async (threadId) => {
-  return await prisma.message.updateMany({
+  const unreadMessages = await prisma.message.findMany({
     where: { threadId, isReadByAdmin: false },
-    data: { isReadByAdmin: true }
+    select: { id: true }
   });
+  
+  await Promise.all(unreadMessages.map(m => 
+    prisma.message.update({ where: { id: m.id }, data: { isReadByAdmin: true } })
+  ));
+  
+  return { count: unreadMessages.length };
 };
 
 const getTotalUnreadThreads = async () => {

@@ -162,19 +162,15 @@ exports.applyPolicyToAllListings = async (req, res) => {
     const { type } = req.body; // 'SHORT_TERM' or 'LONG_TERM'
     
     if (type === 'LONG_TERM') {
-      // update all properties to point to this policy for long term
-      await prisma.property.updateMany({
-        data: {
-          longTermPolicyId: id
-        }
-      });
+      const properties = await prisma.property.findMany({ select: { id: true } });
+      await Promise.all(properties.map(p => 
+        prisma.property.update({ where: { id: p.id }, data: { longTermPolicyId: id } })
+      ));
     } else {
-      // update all properties to point to this policy for short term
-      await prisma.property.updateMany({
-        data: {
-          shortTermPolicyId: id
-        }
-      });
+      const properties = await prisma.property.findMany({ select: { id: true } });
+      await Promise.all(properties.map(p => 
+        prisma.property.update({ where: { id: p.id }, data: { shortTermPolicyId: id } })
+      ));
     }
 
     res.status(200).json({ success: true, message: `Policy applied to all listings for ${type === 'LONG_TERM' ? 'long' : 'short'} term stays` });

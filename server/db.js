@@ -13,12 +13,9 @@ if (!process.env.DATABASE_URL) {
   throw new Error('DATABASE_URL environment variable is not set');
 }
 
-// Enable WebSocket for Neon connection
-neonConfig.webSocketConstructor = ws;
-
-// Use WebSocket-based Pool to support Prisma transactions ($transaction, updateMany, etc.)
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const adapter = new PrismaNeon(pool);
+// Use HTTP adapter as it is more reliable in many serverless environments
+const { PrismaNeonHTTP } = require('@prisma/adapter-neon');
+const adapter = new PrismaNeonHTTP(process.env.DATABASE_URL.trim());
 const prisma = new PrismaClient({ adapter });
 
 module.exports = prisma;

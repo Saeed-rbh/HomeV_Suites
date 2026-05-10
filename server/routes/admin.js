@@ -194,10 +194,10 @@ router.post('/staff/:id/avatar', auth, requireAdmin, upload.single('avatar'), as
 router.put('/staff/:id/host', auth, requireAdmin, async (req, res) => {
     try {
         // Remove isHost from all other users first
-        await prisma.user.updateMany({
-            where: { isHost: true },
-            data: { isHost: false }
-        });
+        const hosts = await prisma.user.findMany({ where: { isHost: true }, select: { id: true } });
+        await Promise.all(hosts.map(h => 
+            prisma.user.update({ where: { id: h.id }, data: { isHost: false } })
+        ));
         // Set the selected user as host
         const user = await prisma.user.update({
             where: { id: req.params.id },

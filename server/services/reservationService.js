@@ -7,23 +7,21 @@ const stripe = require('../utils/stripeClient');
 const createReservation = async (data, paymentIntentId = null) => {
   const reservationId = crypto.randomUUID();
 
-  // Guard: check for overlapping confirmed reservations using a transaction to prevent race conditions
-  const reservation = await prisma.$transaction(async (tx) => {
-    const overlap = await tx.reservation.findFirst({
-      where: {
-        propertyId: data.propertyId,
-        status: { notIn: ['CANCELLED'] },
-        AND: [
-          { startDate: { lt: new Date(data.endDate) } },
-          { endDate:   { gt: new Date(data.startDate) } }
-        ]
-      }
-    });
-    if (overlap) throw new Error('Property is not available for the selected dates.');
+  // Guard: check for overlapping confirmed reservations to prevent race conditions
+  const overlap = await prisma.reservation.findFirst({
+    where: {
+      propertyId: data.propertyId,
+      status: { notIn: ['CANCELLED'] },
+      AND: [
+        { startDate: { lt: new Date(data.endDate) } },
+        { endDate:   { gt: new Date(data.startDate) } }
+      ]
+    }
+  });
+  if (overlap) throw new Error('Property is not available for the selected dates.');
 
-    return await tx.reservation.create({ 
-      data: { ...data, id: reservationId } 
-    });
+  const reservation = await prisma.reservation.create({ 
+    data: { ...data, id: reservationId } 
   });
 
   if (paymentIntentId) {

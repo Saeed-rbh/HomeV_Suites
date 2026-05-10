@@ -1,4 +1,4 @@
-const prisma = require('./db.js');
+const prisma = require('../db');
 
 async function seedPolicies() {
   const policies = [
@@ -73,16 +73,18 @@ async function seedPolicies() {
   const longTerm = await prisma.cancellationPolicy.findFirst({ where: { name: 'Long-Term Standard' } });
 
   if (moderate) {
-    await prisma.property.updateMany({
-      data: { shortTermPolicyId: moderate.id }
-    });
+    const props = await prisma.property.findMany({ select: { id: true } });
+    await Promise.all(props.map(p => 
+      prisma.property.update({ where: { id: p.id }, data: { shortTermPolicyId: moderate.id } })
+    ));
     console.log('Applied Moderate policy to all properties.');
   }
 
   if (longTerm) {
-    await prisma.property.updateMany({
-      data: { longTermPolicyId: longTerm.id }
-    });
+    const props = await prisma.property.findMany({ select: { id: true } });
+    await Promise.all(props.map(p => 
+      prisma.property.update({ where: { id: p.id }, data: { longTermPolicyId: longTerm.id } })
+    ));
     console.log('Applied Long-Term Standard policy to all properties.');
   }
 
