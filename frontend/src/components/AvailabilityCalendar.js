@@ -251,7 +251,7 @@ export default function AvailabilityCalendar({ blockedDates = [], partiallyBlock
   };
 
   return (
-    <div className="w-full rounded-[30px] bg-transparent p-7 md:p-8">
+    <div className="w-full rounded-[30px] bg-transparent md:p-8">
       {/* Header section identical to the image */}
       {showHeader && (
         <div className="mb-6">
