@@ -4,6 +4,7 @@ import {
     ChevronLeft, ChevronRight, Filter, Search, Eye, 
     CalendarDays, RefreshCw, Maximize, Share, SlidersHorizontal, ChevronDown, ChevronUp
 } from 'lucide-react';
+import AvailabilityCalendar from "@/components/AvailabilityCalendar";
 
 export default function MultiHostCalendar() {
     const [properties, setProperties] = useState([]);
@@ -12,6 +13,8 @@ export default function MultiHostCalendar() {
     const [expandedRows, setExpandedRows] = useState({});
     const [selectedCalendars, setSelectedCalendars] = useState(['all']);
     const [isViewOpen, setIsViewOpen] = useState(false);
+    const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+    const [selectedPropertyForCalendar, setSelectedPropertyForCalendar] = useState(null);
     const timelineRef = useRef(null);
     
     // Simulate 30 days of view for now
@@ -67,6 +70,16 @@ export default function MultiHostCalendar() {
     const setToday = () => {
         setStartDate(new Date());
         if (timelineRef.current) timelineRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+    };
+
+    const handleJumpToDate = (isoDateStr) => {
+        if (isoDateStr) {
+            const next = new Date(isoDateStr + "T12:00:00");
+            next.setHours(0,0,0,0);
+            setStartDate(next);
+            setIsDatePickerOpen(false);
+            if (timelineRef.current) timelineRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        }
     };
 
     const dates = useMemo(() => {
@@ -145,7 +158,10 @@ export default function MultiHostCalendar() {
                         <button onClick={prevDays} className="p-1.5 rounded-md hover:bg-slate-100 transition text-[#0c1929]">
                             <ChevronLeft className="w-4 h-4" />
                         </button>
-                        <div className="flex items-center justify-center gap-2 px-3 font-semibold text-[#0c1929] text-sm cursor-pointer select-none min-w-[140px]">
+                        <div 
+                            onClick={() => setIsDatePickerOpen(!isDatePickerOpen)} 
+                            className="flex items-center justify-center gap-2 px-3 font-semibold text-[#0c1929] text-sm cursor-pointer select-none min-w-[140px] hover:text-emerald-600 transition"
+                        >
                             <CalendarDays className="w-4 h-4 text-emerald-600" /> 
                             {dates[0].toLocaleString('default', { month: 'long', year: 'numeric' })}
                         </div>
@@ -171,6 +187,18 @@ export default function MultiHostCalendar() {
 
             {/* Calendar Main Grid Area */}
             <div ref={timelineRef} className="flex-1 overflow-auto bg-white hidden-scrollbar flex flex-col relative">
+                
+                {/* Global Date Picker Overlay */}
+                {isDatePickerOpen && (
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 z-[60] bg-white rounded-[30px] shadow-2xl border border-slate-200 w-full max-w-4xl p-2 mt-4">
+                        <AvailabilityCalendar 
+                            blockedDates={[]} // Allow jumping to any date
+                            onCheckInChange={handleJumpToDate}
+                            showClearDates={false}
+                            onClose={() => setIsDatePickerOpen(false)}
+                        />
+                    </div>
+                )}
                 <div className="min-w-max flex flex-col">
                     {/* Header Row */}
                     <div className="flex border-b border-slate-200 sticky top-0 z-40 bg-white shadow-sm">
@@ -200,11 +228,14 @@ export default function MultiHostCalendar() {
                                 {/* Left Side: Property Header */}
                                 <div className="w-[320px] flex-shrink-0 border-r border-slate-200 sticky left-0 z-30 bg-white flex flex-col">
                                     <div className="flex items-center justify-between p-3 min-h-[96px] bg-slate-50/50">
-                                        <div className="flex gap-3 items-center">
-                                            <div className="w-16 h-12 bg-slate-200 rounded-md overflow-hidden bg-cover bg-center" style={{backgroundImage: `url(${p.images?.[0] || 'https://images.unsplash.com/photo-1554995207-c18c203602cb'})`}}></div>
-                                            <div>
-                                                <div className="font-bold text-[#0c1929] text-base">{p.nickname || p.neighborhood || p.title || p.name}</div>
-                                                <div className="text-xs font-semibold text-emerald-600 tracking-wide mt-1">Monthly view</div>
+                                        <div 
+                                            className="flex gap-3 items-center cursor-pointer hover:opacity-80 transition"
+                                            onClick={() => setSelectedPropertyForCalendar(p)}
+                                        >
+                                            <div className="w-16 h-12 bg-slate-200 rounded-md overflow-hidden bg-cover bg-center flex-shrink-0" style={{backgroundImage: `url(${p.images?.[0] || 'https://images.unsplash.com/photo-1554995207-c18c203602cb'})`}}></div>
+                                            <div className="min-w-0">
+                                                <div className="font-bold text-[#0c1929] text-base truncate">{p.nickname || p.neighborhood || p.title || p.name}</div>
+                                                <div className="text-xs font-semibold text-emerald-600 tracking-wide mt-1">Detailed calendar</div>
                                             </div>
                                         </div>
                                         <button onClick={() => toggleRow(p.id)} className="p-1 hover:bg-slate-200 rounded">
@@ -342,6 +373,31 @@ export default function MultiHostCalendar() {
                     })}
                 </div>
             </div>
+            
+            {/* Property Specific Calendar Overlay */}
+            {selectedPropertyForCalendar && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0c1929]/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+                    <div className="bg-white rounded-[30px] shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto hidden-scrollbar flex flex-col relative">
+                        <div className="p-6 pb-2 flex justify-between items-center sticky top-0 bg-white/95 backdrop-blur z-20 rounded-t-[30px]">
+                            <div className="flex items-center gap-4">
+                                <div className="w-16 h-12 bg-slate-200 rounded-md overflow-hidden bg-cover bg-center" style={{backgroundImage: `url(${selectedPropertyForCalendar.images?.[0] || 'https://images.unsplash.com/photo-1554995207-c18c203602cb'})`}}></div>
+                                <div>
+                                    <h2 className="text-xl font-bold text-[#0c1929]">{selectedPropertyForCalendar.nickname || selectedPropertyForCalendar.neighborhood || selectedPropertyForCalendar.title}</h2>
+                                    <p className="text-sm font-medium text-emerald-600">Full detailed availability</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="p-2 pt-0 pb-6">
+                            <AvailabilityCalendar 
+                                blockedDates={selectedPropertyForCalendar.blockedDates || []}
+                                calendarMinStays={selectedPropertyForCalendar.calendarMinStays || {}}
+                                showClearDates={false}
+                                onClose={() => setSelectedPropertyForCalendar(null)}
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
             
             <style jsx global>{`
                 .hidden-scrollbar::-webkit-scrollbar {
