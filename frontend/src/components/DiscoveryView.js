@@ -203,7 +203,7 @@ function HeroSearchBar({ booking, openBelow = false, globalBlockedDates = [], pa
       </div>
 
       {/* Mobile Search Panel */}
-      {mounted && (openPanel === "mobile-search" || closingPanel) && (
+      {mounted && (openPanel === "mobile-search" || closingPanel) && createPortal(
         <>
           <div className={`fixed inset-0 bg-[#0c1929]/40 z-[9998] ${closingPanel ? "mobile-backdrop-close" : "mobile-backdrop-animate"}`} onClick={handleClosePanel} />
           <div className={`fixed inset-x-0 bottom-0 top-[100px] z-[9999] bg-white flex flex-col rounded-t-[32px] ${closingPanel ? "mobile-modal-close" : "mobile-modal-animate"}`}>
@@ -244,7 +244,8 @@ function HeroSearchBar({ booking, openBelow = false, globalBlockedDates = [], pa
               </button>
             </div>
           </div>
-        </>
+        </>,
+        document.body
       )}
 
       {/* Calendar popover */}

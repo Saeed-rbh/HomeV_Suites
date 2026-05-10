@@ -164,17 +164,6 @@ export default function DetailedPropertyCalendar({ property, bookings = [], onCl
                     <ChevronRight className="w-4 h-4" />
                 </button>
             </div>
-
-          <button className="flex items-center gap-2 px-4 py-2 border border-slate-300 rounded-lg font-semibold text-sm text-slate-700 hover:bg-slate-50 shadow-sm transition">
-            <Settings2 className="w-4 h-4" /> Bulk Update
-          </button>
-          
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-semibold text-slate-700">Calendar Views:</span>
-            <div className="bg-slate-900 text-white rounded-full px-4 py-2 text-sm font-semibold shadow-md">
-              Spot, Direct
-            </div>
-          </div>
         </div>
       </div>
 
