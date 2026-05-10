@@ -98,7 +98,6 @@ model Property {
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
   lastWebhookTimestamp DateTime?
-  isActive             Boolean   @default(true)
 
   managerId String?
   manager   User?   @relation("PropertyManager", fields: [managerId], references: [id])

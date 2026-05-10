@@ -78,9 +78,8 @@ const ingestPropertyFromUplisting = async (extId) => {
 };
 
 const getProperties = async (filters = {}) => {
-  const activeFilters = { ...filters, isActive: true };
   return await prisma.property.findMany({
-    where: activeFilters,
+    where: filters,
     include: {
       manager: {
         select: { id: true, email: true }
@@ -108,9 +107,8 @@ const updateProperty = async (id, data) => {
 };
 
 const deleteProperty = async (id) => {
-  return await prisma.property.update({
-    where: { id },
-    data: { isActive: false }
+  return await prisma.property.delete({
+    where: { id }
   });
 };
 
