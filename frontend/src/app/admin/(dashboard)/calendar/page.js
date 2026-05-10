@@ -5,6 +5,7 @@ import {
     CalendarDays, RefreshCw, Maximize, Share, SlidersHorizontal, ChevronDown, ChevronUp
 } from 'lucide-react';
 import AvailabilityCalendar from "@/components/AvailabilityCalendar";
+import DetailedPropertyCalendar from "@/components/DetailedPropertyCalendar";
 
 export default function MultiHostCalendar() {
     const [properties, setProperties] = useState([]);
@@ -376,27 +377,11 @@ export default function MultiHostCalendar() {
             
             {/* Property Specific Calendar Overlay */}
             {selectedPropertyForCalendar && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0c1929]/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-                    <div className="bg-white rounded-[30px] shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto hidden-scrollbar flex flex-col relative">
-                        <div className="p-6 pb-2 flex justify-between items-center sticky top-0 bg-white/95 backdrop-blur z-20 rounded-t-[30px]">
-                            <div className="flex items-center gap-4">
-                                <div className="w-16 h-12 bg-slate-200 rounded-md overflow-hidden bg-cover bg-center" style={{backgroundImage: `url(${selectedPropertyForCalendar.images?.[0] || 'https://images.unsplash.com/photo-1554995207-c18c203602cb'})`}}></div>
-                                <div>
-                                    <h2 className="text-xl font-bold text-[#0c1929]">{selectedPropertyForCalendar.nickname || selectedPropertyForCalendar.neighborhood || selectedPropertyForCalendar.title}</h2>
-                                    <p className="text-sm font-medium text-emerald-600">Full detailed availability</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="p-2 pt-0 pb-6">
-                            <AvailabilityCalendar 
-                                blockedDates={selectedPropertyForCalendar.blockedDates || []}
-                                calendarMinStays={selectedPropertyForCalendar.calendarMinStays || {}}
-                                showClearDates={false}
-                                onClose={() => setSelectedPropertyForCalendar(null)}
-                            />
-                        </div>
-                    </div>
-                </div>
+                <DetailedPropertyCalendar 
+                    property={selectedPropertyForCalendar}
+                    bookings={bookings.filter(b => b.propertyId === selectedPropertyForCalendar.id)}
+                    onClose={() => setSelectedPropertyForCalendar(null)}
+                />
             )}
             
             <style jsx global>{`
