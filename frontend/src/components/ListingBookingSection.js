@@ -795,10 +795,10 @@ export default function ListingBookingSection({
                <button 
                  type="button" 
                  disabled={!hasBooking}
-                 onClick={(e) => { handleClosePanel(); handleReserve(e); }} 
+                 onClick={() => handleClosePanel()} 
                  className="rounded-full bg-[#0c1929] px-8 py-4 text-base font-bold text-white shadow-lg transition flex items-center gap-2 hover:scale-[1.02] disabled:opacity-50"
                >
-                 {hasBooking ? "Reserve" : "Select dates"}
+                 Apply
                </button>
              </div>
           </div>
