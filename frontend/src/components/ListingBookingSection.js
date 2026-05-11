@@ -76,6 +76,18 @@ export default function ListingBookingSection({
 
   useEffect(() => { setMountedPortal(true); }, []);
 
+  // Prevent background scrolling when any modal is open
+  useEffect(() => {
+    if (mobileSheetOpen || priceSheetOpen || calendarOpen || guestOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileSheetOpen, priceSheetOpen, calendarOpen, guestOpen]);
+
   const breakdown = useMemo(
     () => calculatePriceBreakdown(listing, checkIn, checkOut, totalGuests, nonRefundable),
     [listing, checkIn, checkOut, totalGuests, nonRefundable]
