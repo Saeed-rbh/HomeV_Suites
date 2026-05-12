@@ -6,7 +6,7 @@ export default function HomePage() {
     <Suspense fallback={
       <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#f3f5f8] min-h-[100dvh]">
         <div className="relative flex flex-col items-center">
-          <img src="/suites-logo.png" alt="HomEV" className="h-10 w-auto object-contain mix-blend-multiply opacity-80 mb-6" />
+          <img src="/suites-logo.png" alt="HomEV" className="h-12 w-auto object-contain mix-blend-multiply opacity-80 mb-6" />
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-[#0c1929] animate-bounce" style={{ animationDelay: '0ms' }} />
             <div className="w-2 h-2 rounded-full bg-[#0c1929] animate-bounce" style={{ animationDelay: '150ms' }} />

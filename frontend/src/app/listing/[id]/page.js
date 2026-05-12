@@ -230,7 +230,7 @@ export default async function ListingPage({ params, searchParams }) {
              </div>
              <div>
                <h2 className="font-semibold text-[#0c1929] text-[16px]">Hosted by {listing.host}</h2>
-               <p className="text-sm text-slate-500">Superhost · {listing.hostSince || "Joined 2021"}</p>
+               <p className="text-sm text-slate-500">Superhost · Quick response</p>
              </div>
           </div>
 

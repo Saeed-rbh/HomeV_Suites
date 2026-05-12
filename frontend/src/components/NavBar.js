@@ -542,7 +542,7 @@ export default function NavBar() {
         <div className="flex w-full items-center justify-between bg-white/80 backdrop-blur-xl shadow-sm border-b border-white/60 px-6 py-4 md:px-10">
           <div className="flex items-center gap-5">
             <Link href="/" className="flex items-center">
-              <img src="/suites-logo.png" alt="HomEV" className="h-8 w-auto object-contain mix-blend-multiply opacity-80" />
+              <img src="/suites-logo.png" alt="HomEV" className="h-10 w-auto object-contain mix-blend-multiply opacity-80" />
             </Link>
             
             <div className="hidden sm:block h-5 w-px bg-slate-200" />
