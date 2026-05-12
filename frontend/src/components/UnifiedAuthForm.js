@@ -25,30 +25,38 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
   // Track which email to use during OTP verification (may come from registration)
   const [otpEmail, setOtpEmail] = useState("");
 
-  const setupRecaptcha = () => {
-    // Fully destroy the old verifier instance
+  const setupRecaptcha = async () => {
+    // Fully destroy any existing verifier
     if (window.recaptchaVerifier) {
-      try {
-        window.recaptchaVerifier.clear();
-      } catch (_) {}
+      try { window.recaptchaVerifier.clear(); } catch (_) {}
       window.recaptchaVerifier = null;
+      window.recaptchaWidgetId = null;
     }
-    // Reset the DOM container so reCAPTCHA can render fresh
+    // Wipe the DOM container so Firebase can render fresh
     const container = document.getElementById('recaptcha-container');
     if (container) container.innerHTML = '';
 
+    // Create the invisible verifier (per Firebase docs)
     window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
       'size': 'invisible',
-      'callback': () => {}
+      'callback': () => {},
+      'expired-callback': () => {
+        // Token expired — reset so the next attempt re-challenges
+        if (window.recaptchaWidgetId != null) {
+          window.grecaptcha?.reset(window.recaptchaWidgetId);
+        }
+      }
     });
+
+    // Explicitly render and store the widgetId (required by Firebase docs)
+    window.recaptchaWidgetId = await window.recaptchaVerifier.render();
   };
 
   const clearRecaptcha = () => {
     if (window.recaptchaVerifier) {
-      try {
-        window.recaptchaVerifier.clear();
-      } catch (_) {}
+      try { window.recaptchaVerifier.clear(); } catch (_) {}
       window.recaptchaVerifier = null;
+      window.recaptchaWidgetId = null;
     }
     const container = document.getElementById('recaptcha-container');
     if (container) container.innerHTML = '';
@@ -116,11 +124,19 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
         const checkData = await checkRes.json();
 
         if (checkData.exists) {
-          // Existing user → Firebase SMS
-          setupRecaptcha();
-          const result = await signInWithPhoneNumber(auth, rawPhone, window.recaptchaVerifier);
-          setConfirmationResult(result);
-          setStep(2);
+          // Existing user → Firebase SMS (must await render per Firebase docs)
+          await setupRecaptcha();
+          try {
+            const result = await signInWithPhoneNumber(auth, rawPhone, window.recaptchaVerifier);
+            setConfirmationResult(result);
+            setStep(2);
+          } catch (smsErr) {
+            // Per Firebase docs: reset reCAPTCHA on SMS failure so user can retry
+            if (window.recaptchaWidgetId != null) {
+              window.grecaptcha?.reset(window.recaptchaWidgetId);
+            }
+            throw smsErr;
+          }
         } else {
           // New user → show registration form, pre-fill phone
           setRegPhone(identifier);
@@ -149,13 +165,21 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
           body: JSON.stringify({ firstName: regFirstName, lastName: regLastName, email: regEmail, phone: regPhoneRaw })
         });
         if (!res.ok) { const e = await res.json(); throw new Error(e.error || "Registration failed"); }
-        // Also fire Firebase SMS for phone users
-        setupRecaptcha();
-        const rawPhone = `${countryCode}${identifier.replace(/\D/g, "")}`;
-        const result = await signInWithPhoneNumber(auth, rawPhone, window.recaptchaVerifier);
-        setConfirmationResult(result);
-        setOtpEmail(regEmail);
-        setStep(2);
+        // Also fire Firebase SMS for phone users (must await render per Firebase docs)
+        await setupRecaptcha();
+        const rawPhone = `${countryCode}${regPhone.replace(/\D/g, "")}`;
+        try {
+          const result = await signInWithPhoneNumber(auth, rawPhone, window.recaptchaVerifier);
+          setConfirmationResult(result);
+          setOtpEmail(regEmail);
+          setStep(2);
+        } catch (smsErr) {
+          // Per Firebase docs: reset reCAPTCHA on SMS failure
+          if (window.recaptchaWidgetId != null) {
+            window.grecaptcha?.reset(window.recaptchaWidgetId);
+          }
+          throw smsErr;
+        }
       } else {
         // Email registration
         const res = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/auth/create-guest-and-send-otp", {
