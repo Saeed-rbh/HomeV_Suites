@@ -740,8 +740,8 @@ export default function ListingBookingSection({
                  </button>
                </div>
                
-               <div className="mb-6">
-                 <div className="rounded-[24px] border-y border-slate-100 p-0 shadow-sm">
+               <div className="mb-6 px-4 sm:px-5">
+                 <div className="rounded-[24px] border border-slate-100 p-2 sm:p-4 shadow-sm">
                    {/* Remove header from calendar for mobile sheet to match main page */}
                    <AvailabilityCalendar
                      blockedDates={listing.blockedDates || []}
