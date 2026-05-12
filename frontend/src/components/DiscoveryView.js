@@ -215,8 +215,8 @@ function HeroSearchBar({ booking, openBelow = false, globalBlockedDates = [], pa
                 </button>
               </div>
 
-              <div className="mb-6">
-                <div className="rounded-[24px] border-y border-slate-100 p-0 shadow-sm">
+              <div className="mb-6 px-4 sm:px-5">
+                <div className="rounded-[24px] border border-slate-100 p-2 sm:p-4 shadow-sm">
                   <AvailabilityCalendar blockedDates={globalBlockedDates} partiallyBlockedDates={partiallyBlockedDates} allListingsBlocked={allListingsBlocked} checkIn={checkIn} checkOut={checkOut}
                     onCheckInChange={setCheckIn} onCheckOutChange={setCheckOut}
                     minNights={0} showHeader={false} />
@@ -497,7 +497,7 @@ export default function DiscoveryView() {
           {/* Top bar */}
           <div className="absolute top-0 left-0 right-0 z-[10] flex items-center justify-between px-5 pt-5">
             <Link href="/">
-              <img src="/suites-logo.png" alt="HomEV" className="h-7 w-auto object-contain brightness-0 invert opacity-95" />
+              <img src="/suites-logo_2.PNG" alt="HomEV" className="h-7 w-auto object-contain brightness-0 invert opacity-95" />
             </Link>
             <Link href="/login" className="h-9 w-9 flex items-center justify-center rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-white transition hover:bg-white/25">
               <User className="h-4 w-4" />
