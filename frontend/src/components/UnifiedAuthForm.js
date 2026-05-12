@@ -26,14 +26,32 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
   const [otpEmail, setOtpEmail] = useState("");
 
   const setupRecaptcha = () => {
+    // Fully destroy the old verifier instance
     if (window.recaptchaVerifier) {
-      window.recaptchaVerifier.clear();
+      try {
+        window.recaptchaVerifier.clear();
+      } catch (_) {}
       window.recaptchaVerifier = null;
     }
+    // Reset the DOM container so reCAPTCHA can render fresh
+    const container = document.getElementById('recaptcha-container');
+    if (container) container.innerHTML = '';
+
     window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
       'size': 'invisible',
       'callback': () => {}
     });
+  };
+
+  const clearRecaptcha = () => {
+    if (window.recaptchaVerifier) {
+      try {
+        window.recaptchaVerifier.clear();
+      } catch (_) {}
+      window.recaptchaVerifier = null;
+    }
+    const container = document.getElementById('recaptcha-container');
+    if (container) container.innerHTML = '';
   };
 
   const handlePhoneChange = (e) => {
@@ -325,7 +343,7 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
               Create Account & Get Code
             </button>
 
-            <button type="button" onClick={() => { setStep(1); setError(""); }}
+            <button type="button" onClick={() => { clearRecaptcha(); setStep(1); setError(""); }}
               className="flex w-full items-center justify-center gap-2 text-sm text-[#0c1929] hover:text-[#0c1929] transition-colors pt-1">
               <ArrowLeft className="w-4 h-4" /> Back to Login
             </button>
@@ -347,7 +365,7 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
             </button>
 
             <div className="flex items-center justify-between pt-2 px-1">
-              <button type="button" onClick={() => setStep(1)}
+              <button type="button" onClick={() => { clearRecaptcha(); setStep(1); setError(""); }}
                 className="text-sm text-[#0c1929] hover:text-[#0c1929] font-medium transition-colors focus:outline-none">
                 &larr; Back
               </button>
