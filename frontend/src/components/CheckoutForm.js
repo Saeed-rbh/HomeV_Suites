@@ -187,7 +187,7 @@ export default function CheckoutForm({ listingId, checkIn, checkOut, guests, sel
           <h2 className="mt-2 text-2xl font-medium text-[#0c1929]">Secure card details</h2>
         </div>
 
-        <div className="rounded-[28px] bg-white border border-slate-100 shadow-[0_4px_30px_rgba(12,25,41,0.03)] p-5">
+        <div className="rounded-[28px] bg-white border border-slate-100 shadow-[0_4px_30px_rgba(12,25,41,0.03)] p-5 w-full">
           <div className="mb-4 flex items-center justify-between rounded-[20px] border border-slate-200 bg-slate-50 px-4 py-3">
             <div className="flex items-center gap-2 text-sm font-medium text-[#0c1929]">
               <CreditCard className="h-4 w-4" />
@@ -195,7 +195,7 @@ export default function CheckoutForm({ listingId, checkIn, checkOut, guests, sel
             </div>
           </div>
 
-          <div className="p-2">
+          <div className="p-2 w-full">
             <PaymentElement />
           </div>
         </div>
