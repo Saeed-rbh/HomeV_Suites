@@ -72,7 +72,7 @@ export default async function CheckoutPage({ searchParams }) {
         </div>
 
         <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_430px]">
-          <section className="rounded-[30px] bg-white border border-slate-100 shadow-[0_4px_30px_rgba(12,25,41,0.03)] p-7 md:p-8 self-start">
+          <section className="rounded-[30px] bg-white border border-slate-100 shadow-[0_4px_30px_rgba(12,25,41,0.03)] p-4 sm:p-7 md:p-8 self-start">
             {/* CheckoutClient is a client component — it owns StripeWrapper + CheckoutForm.
                 initialTotal comes from the server; it updates itself once the payment intent
                 confirms the exact charge via onAmountConfirmed. */}
