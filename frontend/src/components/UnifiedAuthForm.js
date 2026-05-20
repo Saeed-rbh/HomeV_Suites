@@ -153,7 +153,8 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
     setLoading(true);
     setError("");
     try {
-      await completeLogin(null, otp);
+      const sanitizedOtp = otp.replace(/\D/g, ""); // Strip any spaces, hyphens, or non-digits
+      await completeLogin(null, sanitizedOtp);
     } catch (err) {
       setError(err.message);
       setLoading(false);

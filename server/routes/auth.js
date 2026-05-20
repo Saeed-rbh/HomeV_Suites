@@ -163,6 +163,7 @@ router.post('/verify-otp', otpVerifyLimiter, async (req, res) => {
         let lookup;
         let decodedToken = null;
         let isEmailOTP = false;
+        const sanitizedOtp = otp ? otp.replace(/\D/g, "") : "";
 
         if (idToken) {
             // Firebase authentication path (Phones)
@@ -213,7 +214,7 @@ router.post('/verify-otp', otpVerifyLimiter, async (req, res) => {
             const target = user || guest;
             if (!target) return res.status(400).json({ msg: 'User not found' });
             // Use bcrypt.compare to verify against hashed OTP
-            const isValid = await bcrypt.compare(otp, target.otpCode || '');
+            const isValid = await bcrypt.compare(sanitizedOtp, target.otpCode || '');
             if (!isValid) return res.status(400).json({ msg: 'Invalid verification code' });
             if (new Date() > new Date(target.otpExpiresAt)) return res.status(400).json({ msg: 'Verification code has expired' });
 
