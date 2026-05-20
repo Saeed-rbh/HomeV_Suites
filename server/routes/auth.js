@@ -93,34 +93,18 @@ router.post('/request-phone-otp', otpRequestLimiter, async (req, res) => {
         const digits = phone.replace(/\D/g, '');
         const shortPhone = digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : (digits.length === 10 ? digits : null);
 
-        let user = await prisma.user.findFirst({
-            where: {
-                OR: [
-                    { phone: normalizedP },
-                    ...(shortPhone ? [{ phone: shortPhone }] : []),
-                    { phone: phone }
-                ]
-            }
-        });
-        let guest = null;
+        const whereClause = {
+            OR: [
+                { phone: normalizedP },
+                ...(shortPhone ? [{ phone: shortPhone }] : []),
+                { phone: phone }
+            ]
+        };
 
-        if (!user) {
-            guest = await prisma.guestProfile.findFirst({
-                where: {
-                    OR: [
-                        { phone: normalizedP },
-                        ...(shortPhone ? [{ phone: shortPhone }] : []),
-                        { phone: phone }
-                    ]
-                }
-            });
-        }
+        const updatedUsers = await prisma.user.updateMany({ where: whereClause, data: { otpCode: otpHash, otpExpiresAt } });
+        const updatedGuests = await prisma.guestProfile.updateMany({ where: whereClause, data: { otpCode: otpHash, otpExpiresAt } });
 
-        if (user) {
-            await prisma.user.update({ where: { id: user.id }, data: { otpCode: otpHash, otpExpiresAt } });
-        } else if (guest) {
-            await prisma.guestProfile.update({ where: { id: guest.id }, data: { otpCode: otpHash, otpExpiresAt } });
-        } else {
+        if (updatedUsers.count === 0 && updatedGuests.count === 0) {
             // Create a new guest if it's their first time
             const placeholderEmail = `${normalizedP.replace(/\D/g, '')}@placeholder.com`;
             await prisma.guestProfile.create({
@@ -203,50 +187,71 @@ router.post('/verify-otp', otpVerifyLimiter, async (req, res) => {
         const shortPhone = digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : (digits.length === 10 ? digits : null);
 
         // Sync with local database
-        let user = await prisma.user.findFirst({
-            where: {
-                OR: [
-                    { email: lookup },
-                    { phone: normalizedLookup },
-                    ...(shortPhone ? [{ phone: shortPhone }] : []),
-                    { phone: lookup } 
-                ]
-            }
-        });
+        const whereClause = {
+            OR: [
+                { email: lookup },
+                { phone: normalizedLookup },
+                ...(shortPhone ? [{ phone: shortPhone }] : []),
+                { phone: lookup } 
+            ]
+        };
 
-        let guest = null;
-        if (!user) {
-            guest = await prisma.guestProfile.findFirst({
-                where: {
-                    OR: [
-                        { email: lookup },
-                        { phone: normalizedLookup },
-                        ...(shortPhone ? [{ phone: shortPhone }] : []),
-                        { phone: lookup }
-                    ]
-                }
-            });
-        }
+        let users = await prisma.user.findMany({ where: whereClause });
+        let targetUser = null;
+        let isUser = true;
 
         // Verify Custom OTP — compare against bcrypt hash
         if (isEmailOTP) {
-            const target = user || guest;
-            if (!target) return res.status(400).json({ msg: 'User not found' });
-            // Use bcrypt.compare to verify against hashed OTP
-            const isValid = await bcrypt.compare(sanitizedOtp, target.otpCode || '');
-            if (!isValid) return res.status(400).json({ msg: 'Invalid verification code' });
-            if (new Date() > new Date(target.otpExpiresAt)) return res.status(400).json({ msg: 'Verification code has expired' });
+            // Find a user with a matching OTP
+            for (const u of users) {
+                if (u.otpCode && u.otpExpiresAt > new Date()) {
+                    const isValid = await bcrypt.compare(sanitizedOtp, u.otpCode);
+                    if (isValid) {
+                        targetUser = u;
+                        break;
+                    }
+                }
+            }
+
+            // If no user matches the OTP, check guests
+            let guest = null;
+            if (!targetUser) {
+                const guests = await prisma.guestProfile.findMany({ where: whereClause });
+                for (const g of guests) {
+                    if (g.otpCode && g.otpExpiresAt > new Date()) {
+                        const isValid = await bcrypt.compare(sanitizedOtp, g.otpCode);
+                        if (isValid) {
+                            targetUser = g;
+                            guest = g;
+                            isUser = false;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!targetUser) return res.status(400).json({ msg: 'Invalid verification code or code expired' });
 
             // Clear OTP after successful verification
-            if (user) {
-                await prisma.user.update({ where: { id: user.id }, data: { otpCode: null, otpExpiresAt: null } });
+            if (isUser) {
+                await prisma.user.update({ where: { id: targetUser.id }, data: { otpCode: null, otpExpiresAt: null } });
             } else {
-                await prisma.guestProfile.update({ where: { id: guest.id }, data: { otpCode: null, otpExpiresAt: null } });
+                await prisma.guestProfile.update({ where: { id: targetUser.id }, data: { otpCode: null, otpExpiresAt: null } });
+            }
+        } else {
+            // Firebase Auth path fallback (idToken present but no custom OTP to verify)
+            targetUser = users.length > 0 ? users[0] : null;
+            let guest = null;
+            if (!targetUser) {
+                const guests = await prisma.guestProfile.findMany({ where: whereClause });
+                targetUser = guests.length > 0 ? guests[0] : null;
+                guest = targetUser;
+                isUser = false;
             }
         }
         
         // Ensure guest is dynamically provisioned if they exist in Firebase but not in local DB yet
-        if (!user && !guest && idToken) {
+        if (!targetUser && !guest && idToken) {
            const mappedEmail = isLookupEmail ? normalizedLookup : `${normalizedLookup}@placeholder.com`;
            
            guest = await prisma.guestProfile.findUnique({ where: { email: mappedEmail } });
@@ -261,16 +266,18 @@ router.post('/verify-otp', otpVerifyLimiter, async (req, res) => {
                     }
                 });
            }
+           targetUser = guest;
+           isUser = false;
         }
 
-        const targetAccount = user || guest;
-        const role = user ? user.role : 'GUEST';
+        const targetAccount = targetUser || guest;
+        const role = isUser && targetAccount ? targetAccount.role : 'GUEST';
 
         // Create our own JWT session
         const payload = { user: { id: targetAccount.id, role } };
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' }, (err, token) => {
             if (err) throw err;
-            res.json({ token, user: user ? targetAccount : null, guest: guest ? targetAccount : null, role });
+            res.json({ token, user: isUser ? targetAccount : null, guest: !isUser ? targetAccount : null, role });
         });
     } catch (err) {
         console.error('Verify Error:', err.message);
