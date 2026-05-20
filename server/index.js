@@ -11,6 +11,7 @@ if (!process.env.JWT_SECRET) {
 }
 
 const app = express();
+app.set('trust proxy', 1); // Trust first proxy (Render) for rate-limiting
 const http = require('http');
 const { Server } = require('socket.io');
 
