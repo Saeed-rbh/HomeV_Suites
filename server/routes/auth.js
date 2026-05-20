@@ -90,11 +90,30 @@ router.post('/request-phone-otp', otpRequestLimiter, async (req, res) => {
         const otpHash = await bcrypt.hash(otpCode, 10);
         const otpExpiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
 
-        let user = await prisma.user.findUnique({ where: { phone: normalizedP } });
+        const digits = phone.replace(/\D/g, '');
+        const shortPhone = digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : (digits.length === 10 ? digits : null);
+
+        let user = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { phone: normalizedP },
+                    ...(shortPhone ? [{ phone: shortPhone }] : []),
+                    { phone: phone }
+                ]
+            }
+        });
         let guest = null;
 
         if (!user) {
-            guest = await prisma.guestProfile.findUnique({ where: { phone: normalizedP } });
+            guest = await prisma.guestProfile.findFirst({
+                where: {
+                    OR: [
+                        { phone: normalizedP },
+                        ...(shortPhone ? [{ phone: shortPhone }] : []),
+                        { phone: phone }
+                    ]
+                }
+            });
         }
 
         if (user) {
