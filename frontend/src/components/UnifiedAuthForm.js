@@ -1,7 +1,5 @@
 "use client";
 
-import { auth } from "@/lib/firebase";
-import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { useState } from "react";
 import { LoaderCircle, Mail, KeyRound, Phone, User, ArrowLeft } from "lucide-react";
 
@@ -21,46 +19,8 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [confirmationResult, setConfirmationResult] = useState(null);
   // Track which email to use during OTP verification (may come from registration)
   const [otpEmail, setOtpEmail] = useState("");
-
-  const setupRecaptcha = async () => {
-    // Fully destroy any existing verifier
-    if (window.recaptchaVerifier) {
-      try { window.recaptchaVerifier.clear(); } catch (_) {}
-      window.recaptchaVerifier = null;
-      window.recaptchaWidgetId = null;
-    }
-    // Wipe the DOM container so Firebase can render fresh
-    const container = document.getElementById('recaptcha-container');
-    if (container) container.innerHTML = '';
-
-    // Create the invisible verifier (per Firebase docs)
-    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-      'size': 'invisible',
-      'callback': () => {},
-      'expired-callback': () => {
-        // Token expired — reset so the next attempt re-challenges
-        if (window.recaptchaWidgetId != null) {
-          window.grecaptcha?.reset(window.recaptchaWidgetId);
-        }
-      }
-    });
-
-    // Explicitly render and store the widgetId (required by Firebase docs)
-    window.recaptchaWidgetId = await window.recaptchaVerifier.render();
-  };
-
-  const clearRecaptcha = () => {
-    if (window.recaptchaVerifier) {
-      try { window.recaptchaVerifier.clear(); } catch (_) {}
-      window.recaptchaVerifier = null;
-      window.recaptchaWidgetId = null;
-    }
-    const container = document.getElementById('recaptcha-container');
-    if (container) container.innerHTML = '';
-  };
 
   const handlePhoneChange = (e) => {
     const digits = e.target.value.replace(/\D/g, "");
@@ -89,9 +49,10 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
     setLoading(true);
     setError("");
     try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
       if (loginMethod === "email") {
         // Step 1: Check if user exists
-        const checkRes = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/auth/check-user", {
+        const checkRes = await fetch(`${apiUrl}/auth/check-user`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ identifier })
@@ -100,7 +61,7 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
 
         if (checkData.exists) {
           // Existing user → send OTP directly
-          const res = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/auth/request-email-otp", {
+          const res = await fetch(`${apiUrl}/auth/request-email-otp`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: identifier })
@@ -116,7 +77,7 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
       } else {
         // Phone login: check first
         const rawPhone = `${countryCode}${identifier.replace(/\D/g, "")}`;
-        const checkRes = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/auth/check-user", {
+        const checkRes = await fetch(`${apiUrl}/auth/check-user`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ identifier: rawPhone })
@@ -124,19 +85,14 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
         const checkData = await checkRes.json();
 
         if (checkData.exists) {
-          // Existing user → Firebase SMS (must await render per Firebase docs)
-          await setupRecaptcha();
-          try {
-            const result = await signInWithPhoneNumber(auth, rawPhone, window.recaptchaVerifier);
-            setConfirmationResult(result);
-            setStep(2);
-          } catch (smsErr) {
-            // Per Firebase docs: reset reCAPTCHA on SMS failure so user can retry
-            if (window.recaptchaWidgetId != null) {
-              window.grecaptcha?.reset(window.recaptchaWidgetId);
-            }
-            throw smsErr;
-          }
+          // Existing user → send SMS OTP directly from backend
+          const res = await fetch(`${apiUrl}/auth/request-phone-otp`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ phone: rawPhone })
+          });
+          if (!res.ok) throw new Error("Failed to send verification SMS.");
+          setStep(2);
         } else {
           // New user → show registration form, pre-fill phone
           setRegPhone(identifier);
@@ -156,33 +112,27 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
     setError("");
     try {
       const regPhoneRaw = regPhone ? `+1${regPhone.replace(/\D/g, "")}` : null;
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
       if (loginMethod === "phone") {
-        // Register via the new API, then send Firebase SMS too
-        const res = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/auth/create-guest-and-send-otp", {
+        // Register via the new API, then transition to OTP verification
+        const res = await fetch(`${apiUrl}/auth/create-guest-and-send-otp`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ firstName: regFirstName, lastName: regLastName, email: regEmail, phone: regPhoneRaw })
+          body: JSON.stringify({ 
+            firstName: regFirstName, 
+            lastName: regLastName, 
+            email: regEmail, 
+            phone: regPhoneRaw,
+            loginMethod: "phone"
+          })
         });
         if (!res.ok) { const e = await res.json(); throw new Error(e.error || "Registration failed"); }
-        // Also fire Firebase SMS for phone users (must await render per Firebase docs)
-        await setupRecaptcha();
-        const rawPhone = `${countryCode}${regPhone.replace(/\D/g, "")}`;
-        try {
-          const result = await signInWithPhoneNumber(auth, rawPhone, window.recaptchaVerifier);
-          setConfirmationResult(result);
-          setOtpEmail(regEmail);
-          setStep(2);
-        } catch (smsErr) {
-          // Per Firebase docs: reset reCAPTCHA on SMS failure
-          if (window.recaptchaWidgetId != null) {
-            window.grecaptcha?.reset(window.recaptchaWidgetId);
-          }
-          throw smsErr;
-        }
+        setOtpEmail(regEmail);
+        setStep(2);
       } else {
         // Email registration
-        const res = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/auth/create-guest-and-send-otp", {
+        const res = await fetch(`${apiUrl}/auth/create-guest-and-send-otp`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ firstName: regFirstName, lastName: regLastName, email: regEmail, phone: regPhoneRaw })
@@ -203,13 +153,7 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
     setLoading(true);
     setError("");
     try {
-      if (loginMethod === "phone" && confirmationResult) {
-        const result = await confirmationResult.confirm(otp);
-        const idToken = await result.user.getIdToken();
-        await completeLogin(idToken, null);
-      } else {
-        await completeLogin(null, otp);
-      }
+      await completeLogin(null, otp);
     } catch (err) {
       setError(err.message);
       setLoading(false);
@@ -219,11 +163,12 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
   async function completeLogin(idToken, otpValue) {
     try {
       const emailToVerify = otpEmail || identifier;
-      const payload = idToken
-        ? { idToken, identifier: `${countryCode}${identifier.replace(/\D/g, "")}` }
+      const payload = loginMethod === "phone" && !otpEmail
+        ? { otp: otpValue, identifier: `${countryCode}${identifier.replace(/\D/g, "")}` }
         : { otp: otpValue, identifier: emailToVerify };
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
-      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api') + '') + "/auth/verify-otp", {
+      const res = await fetch(`${apiUrl}/auth/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -367,7 +312,7 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
               Create Account & Get Code
             </button>
 
-            <button type="button" onClick={() => { clearRecaptcha(); setStep(1); setError(""); }}
+            <button type="button" onClick={() => { setStep(1); setError(""); }}
               className="flex w-full items-center justify-center gap-2 text-sm text-[#0c1929] hover:text-[#0c1929] transition-colors pt-1">
               <ArrowLeft className="w-4 h-4" /> Back to Login
             </button>
@@ -389,7 +334,7 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
             </button>
 
             <div className="flex items-center justify-between pt-2 px-1">
-              <button type="button" onClick={() => { clearRecaptcha(); setStep(1); setError(""); }}
+              <button type="button" onClick={() => { setStep(1); setError(""); }}
                 className="text-sm text-[#0c1929] hover:text-[#0c1929] font-medium transition-colors focus:outline-none">
                 &larr; Back
               </button>
@@ -400,8 +345,6 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
             </div>
           </form>
         )}
-
-        <div id="recaptcha-container"></div>
       </div>
     </div>
   );

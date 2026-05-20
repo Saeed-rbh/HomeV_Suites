@@ -7,6 +7,7 @@ const prisma = require('../db');
 const admin = require('../config/firebaseAdmin');
 const { normalizePhone } = require('../utils/phoneUtils');
 const { sendOtpEmail } = require('../services/mailService');
+const { sendOtpSms } = require('../services/smsService');
 const validate = require('../middleware/validate');
 const { requestOtpSchema, verifyOtpSchema, createGuestOtpSchema } = require('../schemas/authSchema');
 const { otpRequestLimiter, otpVerifyLimiter, apiLimiter } = require('../middleware/rateLimiter');
@@ -39,7 +40,7 @@ router.post('/check-user', apiLimiter, async (req, res) => {
 // @route   POST api/auth/create-guest-and-send-otp
 // @desc    Register a brand-new guest and immediately send them an OTP
 router.post('/create-guest-and-send-otp', otpRequestLimiter, async (req, res) => {
-    const { firstName, lastName, email, phone } = req.body;
+    const { firstName, lastName, email, phone, loginMethod } = req.body;
     if (!firstName || !email) return res.status(400).json({ msg: 'Name and email are required' });
 
     try {
@@ -62,11 +63,57 @@ router.post('/create-guest-and-send-otp', otpRequestLimiter, async (req, res) =>
             });
         }
 
-        await sendOtpEmail(email, otpCode);
-        res.json({ msg: 'Account created and OTP sent', email });
+        if (loginMethod === 'phone' && normalizedP) {
+            await sendOtpSms(normalizedP, otpCode);
+            res.json({ msg: 'Account created and SMS OTP sent', phone: normalizedP });
+        } else {
+            await sendOtpEmail(email, otpCode);
+            res.json({ msg: 'Account created and OTP sent', email });
+        }
     } catch (err) {
         console.error('Create Guest Error:', err.message);
         res.status(500).json({ error: 'Server Error: ' + err.message });
+    }
+});
+
+// @route   POST api/auth/request-phone-otp
+// @desc    Generate and SMS a 6-digit OTP
+router.post('/request-phone-otp', otpRequestLimiter, async (req, res) => {
+    const { phone } = req.body;
+    if (!phone) return res.status(400).json({ msg: 'Phone number is required' });
+
+    try {
+        const normalizedP = normalizePhone(phone);
+        if (!normalizedP) return res.status(400).json({ msg: 'Invalid phone number format' });
+
+        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+        const otpHash = await bcrypt.hash(otpCode, 10);
+        const otpExpiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
+
+        let user = await prisma.user.findUnique({ where: { phone: normalizedP } });
+        let guest = null;
+
+        if (!user) {
+            guest = await prisma.guestProfile.findUnique({ where: { phone: normalizedP } });
+        }
+
+        if (user) {
+            await prisma.user.update({ where: { id: user.id }, data: { otpCode: otpHash, otpExpiresAt } });
+        } else if (guest) {
+            await prisma.guestProfile.update({ where: { id: guest.id }, data: { otpCode: otpHash, otpExpiresAt } });
+        } else {
+            // Create a new guest if it's their first time
+            const placeholderEmail = `${normalizedP.replace(/\D/g, '')}@placeholder.com`;
+            await prisma.guestProfile.create({
+                data: { phone: normalizedP, email: placeholderEmail, firstName: 'Guest', lastName: 'User', otpCode: otpHash, otpExpiresAt }
+            });
+        }
+
+        await sendOtpSms(normalizedP, otpCode);
+        res.json({ msg: 'OTP sent successfully' });
+    } catch (err) {
+        console.error('Request Phone OTP Error:', err);
+        res.status(500).send('Server Error');
     }
 });
 
