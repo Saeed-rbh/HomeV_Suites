@@ -1,5 +1,19 @@
 const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 
+// ─── Provider Detection ────────────────────────────────────────────────────────
+// If SENDGRID_API_KEY is set → use SendGrid.
+// Otherwise fall back to nodemailer (existing GoDaddy SMTP config).
+const useSendGrid = !!process.env.SENDGRID_API_KEY;
+
+if (useSendGrid) {
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    console.log('[MailService] ✅ Using SendGrid for email delivery');
+} else {
+    console.log('[MailService] ⚠️  SENDGRID_API_KEY not set – falling back to nodemailer SMTP');
+}
+
+// ─── Nodemailer Transporter (fallback) ────────────────────────────────────────
 const createTransporter = () => {
     return nodemailer.createTransport({
         host: process.env.SMTP_HOST || 'smtpout.secureserver.net',
@@ -15,27 +29,61 @@ const createTransporter = () => {
     });
 };
 
+// ─── Shared Sender Address ─────────────────────────────────────────────────────
+// SendGrid requires the FROM address to match your verified sender/domain.
+const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || process.env.SMTP_USER || 'support@homevsuites.com';
+const FROM_NAME  = 'HomEV Suites';
+
+// ─── Internal send helper ─────────────────────────────────────────────────────
+/**
+ * Unified send function — routes to SendGrid or nodemailer automatically.
+ */
+const _send = async ({ to, subject, text, html, replyTo }) => {
+    if (useSendGrid) {
+        const msg = {
+            to,
+            from: { email: FROM_EMAIL, name: FROM_NAME },
+            subject,
+            text,
+            html,
+        };
+        if (replyTo) msg.replyTo = replyTo;
+        await sgMail.send(msg);
+    } else {
+        if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+            // No credentials at all — log to console
+            console.log(`\n==========================================`);
+            console.log(`📧 SIMULATED EMAIL TO: ${to}`);
+            console.log(`📋 SUBJECT: ${subject}`);
+            console.log(`📝 BODY: ${text}`);
+            console.log(`==========================================\n`);
+            return;
+        }
+        const transporter = createTransporter();
+        await transporter.sendMail({
+            from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
+            to,
+            subject,
+            text,
+            html,
+            ...(replyTo ? { replyTo } : {})
+        });
+    }
+};
+
+// ─── OTP Email ────────────────────────────────────────────────────────────────
 /**
  * Sends a 6-digit OTP login code via email.
- * Falls back to console logging when SMTP is not configured.
  *
  * @param {string} email    - Recipient email address
  * @param {string} otpCode  - The plain-text OTP code (not the hash)
  */
 const sendOtpEmail = async (email, otpCode) => {
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-        console.log(`\n==========================================`);
-        console.log(`📧 SIMULATED EMAIL TO: ${email}`);
-        console.log(`🔒 SECURITY CODE: ${otpCode}`);
-        console.log(`==========================================\n`);
-        return;
-    }
+    const year = new Date().getFullYear();
 
-    const transporter = createTransporter();
+    const text = `Your HomEV login code is: ${otpCode}\n\nThis code expires in 15 minutes.\n\nIf you did not request this, you can safely ignore this email.\n\n© ${year} HomEV Suites – support@homevsuites.com`;
 
-    const emailText = `Your HomEV login code is: ${otpCode}\n\nThis code expires in 15 minutes.\n\nIf you did not request this, you can safely ignore this email.\n\n© ${new Date().getFullYear()} HomEV Suites – support@homevsuites.com`;
-
-    const emailHtml = `<!DOCTYPE html>
+    const html = `<!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><title>Your HomEV Login Code</title></head>
 <body style="margin:0;padding:0;background-color:#f3f5f8;font-family:Arial,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f3f5f8;padding:40px 20px;">
@@ -52,7 +100,7 @@ const sendOtpEmail = async (email, otpCode) => {
           <p style="color:#94a3b8;font-size:13px;margin:28px 0 0 0;">If you didn't request this, you can safely ignore this email.</p>
         </td></tr>
         <tr><td style="background-color:#f8fafc;padding:20px 40px;border-top:1px solid #e2e8f0;text-align:center;">
-          <p style="color:#94a3b8;font-size:12px;margin:0;">© ${new Date().getFullYear()} HomEV Suites &nbsp;|&nbsp; <a href="mailto:support@homevsuites.com" style="color:#64748b;text-decoration:none;">support@homevsuites.com</a></p>
+          <p style="color:#94a3b8;font-size:12px;margin:0;">© ${year} HomEV Suites &nbsp;|&nbsp; <a href="mailto:support@homevsuites.com" style="color:#64748b;text-decoration:none;">support@homevsuites.com</a></p>
           <p style="color:#cbd5e1;font-size:11px;margin:6px 0 0 0;">This is an automated message. Please do not reply.</p>
         </td></tr>
       </table>
@@ -60,15 +108,15 @@ const sendOtpEmail = async (email, otpCode) => {
   </table>
 </body></html>`;
 
-    await transporter.sendMail({
-        from: `"HomEV Suites" <${process.env.SMTP_USER}>`,
+    await _send({
         to: email,
         subject: `${otpCode} is your HomEV login code`,
-        text: emailText,
-        html: emailHtml
+        text,
+        html
     });
 };
 
+// ─── Thread / Messaging Email ─────────────────────────────────────────────────
 /**
  * Sends a message notification email with thread tracking reference.
  *
@@ -77,70 +125,59 @@ const sendOtpEmail = async (email, otpCode) => {
  * @param {string} toEmail - Recipient email address
  */
 const sendThreadEmail = async (thread, message, toEmail) => {
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-        console.log(`[MailService] Mock sending email to ${toEmail} for Thread ${thread.id}`);
-        return;
-    }
-
     try {
-        const transporter = createTransporter();
-        
-        const senderName = message.senderRole === 'GUEST' 
+        const senderName = message.senderRole === 'GUEST'
             ? `${thread.guest?.firstName || ''} ${thread.guest?.lastName || ''}`.trim() || 'Guest'
             : 'HomEV Admin';
-            
-        const fromAddress = `"${senderName} (HomEV)" <${process.env.SMTP_USER}>`;
+
         const propertyTitle = thread.property?.title || 'HomEV';
         const subject = `Re: Message from ${senderName} regarding ${propertyTitle} [Ref:${thread.id}]`;
 
         let reservationInfoHtml = '';
         let reservationInfoText = '';
-        
+
         if (message.senderRole === 'GUEST' && thread.reservation) {
             const startDate = new Date(thread.reservation.startDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-            const endDate = new Date(thread.reservation.endDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+            const endDate   = new Date(thread.reservation.endDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
             reservationInfoHtml = `
-                    <div style="background-color: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 20px; font-size: 14px; color: #475569;">
-                        <strong style="color:#0f172a;">Guest:</strong> ${senderName}<br/>
-                        <strong style="color:#0f172a;">Property:</strong> ${propertyTitle}<br/>
-                        <strong style="color:#0f172a;">Booked:</strong> ${startDate} to ${endDate}
-                    </div>
-            `;
+                <div style="background-color:#f8fafc;padding:15px;border-radius:6px;border:1px solid #e2e8f0;margin-bottom:20px;font-size:14px;color:#475569;">
+                    <strong style="color:#0f172a;">Guest:</strong> ${senderName}<br/>
+                    <strong style="color:#0f172a;">Property:</strong> ${propertyTitle}<br/>
+                    <strong style="color:#0f172a;">Booked:</strong> ${startDate} to ${endDate}
+                </div>`;
             reservationInfoText = `Guest: ${senderName}\nProperty: ${propertyTitle}\nBooked: ${startDate} to ${endDate}\n\n`;
         }
 
-        const emailHtml = `
-            <div style="font-family: Arial, sans-serif; background-color: #f3f5f8; padding: 20px;">
-                <div style="background-color: white; border-radius: 8px; padding: 20px; max-width: 600px; margin: 0 auto; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                    <h2 style="color: #0c1929; margin-top: 0;">New Message from ${senderName}</h2>
+        const html = `
+            <div style="font-family:Arial,sans-serif;background-color:#f3f5f8;padding:20px;">
+                <div style="background-color:white;border-radius:8px;padding:20px;max-width:600px;margin:0 auto;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+                    <h2 style="color:#0c1929;margin-top:0;">New Message from ${senderName}</h2>
                     ${reservationInfoHtml}
-                    <div style="background-color: #f8fafc; padding: 15px; border-radius: 6px; border-left: 4px solid #000; margin: 20px 0;">
-                        <p style="white-space: pre-wrap; margin: 0; color: #1e293b;">${message.content}</p>
+                    <div style="background-color:#f8fafc;padding:15px;border-radius:6px;border-left:4px solid #000;margin:20px 0;">
+                        <p style="white-space:pre-wrap;margin:0;color:#1e293b;">${message.content}</p>
                     </div>
-                    <p style="color: #64748b; font-size: 13px;">
+                    <p style="color:#64748b;font-size:13px;">
                         <em>Reply directly to this email to continue the conversation. Your reply will automatically be synced to the dashboard.</em>
                     </p>
-                    <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
-                    <p style="color: #94a3b8; font-size: 11px; margin: 0; text-align: center;">
+                    <hr style="border:0;border-top:1px solid #e2e8f0;margin:20px 0;" />
+                    <p style="color:#94a3b8;font-size:11px;margin:0;text-align:center;">
                         Powered by HomEV Suites Messaging<br/>
                         Thread Reference: ${thread.id}
                     </p>
                 </div>
-            </div>
-        `;
+            </div>`;
 
-        await transporter.sendMail({
-            from: fromAddress,
+        await _send({
             to: toEmail,
-            replyTo: process.env.SMTP_USER,
-            subject: subject,
+            subject,
             text: reservationInfoText + message.content + '\n\nReply to this email to respond.',
-            html: emailHtml
+            html,
+            replyTo: FROM_EMAIL
         });
-        
-        console.log(`[MailService] Sent thread email to ${toEmail} for Thread ${thread.id}`);
+
+        console.log(`[MailService] ✅ Sent thread email to ${toEmail} for Thread ${thread.id}`);
     } catch (error) {
-        console.error('[MailService] Error sending email:', error.message);
+        console.error('[MailService] ❌ Error sending email:', error.message);
     }
 };
 
