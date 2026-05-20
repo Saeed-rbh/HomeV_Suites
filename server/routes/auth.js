@@ -101,10 +101,19 @@ router.post('/request-phone-otp', otpRequestLimiter, async (req, res) => {
             ]
         };
 
-        const updatedUsers = await prisma.user.updateMany({ where: whereClause, data: { otpCode: otpHash, otpExpiresAt } });
-        const updatedGuests = await prisma.guestProfile.updateMany({ where: whereClause, data: { otpCode: otpHash, otpExpiresAt } });
+        // Prisma Neon HTTP driver doesn't support updateMany (which uses transactions). 
+        // We must find matching profiles and update them individually.
+        const matchingUsers = await prisma.user.findMany({ where: whereClause });
+        const matchingGuests = await prisma.guestProfile.findMany({ where: whereClause });
 
-        if (updatedUsers.count === 0 && updatedGuests.count === 0) {
+        for (const u of matchingUsers) {
+            await prisma.user.update({ where: { id: u.id }, data: { otpCode: otpHash, otpExpiresAt } });
+        }
+        for (const g of matchingGuests) {
+            await prisma.guestProfile.update({ where: { id: g.id }, data: { otpCode: otpHash, otpExpiresAt } });
+        }
+
+        if (matchingUsers.length === 0 && matchingGuests.length === 0) {
             // Create a new guest if it's their first time
             const placeholderEmail = `${normalizedP.replace(/\D/g, '')}@placeholder.com`;
             await prisma.guestProfile.create({
