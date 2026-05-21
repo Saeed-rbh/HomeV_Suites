@@ -1,89 +1,48 @@
 const nodemailer = require('nodemailer');
-const sgMail = require('@sendgrid/mail');
 
-// ─── Provider Detection ────────────────────────────────────────────────────────
-// If SENDGRID_API_KEY is set → use SendGrid.
-// Otherwise fall back to nodemailer (existing GoDaddy SMTP config).
-const useSendGrid = !!process.env.SENDGRID_API_KEY;
-
-if (useSendGrid) {
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-    console.log('[MailService] ✅ Using SendGrid for email delivery');
-} else {
-    console.log('[MailService] ⚠️  SENDGRID_API_KEY not set – falling back to nodemailer SMTP');
-}
-
-// ─── Nodemailer Transporter (fallback) ────────────────────────────────────────
+/**
+ * Creates a nodemailer transporter using GoDaddy / Microsoft 365 SMTP.
+ * SMTP_HOST should be smtp.office365.com, port 587.
+ */
 const createTransporter = () => {
     return nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'smtpout.secureserver.net',
-        port: parseInt(process.env.SMTP_PORT || '465'),
-        secure: parseInt(process.env.SMTP_PORT || '465') === 465,
+        host: process.env.SMTP_HOST || 'smtp.office365.com',
+        port: parseInt(process.env.SMTP_PORT || '587'),
+        secure: false, // STARTTLS on port 587
         auth: {
             user: process.env.SMTP_USER,
             pass: process.env.SMTP_PASS
         },
-        connectionTimeout: 5000,
-        greetingTimeout: 5000,
-        socketTimeout: 5000
+        connectionTimeout: 8000,
+        greetingTimeout: 8000,
+        socketTimeout: 8000
     });
 };
 
-// ─── Shared Sender Address ─────────────────────────────────────────────────────
-// SendGrid requires the FROM address to match your verified sender/domain.
-const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || process.env.SMTP_USER || 'support@homevsuites.com';
+const FROM_EMAIL = process.env.SMTP_USER || 'support@homevsuites.com';
 const FROM_NAME  = 'HomEV Suites';
 
-// ─── Internal send helper ─────────────────────────────────────────────────────
-/**
- * Unified send function — routes to SendGrid or nodemailer automatically.
- */
-const _send = async ({ to, subject, text, html, replyTo }) => {
-    if (useSendGrid) {
-        const msg = {
-            to,
-            from: { email: FROM_EMAIL, name: FROM_NAME },
-            subject,
-            text,
-            html,
-        };
-        if (replyTo) msg.replyTo = replyTo;
-        await sgMail.send(msg);
-    } else {
-        if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-            // No credentials at all — log to console
-            console.log(`\n==========================================`);
-            console.log(`📧 SIMULATED EMAIL TO: ${to}`);
-            console.log(`📋 SUBJECT: ${subject}`);
-            console.log(`📝 BODY: ${text}`);
-            console.log(`==========================================\n`);
-            return;
-        }
-        const transporter = createTransporter();
-        await transporter.sendMail({
-            from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
-            to,
-            subject,
-            text,
-            html,
-            ...(replyTo ? { replyTo } : {})
-        });
-    }
-};
-
-// ─── OTP Email ────────────────────────────────────────────────────────────────
 /**
  * Sends a 6-digit OTP login code via email.
+ * Falls back to console logging when SMTP is not configured.
  *
  * @param {string} email    - Recipient email address
  * @param {string} otpCode  - The plain-text OTP code (not the hash)
  */
 const sendOtpEmail = async (email, otpCode) => {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+        console.log(`\n==========================================`);
+        console.log(`📧 SIMULATED EMAIL TO: ${email}`);
+        console.log(`🔒 SECURITY CODE: ${otpCode}`);
+        console.log(`==========================================\n`);
+        return;
+    }
+
     const year = new Date().getFullYear();
 
-    const text = `Your HomEV login code is: ${otpCode}\n\nThis code expires in 15 minutes.\n\nIf you did not request this, you can safely ignore this email.\n\n© ${year} HomEV Suites – support@homevsuites.com`;
+    const emailText = `Your HomEV login code is: ${otpCode}\n\nThis code expires in 15 minutes.\n\nIf you did not request this, you can safely ignore this email.\n\n© ${year} HomEV Suites – support@homevsuites.com`;
 
-    const html = `<!DOCTYPE html>
+    const emailHtml = `<!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><title>Your HomEV Login Code</title></head>
 <body style="margin:0;padding:0;background-color:#f3f5f8;font-family:Arial,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f3f5f8;padding:40px 20px;">
@@ -108,15 +67,16 @@ const sendOtpEmail = async (email, otpCode) => {
   </table>
 </body></html>`;
 
-    await _send({
+    const transporter = createTransporter();
+    await transporter.sendMail({
+        from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
         to: email,
         subject: `${otpCode} is your HomEV login code`,
-        text,
-        html
+        text: emailText,
+        html: emailHtml
     });
 };
 
-// ─── Thread / Messaging Email ─────────────────────────────────────────────────
 /**
  * Sends a message notification email with thread tracking reference.
  *
@@ -125,7 +85,14 @@ const sendOtpEmail = async (email, otpCode) => {
  * @param {string} toEmail - Recipient email address
  */
 const sendThreadEmail = async (thread, message, toEmail) => {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+        console.log(`[MailService] Mock sending email to ${toEmail} for Thread ${thread.id}`);
+        return;
+    }
+
     try {
+        const transporter = createTransporter();
+
         const senderName = message.senderRole === 'GUEST'
             ? `${thread.guest?.firstName || ''} ${thread.guest?.lastName || ''}`.trim() || 'Guest'
             : 'HomEV Admin';
@@ -148,7 +115,7 @@ const sendThreadEmail = async (thread, message, toEmail) => {
             reservationInfoText = `Guest: ${senderName}\nProperty: ${propertyTitle}\nBooked: ${startDate} to ${endDate}\n\n`;
         }
 
-        const html = `
+        const emailHtml = `
             <div style="font-family:Arial,sans-serif;background-color:#f3f5f8;padding:20px;">
                 <div style="background-color:white;border-radius:8px;padding:20px;max-width:600px;margin:0 auto;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
                     <h2 style="color:#0c1929;margin-top:0;">New Message from ${senderName}</h2>
@@ -157,7 +124,7 @@ const sendThreadEmail = async (thread, message, toEmail) => {
                         <p style="white-space:pre-wrap;margin:0;color:#1e293b;">${message.content}</p>
                     </div>
                     <p style="color:#64748b;font-size:13px;">
-                        <em>Reply directly to this email to continue the conversation. Your reply will automatically be synced to the dashboard.</em>
+                        <em>Reply directly to this email to continue the conversation.</em>
                     </p>
                     <hr style="border:0;border-top:1px solid #e2e8f0;margin:20px 0;" />
                     <p style="color:#94a3b8;font-size:11px;margin:0;text-align:center;">
@@ -167,12 +134,13 @@ const sendThreadEmail = async (thread, message, toEmail) => {
                 </div>
             </div>`;
 
-        await _send({
+        await transporter.sendMail({
+            from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
             to: toEmail,
+            replyTo: FROM_EMAIL,
             subject,
             text: reservationInfoText + message.content + '\n\nReply to this email to respond.',
-            html,
-            replyTo: FROM_EMAIL
+            html: emailHtml
         });
 
         console.log(`[MailService] ✅ Sent thread email to ${toEmail} for Thread ${thread.id}`);
