@@ -413,15 +413,7 @@ function AccountButton() {
   };
 
   if (!session) {
-    return (
-      <Link
-        href="/login"
-        className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-[#0c1929] transition hover:border-slate-300 hover:shadow-sm"
-      >
-        <UserCircle2 className="h-4 w-4 text-[#0c1929]" />
-        Sign In / Sign Up
-      </Link>
-    );
+    return null;
   }
 
   const initials = session.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();

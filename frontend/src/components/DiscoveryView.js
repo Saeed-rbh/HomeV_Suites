@@ -510,12 +510,9 @@ export default function DiscoveryView() {
           <div className="absolute bottom-0 left-0 right-0 h-[50vh] bg-gradient-to-t from-[#0c1929]/95 via-[#0c1929]/40 to-transparent z-[2] pointer-events-none" />
 
           {/* Top bar */}
-          <div className="absolute top-0 left-0 right-0 z-[10] flex items-center justify-between px-5 pt-5">
+          <div className="absolute top-0 left-0 right-0 z-[10] flex items-center justify-start px-5 pt-5">
             <Link href="/">
               <img src="/suites-logo.png" alt="HomEV" className="h-9 w-auto object-contain mix-blend-multiply opacity-80" />
-            </Link>
-            <Link href="/login" className="h-9 w-9 flex items-center justify-center rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-white transition hover:bg-white/25">
-              <User className="h-4 w-4" />
             </Link>
           </div>
 
@@ -604,7 +601,6 @@ export default function DiscoveryView() {
         <HeroCarousel visibleListings={visibleListings} slideIndex={slideIndex} booking={booking} />
         <div className="absolute top-[30px] right-[30px] z-10 flex items-center gap-3">
           <Link href="/contact" className="bg-white px-6 py-2.5 text-sm font-bold text-[#0c1929] border border-white hover:bg-white/90 transition rounded-full">Contact Us</Link>
-          <Link href="/login" className="bg-white h-10 w-10 flex items-center justify-center rounded-full text-[#0c1929] hover:bg-white/90 transition shadow-sm border border-white"><User className="h-5 w-5" /></Link>
         </div>
         <div className="absolute bottom-8 left-0 right-0 z-10 flex justify-center">
           <HeroSearchBar booking={booking} globalBlockedDates={globalBlockedDates} partiallyBlockedDates={partiallyBlockedDates} allListingsBlocked={allListingsBlocked} />
