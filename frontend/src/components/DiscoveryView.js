@@ -599,9 +599,7 @@ export default function DiscoveryView() {
       </div>
       <div className="hero-right-panel">
         <HeroCarousel visibleListings={visibleListings} slideIndex={slideIndex} booking={booking} />
-        <div className="absolute top-[30px] right-[30px] z-10 flex items-center gap-3">
-          <Link href="/contact" className="bg-white px-6 py-2.5 text-sm font-bold text-[#0c1929] border border-white hover:bg-white/90 transition rounded-full">Contact Us</Link>
-        </div>
+
         <div className="absolute bottom-8 left-0 right-0 z-10 flex justify-center">
           <HeroSearchBar booking={booking} globalBlockedDates={globalBlockedDates} partiallyBlockedDates={partiallyBlockedDates} allListingsBlocked={allListingsBlocked} />
         </div>
