@@ -144,8 +144,18 @@ export default async function ListingPage({ params, searchParams }) {
 
   // Redirect directly to Hostaway booking engine (https://book.homevsuites.com/listings/[id])
   const bookingUrl = listing.bookingUrl || `https://book.homevsuites.com/listings/${listing.id}`;
-  const queryParams = new URLSearchParams(resolvedSearchParams).toString();
-  const targetUrl = queryParams ? `${bookingUrl}?${queryParams}` : bookingUrl;
+  
+  const checkIn = resolvedSearchParams.checkIn || resolvedSearchParams.start || '';
+  const checkOut = resolvedSearchParams.checkOut || resolvedSearchParams.end || '';
+  const guests = resolvedSearchParams.guests || resolvedSearchParams.numberOfGuests || '';
+  
+  const externalQuery = new URLSearchParams();
+  if (checkIn) externalQuery.set('start', checkIn);
+  if (checkOut) externalQuery.set('end', checkOut);
+  if (guests) externalQuery.set('numberOfGuests', String(guests));
+  
+  const queryStr = externalQuery.toString();
+  const targetUrl = queryStr ? `${bookingUrl}?${queryStr}` : bookingUrl;
   redirect(targetUrl);
 
   // Hostaway listing ID — update this to your actual Hostaway listing ID

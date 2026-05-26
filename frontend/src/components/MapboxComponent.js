@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import Map, { Marker, NavigationControl } from "react-map-gl/mapbox";
 import mapboxgl from "mapbox-gl";
 import Link from "next/link";
-import { buildBookingQuery } from "@/lib/booking";
+import { buildBookingQuery, buildExternalBookingQuery } from "@/lib/booking";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 const TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
@@ -82,7 +82,7 @@ export default function MapboxComponent({ properties = [], booking, hoveredId, o
         {validProperties.map((property) => {
           const isHovered = hoveredId === property.id;
           const markerBookingUrl = property.bookingUrl || `https://book.homevsuites.com/listings/${property.id}`;
-          const markerQueryParams = new URLSearchParams(buildBookingQuery(booking)).toString();
+          const markerQueryParams = new URLSearchParams(buildExternalBookingQuery(booking)).toString();
           const markerHref = markerQueryParams ? `${markerBookingUrl}?${markerQueryParams}` : markerBookingUrl;
           
           return (

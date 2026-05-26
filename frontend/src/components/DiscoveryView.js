@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { useSearchParams, useRouter } from "next/navigation";
 import { CalendarDays, Users, Search, Minus, Plus, ArrowUpRight, User, X } from "lucide-react";
 import PropertyCard from "@/components/PropertyCard";
-import { normalizeBooking, buildBookingQuery, getStayPriceLabel } from "@/lib/booking";
+import { normalizeBooking, buildBookingQuery, getStayPriceLabel, buildExternalBookingQuery } from "@/lib/booking";
 import AvailabilityCalendar from "@/components/AvailabilityCalendar";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,7 +15,7 @@ import { Star } from "lucide-react";
 function MobilePropertyCard({ listing, booking }) {
   const price = getStayPriceLabel(listing, booking);
   const bookingUrl = listing.bookingUrl || `https://book.homevsuites.com/listings/${listing.id}`;
-  const queryParams = new URLSearchParams(buildBookingQuery(booking)).toString();
+  const queryParams = new URLSearchParams(buildExternalBookingQuery(booking)).toString();
   const href = queryParams ? `${bookingUrl}?${queryParams}` : bookingUrl;
   return (
     <Link href={href} className="block">
@@ -323,7 +323,7 @@ function HeroCarousel({ visibleListings, slideIndex, booking }) {
 
       {visibleListings.map((listing, i) => {
         const bookingUrl = listing.bookingUrl || `https://book.homevsuites.com/listings/${listing.id}`;
-        const queryParams = new URLSearchParams(buildBookingQuery(booking)).toString();
+        const queryParams = new URLSearchParams(buildExternalBookingQuery(booking)).toString();
         const lHref = queryParams ? `${bookingUrl}?${queryParams}` : bookingUrl;
         return (
           <div key={`card-${listing.id}`}
@@ -467,7 +467,7 @@ export default function DiscoveryView() {
   const slideIndex = visibleListings.length > 0 ? activeSlide % visibleListings.length : 0;
   const activeListing = visibleListings[slideIndex] || null;
   const activeBookingUrl = activeListing ? (activeListing.bookingUrl || `https://book.homevsuites.com/listings/${activeListing.id}`) : "";
-  const activeQueryParams = activeListing ? new URLSearchParams(buildBookingQuery(booking)).toString() : "";
+  const activeQueryParams = activeListing ? new URLSearchParams(buildExternalBookingQuery(booking)).toString() : "";
   const listingHref = activeListing ? (activeQueryParams ? `${activeBookingUrl}?${activeQueryParams}` : activeBookingUrl) : "/";
 
   if (isMobile === null || isLoading) {

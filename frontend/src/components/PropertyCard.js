@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
-import { buildBookingQuery, getStayPriceLabel } from "@/lib/booking";
+import { buildBookingQuery, getStayPriceLabel, buildExternalBookingQuery } from "@/lib/booking";
 
 
 function wrapIndex(index, length) {
@@ -18,7 +18,7 @@ export default function PropertyCard({ property, booking, highlighted = false, o
   const touchStartRef = useRef(null);
   const price = getStayPriceLabel(property, booking);
   const bookingUrl = property.bookingUrl || `https://book.homevsuites.com/listings/${property.id}`;
-  const queryParams = new URLSearchParams(buildBookingQuery(booking)).toString();
+  const queryParams = new URLSearchParams(buildExternalBookingQuery(booking)).toString();
   const href = queryParams ? `${bookingUrl}?${queryParams}` : bookingUrl;
 
   function goToImage(nextIndex, event) {

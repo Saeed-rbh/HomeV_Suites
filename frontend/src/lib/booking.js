@@ -191,6 +191,15 @@ export function buildBookingQuery(booking, overrides = {}) {
   return Object.fromEntries(Object.entries(query).filter(([, value]) => value !== undefined && value !== null && value !== ""));
 }
 
+export function buildExternalBookingQuery(booking) {
+  const query = {
+    start: booking.checkIn || undefined,
+    end: booking.checkOut || undefined,
+    numberOfGuests: booking.guests ? String(booking.guests) : undefined,
+  };
+  return Object.fromEntries(Object.entries(query).filter(([, value]) => value !== undefined && value !== null && value !== ""));
+}
+
 export function getStayPriceLabel(listing, booking) {
   const breakdown = calculatePriceBreakdown(listing, booking.checkIn, booking.checkOut);
   return {
