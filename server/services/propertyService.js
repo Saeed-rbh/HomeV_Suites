@@ -27,8 +27,16 @@ const ingestPropertyFromUplisting = async (extId) => {
   return await prisma.property.findFirst({ where: { OR: [{ id: extId }, { externalId: extId }] } });
 };
 
+const parseImages = (raw) => {
+  if (Array.isArray(raw)) return raw;
+  if (typeof raw === 'string') {
+    try { return JSON.parse(raw); } catch { return []; }
+  }
+  return [];
+};
+
 const getProperties = async (filters = {}) => {
-  return await prisma.property.findMany({
+  const props = await prisma.property.findMany({
     where: filters,
     include: {
       manager: {
@@ -36,7 +44,13 @@ const getProperties = async (filters = {}) => {
       }
     }
   });
+  return props.map(p => ({
+    ...p,
+    images: parseImages(p.images),
+    thumbnailUrl: p.thumbnailUrl || parseImages(p.images)[0] || null
+  }));
 };
+
 
 const getPropertyById = async (id) => {
   return await prisma.property.findUnique({

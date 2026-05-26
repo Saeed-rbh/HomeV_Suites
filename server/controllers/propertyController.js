@@ -67,10 +67,19 @@ const getPropertyById = async (req, res) => {
             };
         }
 
+        // Parse images from JSON string to array if needed
+        let images = property.images;
+        if (typeof images === 'string') {
+            try { images = JSON.parse(images); } catch { images = []; }
+        }
+        images = Array.isArray(images) ? images : [];
+
         res.status(200).json({
             success: true,
             data: {
                 ...property,
+                images,
+                thumbnailUrl: property.thumbnailUrl || images[0] || null,
                 cancellationPolicy,
                 blockedDates: property.blockedDates || [],
                 calendarRates: property.calendarRates || {},
