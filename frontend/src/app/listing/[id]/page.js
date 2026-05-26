@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import {
   BriefcaseBusiness,
   CarFront,
@@ -141,6 +141,12 @@ export default async function ListingPage({ params, searchParams }) {
   if (!listing) {
     notFound();
   }
+
+  // Redirect directly to Hostaway booking engine (https://book.homevsuites.com/listings/[id])
+  const bookingUrl = listing.bookingUrl || `https://book.homevsuites.com/listings/${listing.id}`;
+  const queryParams = new URLSearchParams(resolvedSearchParams).toString();
+  const targetUrl = queryParams ? `${bookingUrl}?${queryParams}` : bookingUrl;
+  redirect(targetUrl);
 
   // Hostaway listing ID — update this to your actual Hostaway listing ID
   const HOSTAWAY_LISTING_ID = listing.hostawayListingId || 40467;

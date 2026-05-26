@@ -17,10 +17,9 @@ export default function PropertyCard({ property, booking, highlighted = false, o
   const [imageIndex, setImageIndex] = useState(0);
   const touchStartRef = useRef(null);
   const price = getStayPriceLabel(property, booking);
-  const href = {
-    pathname: `/listing/${property.id}`,
-    query: buildBookingQuery(booking),
-  };
+  const bookingUrl = property.bookingUrl || `https://book.homevsuites.com/listings/${property.id}`;
+  const queryParams = new URLSearchParams(buildBookingQuery(booking)).toString();
+  const href = queryParams ? `${bookingUrl}?${queryParams}` : bookingUrl;
 
   function goToImage(nextIndex, event) {
     event.preventDefault();

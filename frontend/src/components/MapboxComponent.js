@@ -81,6 +81,9 @@ export default function MapboxComponent({ properties = [], booking, hoveredId, o
 
         {validProperties.map((property) => {
           const isHovered = hoveredId === property.id;
+          const markerBookingUrl = property.bookingUrl || `https://book.homevsuites.com/listings/${property.id}`;
+          const markerQueryParams = new URLSearchParams(buildBookingQuery(booking)).toString();
+          const markerHref = markerQueryParams ? `${markerBookingUrl}?${markerQueryParams}` : markerBookingUrl;
           
           return (
             <Marker
@@ -90,10 +93,7 @@ export default function MapboxComponent({ properties = [], booking, hoveredId, o
               anchor="bottom"
             >
               <Link
-                href={{
-                  pathname: `/listing/${property.id}`,
-                  query: buildBookingQuery(booking),
-                }}
+                href={markerHref}
                 onMouseEnter={() => onHoverChange?.(property.id)}
                 onMouseLeave={() => onHoverChange?.(null)}
                 className={`relative flex items-center justify-center transition-all duration-300 ${
