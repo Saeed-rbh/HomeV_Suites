@@ -67,12 +67,16 @@ const getPropertyById = async (req, res) => {
             };
         }
 
+        // Helper: parse JSON string fields → array/object
+        const parseJson = (val, fallback) => {
+            if (!val) return fallback;
+            if (typeof val !== 'string') return val;
+            try { return JSON.parse(val); } catch { return fallback; }
+        };
+
         // Parse images from JSON string to array if needed
-        let images = property.images;
-        if (typeof images === 'string') {
-            try { images = JSON.parse(images); } catch { images = []; }
-        }
-        images = Array.isArray(images) ? images : [];
+        let images = parseJson(property.images, []);
+        if (!Array.isArray(images)) images = [];
 
         res.status(200).json({
             success: true,
@@ -80,19 +84,23 @@ const getPropertyById = async (req, res) => {
                 ...property,
                 images,
                 thumbnailUrl: property.thumbnailUrl || images[0] || null,
+                bookingUrl: property.bookingUrl || `https://book.homevsuites.com/listings/${property.id}`,
                 cancellationPolicy,
                 blockedDates: property.blockedDates || [],
                 calendarRates: property.calendarRates || {},
                 calendarMinStays: property.calendarMinStays || {},
                 minStay: property.minStay || 1,
-                amenities: property.amenities || [],
-                fees: property.fees || [],
-                taxes: property.taxes || [],
-                discounts: property.discounts || { weekly: 0, monthly: 0 },
-                suitability: property.suitability || { children: true, pets: false, events: false, smoking: false },
-                securityDeposit: property.securityDeposit || { amount: 0, enabled: false },
+                amenities:          parseJson(property.amenities, []),
+                fees:               parseJson(property.fees, []),
+                taxes:              parseJson(property.taxes, []),
+                suitability:        parseJson(property.suitability, { children: true, pets: false, events: false, smoking: false }),
+                discounts:          parseJson(property.discounts, { weekly: 0, monthly: 0 }),
+                securityDeposit:    parseJson(property.securityDeposit, { amount: 0, enabled: false }),
+                bedTypes:           parseJson(property.bedTypes, []),
+                channelCommissions: parseJson(property.channelCommissions, []),
             }
         });
+
     } catch (error) {
         handleError(res, error, 'getPropertyById', 400);
     }

@@ -92,9 +92,46 @@ model Property {
   neighborhood         String?
   thumbnailUrl         String?
   images               String?   // JSON-encoded array of image URLs
+  bookingUrl           String?   // https://book.homevsuites.com/listings/{id}
+
+  // Pricing & capacity
   pricePerNight        Float
   capacity             Int
   bedrooms             Int
+  beds                 Int?
+  bathrooms            Float?
+  minStay              Int?      @default(1)
+  currency             String?   @default("CAD")
+  propertyType         String?   @default("Apartment")
+
+  // Location
+  latitude             Float?
+  longitude            Float?
+  city                 String?
+  state                String?
+  zipCode              String?
+  country              String?
+
+  // Rating & reviews
+  rating               Float?
+  reviewCount          Int?
+
+  // Check-in/out times (hour, 24h)
+  checkInTime          Int?      @default(15)
+  checkOutTime         Int?      @default(11)
+
+  // Extended data (JSON-encoded)
+  amenities            String?   // JSON: [{id, name, group}]
+  fees                 String?   // JSON: [{label, amount, type, enabled}]
+  taxes                String?   // JSON: [{label, amount, type}]
+  suitability          String?   // JSON: {children, pets, events, smoking}
+  discounts            String?   // JSON: {weekly, monthly}
+  securityDeposit      String?   // JSON: {amount, enabled}
+  bedTypes             String?   // JSON: [{type, count}]
+  channelCommissions   String?   // JSON array
+  cancellationType     String?
+  cancellationDescription String?
+
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
   lastWebhookTimestamp DateTime?
@@ -116,6 +153,7 @@ model Property {
   ratePlans      RatePlan[]
   journalEntries JournalEntry[]
 }
+
 
 model GuestProfile {
   id           String    @id @default(uuid())

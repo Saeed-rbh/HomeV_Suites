@@ -300,6 +300,17 @@ export default async function ListingPage({ params, searchParams }) {
             <h2 className="text-[18px] font-semibold text-[#0c1929] mb-4">Availability &amp; Booking</h2>
             <HostawayCalendarWidget listingId={HOSTAWAY_LISTING_ID} widgetId={`hostaway-calendar-widget-mobile-${id}`} />
           </div>
+
+          {/* Book Now CTA — mobile */}
+          <a
+            href={listing.bookingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex w-full items-center justify-center gap-2 rounded-[20px] bg-[#0c1929] py-4 text-[15px] font-bold text-white shadow-[0_4px_18px_rgba(12,25,41,0.22)] hover:bg-[#152b47] active:scale-[0.98] transition-all"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Book on HomEV
+          </a>
         </div>
       </div>
 
@@ -320,8 +331,25 @@ export default async function ListingPage({ params, searchParams }) {
                 <MapPin className="h-4 w-4" />
                 {listing.location}
               </span>
+              {listing.rating && (
+                <span className="inline-flex items-center gap-1">
+                  <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                  <span className="font-semibold">{listing.rating}</span>
+                  {listing.reviewCount && <span className="text-slate-500">({listing.reviewCount} reviews)</span>}
+                </span>
+              )}
             </div>
           </div>
+          {/* Direct booking link — desktop header */}
+          <a
+            href={listing.bookingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex shrink-0 items-center gap-2 rounded-[14px] bg-[#0c1929] px-6 py-3 text-sm font-bold text-white shadow-[0_4px_14px_rgba(12,25,41,0.18)] hover:bg-[#152b47] transition-all"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Book on HomEV
+          </a>
         </div>
 
         <ListingGallery listing={listing} />
@@ -398,7 +426,17 @@ export default async function ListingPage({ params, searchParams }) {
             />
           </div>
 
-          <aside className="lg:sticky lg:top-6 self-start">
+          <aside className="lg:sticky lg:top-6 self-start space-y-4">
+            {/* Primary Book Now CTA — desktop sidebar */}
+            <a
+              href={listing.bookingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-full items-center justify-center gap-2.5 rounded-[20px] bg-[#0c1929] px-6 py-4 text-[15px] font-bold text-white shadow-[0_6px_24px_rgba(12,25,41,0.22)] hover:bg-[#152b47] hover:shadow-[0_8px_28px_rgba(12,25,41,0.28)] transition-all"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Book on HomEV
+            </a>
             {/* Hostaway booking widget on desktop sidebar */}
             <HostawayCalendarWidget listingId={HOSTAWAY_LISTING_ID} widgetId={`hostaway-booking-sidebar-${id}`} />
           </aside>

@@ -27,12 +27,10 @@ const ingestPropertyFromUplisting = async (extId) => {
   return await prisma.property.findFirst({ where: { OR: [{ id: extId }, { externalId: extId }] } });
 };
 
-const parseImages = (raw) => {
-  if (Array.isArray(raw)) return raw;
-  if (typeof raw === 'string') {
-    try { return JSON.parse(raw); } catch { return []; }
-  }
-  return [];
+const parseJson = (raw, fallback) => {
+  if (!raw) return fallback;
+  if (typeof raw !== 'string') return raw;
+  try { return JSON.parse(raw); } catch { return fallback; }
 };
 
 const getProperties = async (filters = {}) => {
@@ -44,12 +42,27 @@ const getProperties = async (filters = {}) => {
       }
     }
   });
-  return props.map(p => ({
-    ...p,
-    images: parseImages(p.images),
-    thumbnailUrl: p.thumbnailUrl || parseImages(p.images)[0] || null
-  }));
+  return props.map(p => {
+    const images = parseJson(p.images, []);
+    return {
+      ...p,
+      images: Array.isArray(images) ? images : [],
+      thumbnailUrl: p.thumbnailUrl || (Array.isArray(images) ? images[0] : null) || null,
+      bookingUrl: p.bookingUrl || `https://book.homevsuites.com/listings/${p.id}`,
+      rating: p.rating || null,
+      reviewCount: p.reviewCount || null,
+      amenities:          parseJson(p.amenities, []),
+      fees:               parseJson(p.fees, []),
+      taxes:              parseJson(p.taxes, []),
+      suitability:        parseJson(p.suitability, { children: true, pets: false, events: false, smoking: false }),
+      discounts:          parseJson(p.discounts, { weekly: 0, monthly: 0 }),
+      securityDeposit:    parseJson(p.securityDeposit, { amount: 0, enabled: false }),
+      bedTypes:           parseJson(p.bedTypes, []),
+      channelCommissions: parseJson(p.channelCommissions, []),
+    };
+  });
 };
+
 
 
 const getPropertyById = async (id) => {
