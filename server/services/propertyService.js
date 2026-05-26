@@ -35,7 +35,7 @@ const parseJson = (raw, fallback) => {
 
 const getProperties = async (filters = {}) => {
   const props = await prisma.property.findMany({
-    where: filters,
+    where: { isActive: { not: false }, ...filters },
     include: {
       manager: {
         select: { id: true, email: true }

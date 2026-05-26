@@ -93,6 +93,7 @@ model Property {
   thumbnailUrl         String?
   images               String?   // JSON-encoded array of image URLs
   bookingUrl           String?   // https://book.homevsuites.com/listings/{id}
+  isActive             Boolean?  @default(true) // false = removed from booking site
 
   // Pricing & capacity
   pricePerNight        Float

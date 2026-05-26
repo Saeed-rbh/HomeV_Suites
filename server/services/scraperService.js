@@ -1,9 +1,34 @@
 const cron = require('node-cron');
 const prisma = require('../db');
 
-const LISTING_MAP_IDS = [537314, 537322, 537336, 537342, 537356];
+const BOOKING_SITE = 'https://book.homevsuites.com';
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// ─── Discovery ────────────────────────────────────────────────────────────────
+
+/**
+ * Fetches the booking site homepage and extracts all listing IDs from
+ * /listings/{id} URL patterns in the HTML.
+ * Returns an array of numeric IDs, e.g. [537314, 537322, ...].
+ */
+async function discoverListingIds() {
+  console.log(`[Scraper] Discovering listings from ${BOOKING_SITE} ...`);
+  try {
+    const res = await fetch(BOOKING_SITE, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+      }
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const html = await res.text();
+    const matches = [...html.matchAll(/\/listings\/(\d+)/g)];
+    const ids = [...new Set(matches.map(m => parseInt(m[1])))];
+    console.log(`[Scraper] Discovered ${ids.length} listing IDs: [${ids.join(', ')}]`);
+    return ids;
+  } catch (err) {
+    console.error('[Scraper] Failed to discover listing IDs:', err.message);
+    return [];
+  }
+}
 
 /** Safely parse a JSON string, returning fallback on failure. */
 function safeJson(str, fallback = null) {
@@ -269,8 +294,47 @@ const LONG_TERM_POLICY_ID  = '22b7b8a1-f4bc-47a4-b3cd-eab402b1ea89';
 async function scrapeAndSyncProperties() {
   console.log('[Scraper] Starting property scrape & sync at:', new Date().toISOString());
 
+  // ── 1. Discover live listing IDs from the booking site ────────────────────
+  const liveIds = await discoverListingIds();
+
+  if (!liveIds.length) {
+    console.warn('[Scraper] Could not discover any listing IDs. Aborting sync.');
+    return 0;
+  }
+
+  // ── 2. Get all existing property IDs in our DB ────────────────────────────
+  const existingProps = await prisma.property.findMany({
+    select: { id: true, title: true }
+  });
+  const existingIds = new Set(existingProps.map(p => p.id));
+  const liveIdStrings = new Set(liveIds.map(String));
+
+  // ── 3. Mark removed listings as inactive ─────────────────────────────────
+  const removedIds = [...existingIds].filter(id => !liveIdStrings.has(id));
+  if (removedIds.length) {
+    console.log(`[Scraper] ${removedIds.length} listing(s) no longer on booking site — marking inactive: [${removedIds.join(', ')}]`);
+    for (const id of removedIds) {
+      try {
+        await prisma.property.update({
+          where: { id },
+          data: { isActive: false }
+        });
+        console.log(`[Scraper] ⚪ Marked inactive: ${id}`);
+      } catch (e) {
+        console.warn(`[Scraper] Could not mark ${id} inactive:`, e.message);
+      }
+    }
+  }
+
+  // ── 4. New listings that don't exist in DB yet ───────────────────────────
+  const newIds = liveIds.filter(id => !existingIds.has(String(id)));
+  if (newIds.length) {
+    console.log(`[Scraper] 🆕 ${newIds.length} new listing(s) found: [${newIds.join(', ')}]`);
+  }
+
+  // ── 5. Scrape & upsert all live listings ──────────────────────────────────
   let successCount = 0;
-  for (const mapId of LISTING_MAP_IDS) {
+  for (const mapId of liveIds) {
     const scraped = await scrapeListingDetails(mapId);
     if (!scraped) {
       console.warn(`[Scraper] No data returned for mapId ${mapId}, skipping.`);
@@ -278,7 +342,8 @@ async function scrapeAndSyncProperties() {
     }
 
     const idStr = String(mapId);
-    const bookingUrl = `https://book.homevsuites.com/listings/${mapId}`;
+    const bookingUrl = `${BOOKING_SITE}/listings/${mapId}`;
+    const isNew = !existingIds.has(idStr);
 
     const propertyData = {
       title:       scraped.title || `Property ${idStr}`,
@@ -294,6 +359,7 @@ async function scrapeAndSyncProperties() {
       latitude:    scraped.latitude,
       longitude:   scraped.longitude,
       bookingUrl,
+      isActive:    true,  // explicitly mark active on every sync
       thumbnailUrl: scraped.images?.length ? scraped.images[0] : null,
       images:       JSON.stringify(scraped.images || []),
       pricePerNight: scraped.pricePerNight,
@@ -322,7 +388,8 @@ async function scrapeAndSyncProperties() {
         update: propertyData,
         create: { id: idStr, externalId: idStr, ...propertyData },
       });
-      console.log(`[Scraper] ✅ ${propertyData.title} (${idStr}) — ${scraped.images?.length || 0} images, rating: ${scraped.rating}, reviews: ${scraped.reviewCount}`);
+      const badge = isNew ? '🆕' : '✅';
+      console.log(`[Scraper] ${badge} ${propertyData.title} (${idStr}) — ${scraped.images?.length || 0} images, rating: ${scraped.rating}`);
       successCount++;
     } catch (dbErr) {
       console.error(`[Scraper] ❌ DB error for ${idStr}:`, dbErr.message);
@@ -331,7 +398,10 @@ async function scrapeAndSyncProperties() {
     await new Promise(r => setTimeout(r, 1200)); // polite delay
   }
 
-  console.log(`[Scraper] Sync done: ${successCount}/${LISTING_MAP_IDS.length} succeeded.`);
+  const summary = `${successCount}/${liveIds.length} synced`
+    + (newIds.length ? `, ${newIds.length} new` : '')
+    + (removedIds.length ? `, ${removedIds.length} removed` : '');
+  console.log(`[Scraper] Sync done: ${summary}.`);
   return successCount;
 }
 
