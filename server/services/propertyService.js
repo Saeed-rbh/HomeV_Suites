@@ -59,6 +59,9 @@ const getProperties = async (filters = {}) => {
       securityDeposit:    parseJson(p.securityDeposit, { amount: 0, enabled: false }),
       bedTypes:           parseJson(p.bedTypes, []),
       channelCommissions: parseJson(p.channelCommissions, []),
+      blockedDates:       parseJson(p.blockedDates, []),
+      calendarRates:      parseJson(p.calendarRates, {}),
+      calendarMinStays:   parseJson(p.calendarMinStays, {}),
     };
   });
 };

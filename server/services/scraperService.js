@@ -402,7 +402,138 @@ async function scrapeAndSyncProperties() {
     + (newIds.length ? `, ${newIds.length} new` : '')
     + (removedIds.length ? `, ${removedIds.length} removed` : '');
   console.log(`[Scraper] Sync done: ${summary}.`);
+  
+  // Trigger calendar sync automatically after properties sync
+  await syncHostawayCalendars().catch(err => console.error('[Scraper] Post-scrape calendar sync error:', err.message));
+
   return successCount;
+}
+
+/**
+ * Fetches calendar availability, custom nightly rates, and minimum stays
+ * from Hostaway Public API for all active listings and updates the database.
+ */
+async function syncHostawayCalendars() {
+  const clientId = process.env.HOSTAWAY_CLIENT_ID;
+  const apiKey = process.env.HOSTAWAY_API_KEY;
+
+  if (!clientId || !apiKey) {
+    console.warn('[CalendarSync] HOSTAWAY_CLIENT_ID or HOSTAWAY_API_KEY not configured. Skipping sync.');
+    return false;
+  }
+
+  console.log('[CalendarSync] Starting calendar synchronization via Hostaway Public API...');
+  try {
+    // 1. Generate access token
+    const tokenRes = await fetch('https://api.hostaway.com/v1/accessTokens', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Cache-Control': 'no-cache'
+      },
+      body: new URLSearchParams({
+        grant_type: 'client_credentials',
+        client_id: clientId,
+        client_secret: apiKey,
+        scope: 'general'
+      }).toString()
+    });
+
+    const tokenData = await tokenRes.json();
+    if (!tokenRes.ok) {
+      throw new Error(`Token generation failed: ${JSON.stringify(tokenData)}`);
+    }
+
+    const accessToken = tokenData.result?.accessToken || tokenData.access_token;
+    if (!accessToken) throw new Error('No access token returned by Hostaway.');
+
+    // 2. Fetch active properties from our DB
+    const activeProperties = await prisma.property.findMany({
+      where: { isActive: { not: false } }
+    });
+
+    console.log(`[CalendarSync] Found ${activeProperties.length} active listings to sync.`);
+
+    // 3. For each listing, fetch calendar for next 180 days (6 months)
+    const today = new Date();
+    const startDate = today.toISOString().split('T')[0];
+    const future = new Date();
+    future.setDate(today.getDate() + 180);
+    const endDate = future.toISOString().split('T')[0];
+
+    let successCount = 0;
+
+    for (const property of activeProperties) {
+      const listingId = property.externalId || property.id;
+      // Skip if listing ID is not numeric (not a Hostaway listing ID)
+      if (!/^\d+$/.test(listingId)) {
+        console.warn(`[CalendarSync] Listing ID ${listingId} is not numeric, skipping.`);
+        continue;
+      }
+
+      try {
+        console.log(`[CalendarSync] Syncing listing ${listingId} (${property.title}) ...`);
+        const calendarUrl = `https://api.hostaway.com/v1/listings/${listingId}/calendar?startDate=${startDate}&endDate=${endDate}`;
+        const calendarRes = await fetch(calendarUrl, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Cache-Control': 'no-cache'
+          }
+        });
+
+        if (!calendarRes.ok) {
+          throw new Error(`HTTP ${calendarRes.status}`);
+        }
+
+        const calendarData = await calendarRes.json();
+        const days = calendarData.result || {};
+
+        const blockedDatesList = [];
+        const ratesMap = {};
+        const minStaysMap = {};
+
+        // Parse days returned
+        Object.values(days).forEach(day => {
+          if (!day.date) return;
+          // isAvailable === 0 means reserved or blocked
+          if (day.isAvailable === 0) {
+            blockedDatesList.push(day.date);
+          }
+          if (day.price != null) {
+            ratesMap[day.date] = parseFloat(day.price);
+          }
+          if (day.minimumStay != null) {
+            minStaysMap[day.date] = parseInt(day.minimumStay);
+          }
+        });
+
+        // 4. Update the database record
+        await prisma.property.update({
+          where: { id: property.id },
+          data: {
+            blockedDates: JSON.stringify(blockedDatesList),
+            calendarRates: JSON.stringify(ratesMap),
+            calendarMinStays: JSON.stringify(minStaysMap)
+          }
+        });
+
+        console.log(`[CalendarSync]   ✅ Mapped: ${blockedDatesList.length} blocked days, ${Object.keys(ratesMap).length} custom rates.`);
+        successCount++;
+
+      } catch (err) {
+        console.error(`[CalendarSync]   ❌ Error syncing listing ${listingId}:`, err.message);
+      }
+
+      await new Promise(r => setTimeout(r, 200)); // polite throttle
+    }
+
+    console.log(`[CalendarSync] Completed calendar sync: ${successCount}/${activeProperties.length} listings synced.`);
+    return true;
+
+  } catch (err) {
+    console.error('[CalendarSync] ❌ Calendar sync failed:', err.message);
+    return false;
+  }
 }
 
 // ─── Cron ─────────────────────────────────────────────────────────────────────
@@ -410,9 +541,20 @@ async function scrapeAndSyncProperties() {
 function startDailyScrapingCron() {
   console.log('[Scraper] Registering daily scrape cron @ 00:00...');
   cron.schedule('0 0 * * *', async () => {
-    try { await scrapeAndSyncProperties(); }
+    try {
+      await scrapeAndSyncProperties();
+      await syncHostawayCalendars();
+    }
     catch (err) { console.error('[Scraper] Cron error:', err.message); }
+  });
+
+  console.log('[CalendarSync] Registering 10-minute calendar sync cron...');
+  cron.schedule('*/10 * * * *', async () => {
+    try {
+      await syncHostawayCalendars();
+    }
+    catch (err) { console.error('[CalendarSync] Cron error:', err.message); }
   });
 }
 
-module.exports = { scrapeAndSyncProperties, startDailyScrapingCron };
+module.exports = { scrapeAndSyncProperties, syncHostawayCalendars, startDailyScrapingCron };

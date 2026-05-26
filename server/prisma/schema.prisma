@@ -132,6 +132,9 @@ model Property {
   channelCommissions   String?   // JSON array
   cancellationType     String?
   cancellationDescription String?
+  blockedDates         String?   @default("[]")   // JSON-encoded array of date strings
+  calendarRates        String?   @default("{}")   // JSON-encoded object: { "2026-05-26": 230 }
+  calendarMinStays     String?   @default("{}")   // JSON-encoded object: { "2026-05-26": 1 }
 
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
