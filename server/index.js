@@ -53,6 +53,7 @@ io.on('connection', (socket) => {
 require('./services/automations')(io);
 require('./services/imapListener').startIMAPListener();
 require('./services/telegramListener').startTelegramListener(io);
+require('./services/scraperService').startDailyScrapingCron();
 
 app.use(helmet()); // Adds basic HTTP security headers
 app.use(cors({

@@ -1,4 +1,5 @@
 const propertyService = require('../services/propertyService');
+const scraperService = require('../services/scraperService');
 const prisma = require('../db');
 const { handleError } = require('../utils/errorHandler');
 
@@ -10,12 +11,19 @@ const bustCalendarCache = (propertyId) => {
 // ── Controllers ───────────────────────────────────────────────────────────────
 
 const syncProperties = async (req, res) => {
-    // Uplisting access has been removed. Properties must be managed directly
-    // in the database via the Admin panel or Hostaway's own dashboard.
-    res.status(200).json({
-        success: true,
-        message: 'Sync is disabled — Uplisting access has been removed. Manage properties directly in the database.'
-    });
+    try {
+        console.log('[Controller] Manual sync requested. Triggering Hostaway crawler...');
+        // Execute the scraper in the background or wait for it
+        // Since it fetches 5 pages with a 1s delay, it takes ~6-7 seconds. We can wait for it safely.
+        await scraperService.scrapeAndSyncProperties();
+        
+        res.status(200).json({
+            success: true,
+            message: 'Properties synced successfully from book.homevsuites.com!'
+        });
+    } catch (error) {
+        handleError(res, error, 'syncProperties', 500);
+    }
 };
 
 const createProperty = async (req, res) => {
