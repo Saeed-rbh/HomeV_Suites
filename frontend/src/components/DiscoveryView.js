@@ -256,7 +256,16 @@ function HeroSearchBar({ booking, openBelow = false, globalBlockedDates = [], pa
           <div className="absolute inset-0" onClick={() => setOpenPanel(null)} />
           <div className="relative w-full max-w-[850px] rounded-[32px] bg-white shadow-[0_20px_60px_rgba(12,25,41,0.2)] ring-1 ring-slate-200 overflow-hidden animate-in zoom-in-95 duration-200">
             <AvailabilityCalendar blockedDates={globalBlockedDates} partiallyBlockedDates={partiallyBlockedDates} allListingsBlocked={allListingsBlocked} checkIn={checkIn} checkOut={checkOut}
-              onCheckInChange={setCheckIn} onCheckOutChange={(v) => { setCheckOut(v); if (v) setOpenPanel(null); }}
+              onCheckInChange={setCheckIn} onCheckOutChange={(v) => {
+                setCheckOut(v);
+                if (v) {
+                  setOpenPanel(null);
+                  startTransition(() => {
+                    const query = buildBookingQuery({ checkIn, checkOut: v, guests: adults + childrenCount });
+                    router.push(`/?${new URLSearchParams(query).toString()}`);
+                  });
+                }
+              }}
               minNights={0} showHeader={false} onClose={() => setOpenPanel(null)} />
           </div>
         </div>,
