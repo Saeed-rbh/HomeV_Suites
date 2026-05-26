@@ -17,16 +17,14 @@ import {
   Wifi,
   Wind,
 } from "lucide-react";
-import ListingBookingSection from "@/components/ListingBookingSection";
-import EditableBookingSummary from "@/components/EditableBookingSummary";
 import ListingGallery from "@/components/ListingGallery";
-import { buildBookingQuery, calculatePriceBreakdown, formatCurrency, formatDateRange, normalizeBooking } from "@/lib/booking";
 import { getListingByIdDynamic } from "@/lib/server-fetch";
 import FavoriteButton from "@/components/FavoriteButton";
 import ListingAmenities from "@/components/ListingAmenities";
 import ExpandableText from "@/components/ExpandableText";
 import ListingThingsToKnow from "@/components/ListingThingsToKnow";
 import ListingMapWrapper from "@/components/ListingMapWrapper";
+import HostawayCalendarWidget from "@/components/HostawayCalendarWidget";
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
@@ -144,10 +142,8 @@ export default async function ListingPage({ params, searchParams }) {
     notFound();
   }
 
-  const booking = normalizeBooking(resolvedSearchParams);
-  const breakdown = calculatePriceBreakdown(listing, booking.checkIn, booking.checkOut, booking.guests);
-
-  console.log(`[Diagnostic] Listing page rendering. blockedDates array length: ${listing.blockedDates?.length}`);
+  // Hostaway listing ID — update this to your actual Hostaway listing ID
+  const HOSTAWAY_LISTING_ID = listing.hostawayListingId || 40467;
 
   // Build JSON-LD structured data for rich snippets
   const jsonLd = {
@@ -291,7 +287,7 @@ export default async function ListingPage({ params, searchParams }) {
           <ListingMapWrapper latitude={listing.latitude} longitude={listing.longitude} />
           <ListingThingsToKnow 
             thingsToKnow={listing.thingsToKnow} 
-            checkIn={booking.checkIn} 
+            checkIn={null} 
             cancellationDays={listing.cancellationDays}
             cancellationDescription={listing.cancellationDescription}
             cancellationPolicy={listing.cancellationPolicy}
@@ -299,16 +295,11 @@ export default async function ListingPage({ params, searchParams }) {
 
           <div className="h-px w-full bg-slate-200" />
 
-          {/* Inline Calendar and Sticky Bar Portal for Mobile */}
-          <ListingBookingSection
-              listing={listing}
-              initialCheckIn={booking.checkIn}
-              initialCheckOut={booking.checkOut}
-              initialGuests={booking.guests}
-              initialNonRefundable={booking.nonRefundable}
-              cancellationPolicy={listing.cancellationPolicy}
-              layout="mobile"
-          />
+          {/* Availability Calendar (powered by Hostaway) */}
+          <div className="rounded-[24px] border border-slate-200 bg-white p-6">
+            <h2 className="text-[18px] font-semibold text-[#0c1929] mb-4">Availability &amp; Booking</h2>
+            <HostawayCalendarWidget listingId={HOSTAWAY_LISTING_ID} widgetId={`hostaway-calendar-widget-mobile-${id}`} />
+          </div>
         </div>
       </div>
 
@@ -353,15 +344,11 @@ export default async function ListingPage({ params, searchParams }) {
               amenityDescriptions={amenityDescriptions}
             />
 
-            <ListingBookingSection
-              listing={listing}
-              initialCheckIn={booking.checkIn}
-              initialCheckOut={booking.checkOut}
-              initialGuests={booking.guests}
-              initialNonRefundable={booking.nonRefundable}
-              cancellationPolicy={listing.cancellationPolicy}
-              layout="desktop"
-            />
+            {/* Availability Calendar (powered by Hostaway) */}
+            <section className="rounded-[24px] border border-slate-200 bg-white p-7 md:p-8">
+              <h2 className="text-sm font-medium uppercase tracking-[0.24em] text-[#0c1929] mb-6">Availability &amp; Booking</h2>
+              <HostawayCalendarWidget listingId={HOSTAWAY_LISTING_ID} widgetId={`hostaway-calendar-widget-desktop-${id}`} />
+            </section>
 
             {/* Reviews Section */}
             {listing.guestReviews && listing.guestReviews.length > 0 && (
@@ -404,7 +391,7 @@ export default async function ListingPage({ params, searchParams }) {
             <ListingMapWrapper latitude={listing.latitude} longitude={listing.longitude} />
             <ListingThingsToKnow 
               thingsToKnow={listing.thingsToKnow} 
-              checkIn={booking.checkIn} 
+              checkIn={null}
               cancellationDays={listing.cancellationDays}
               cancellationDescription={listing.cancellationDescription}
               cancellationPolicy={listing.cancellationPolicy}
@@ -412,8 +399,8 @@ export default async function ListingPage({ params, searchParams }) {
           </div>
 
           <aside className="lg:sticky lg:top-6 self-start">
-            {/* Portal target — ListingBookingSection portals the sidebar card here */}
-            <div id="listing-booking-sidebar" />
+            {/* Hostaway booking widget on desktop sidebar */}
+            <HostawayCalendarWidget listingId={HOSTAWAY_LISTING_ID} widgetId={`hostaway-booking-sidebar-${id}`} />
           </aside>
         </div>
       </div>

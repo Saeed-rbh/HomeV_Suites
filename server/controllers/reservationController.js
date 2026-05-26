@@ -1,6 +1,5 @@
 const reservationService = require('../services/reservationService');
 const prisma = require('../db');
-const { fetchPropertyData, blockCalendarDates, createV2Booking, updateV2Booking } = require('../services/uplistingService');
 const jwt = require('jsonwebtoken');
 const { handleError } = require('../utils/errorHandler');
 
@@ -94,61 +93,18 @@ const createReservation = async (req, res) => {
       });
 
       if (!property) {
-        // Try to fetch the real property from Uplisting
-        let title = 'Property ' + data.propertyId;
-        let address = '';
-        let images = null;
-        let thumbnailUrl = null;
-        let description = null;
-        let pricePerNight = 200.0;
-        let capacity = 4;
-        let bedrooms = 2;
-
-        try {
-          const response = await fetchPropertyData(data.propertyId, `/properties/${data.propertyId}?include=photos,addresses`);
-          const item = response.data?.data || response.data;
-          const attr = item?.attributes || {};
-          const included = response.data?.included || [];
-
-          // Parse sideloaded addresses and photos
-          const addressMap = {};
-          const photoMap = {};
-          for (const inc of included) {
-            if (inc.type === 'addresses') addressMap[inc.id] = inc.attributes;
-            else if (inc.type === 'photos') photoMap[inc.id] = inc.attributes.url;
-          }
-
-          title = attr.name || attr.nickname || title;
-          const addrId = item?.relationships?.address?.data?.id;
-          const addrData = addrId ? addressMap[addrId] : null;
-          address = addrData
-            ? `${addrData.street || ''}, ${addrData.city || ''}, ${addrData.state || ''}, ${addrData.country || ''}`
-            : 'Address on file';
-          description = attr.description || null;
-          
-          const photoRefs = item?.relationships?.photos?.data || [];
-          const pics = photoRefs.map(p => photoMap[p.id]).filter(Boolean);
-          images = pics.length > 0 ? JSON.stringify(pics) : null;
-          thumbnailUrl = pics[0] || null;
-          pricePerNight = attr.default_daily_rate ? parseFloat(attr.default_daily_rate) : pricePerNight;
-          capacity = attr.maximum_capacity ? parseInt(attr.maximum_capacity) : capacity;
-          bedrooms = attr.bedrooms ? parseInt(attr.bedrooms) : bedrooms;
-        } catch (fetchErr) {
-          console.warn(`[Reservation] Could not fetch Uplisting property data: ${fetchErr.message}`);
-        }
-
+        // Property not found in DB — create a minimal placeholder record
+        // so the FK constraint on Reservation is satisfied.
+        console.warn(`[Reservation] Property ${data.propertyId} not found in DB — creating placeholder.`);
         property = await prisma.property.create({
           data: {
-            id: data.propertyId, // keep ID consistent for FK
+            id: data.propertyId,
             externalId: data.propertyId,
-            title,
-            address,
-            description,
-            images,
-            thumbnailUrl,
-            pricePerNight,
-            capacity,
-            bedrooms
+            title: 'Property ' + data.propertyId,
+            address: 'Address on file',
+            pricePerNight: 200.0,
+            capacity: 4,
+            bedrooms: 2
           }
         });
       }
@@ -160,90 +116,10 @@ const createReservation = async (req, res) => {
     // 3. Create the reservation
     const reservation = await reservationService.createReservation(data, paymentIntentId);
 
-    // 3b. Push booking to Uplisting via V2 API so it appears on the Uplisting calendar
-    //     and syncs across all connected OTA channels (Airbnb, VRBO, Booking.com, etc.).
-    //     Falls back to the legacy calendar-block if the V2 call fails.
-    console.log(`[Reservation] 🔄 Syncing reservation ${reservation.id} to Uplisting...`);
-    try {
-      const blockPropId = (
-        await prisma.property.findUnique({ where: { id: data.propertyId }, select: { externalId: true } })
-      )?.externalId || data.propertyId;
-
-      const rawCheckIn  = req.plainCheckIn;
-      const rawCheckOut = req.plainCheckOut;
-
-      if (blockPropId && rawCheckIn && rawCheckOut) {
-        // Gather guest info for the Uplisting booking record.
-        // We prioritize request body data, then fallback to the authenticated guest session,
-        // ensuring we never send undefined fields to Uplisting.
-        const guestNameVal  = req.body.name || req.body.guestName || (authGuest ? [authGuest.firstName, authGuest.lastName].filter(Boolean).join(' ') : 'Guest User');
-        const guestEmailVal = req.body.email || req.body.guestEmail || authGuest?.email || 'guest@example.com';
-        const guestPhoneVal = req.body.phone || req.body.guestPhone || authGuest?.phone || null;
-        const guestCountVal = Number(req.body.numberOfGuests || req.body.guests || 1);
-
-        const firstNameVal = guestNameVal?.split(' ')[0] || (authGuest?.firstName || 'Guest');
-        const lastNameVal  = guestNameVal?.split(' ').slice(1).join(' ') || (authGuest?.lastName || 'User');
-
-        console.log(`[Reservation] 🔄 Syncing reservation ${reservation.id} to Uplisting...`);
-        console.log(`[Reservation] 📊 Params: Property=${blockPropId}, Dates=${rawCheckIn}→${rawCheckOut}, Guest=${guestNameVal} (${guestEmailVal})`);
-
-        try {
-          const uplistingResponse = await createV2Booking({
-            propertyId:     blockPropId,
-            checkIn:        rawCheckIn,
-            checkOut:       rawCheckOut,
-            guestName:      guestNameVal,
-            guestEmail:     guestEmailVal,
-            guestPhone:     guestPhoneVal,
-            firstName:      firstNameVal,
-            lastName:       lastNameVal,
-            numberOfGuests: guestCountVal
-          });
-          const uplistingBookingId = uplistingResponse?.data?.id;
-
-          // Persist the Uplisting booking ID to the local Reservation record
-          // so we can reference it later for cancellations/modifications.
-          if (uplistingBookingId) {
-            try {
-              await prisma.reservation.update({
-                where: { id: reservation.id },
-                data: { uplistingBookingId: String(uplistingBookingId) }
-              });
-              // Attach the ID to the in-memory object so Telegram can use it immediately
-              reservation.uplistingBookingId = String(uplistingBookingId);
-              console.log(`[Reservation] 💾 Saved uplistingBookingId=${uplistingBookingId} → reservation ${reservation.id}`);
-            } catch (saveErr) {
-              console.warn(`[Reservation] ⚠ Could not save uplistingBookingId to DB:`, saveErr.message);
-            }
-          }
-
-          // Attach HomEV custom attributes to the Uplisting booking record
-          if (uplistingBookingId && paymentIntentId) {
-            try {
-              await updateV2Booking(uplistingBookingId, {
-                homev_payment_source:   'stripe',
-                homev_stripe_intent_id: paymentIntentId,
-                homev_booking_origin:   'website',
-                homev_guest_email:      guestEmailVal,
-                homev_guest_phone:      guestPhoneVal
-              });
-            } catch (patchErr) {
-              console.warn(`[Reservation] ⚠ Could not attach custom attributes to Uplisting booking ${uplistingBookingId}:`, patchErr.message);
-            }
-          }
-        } catch (err) {
-          console.error('[Reservation] ❌ Uplisting V2 booking push FAILED — falling back to legacy calendar block. Error:', err.message);
-          // Fallback: block the calendar dates manually if the V2 booking call failed
-          await blockCalendarDates(blockPropId, rawCheckIn, rawCheckOut).catch(blockErr =>
-            console.error('[Reservation] ⚠ Fallback Uplisting calendar block ALSO FAILED — double-booking risk!', blockErr.message)
-          );
-        }
-      } else {
-        console.warn('[Reservation] ⚠ Could not determine property ID or dates for Uplisting V2 booking push');
-      }
-    } catch (blockErr) {
-      console.error('[Reservation] ⚠ Error initiating Uplisting V2 booking push:', blockErr.message);
-    }
+    // NOTE: Uplisting sync has been removed (no longer have access).
+    // Bookings are stored locally in the DB and processed through Stripe.
+    // Calendar sync to OTAs is now managed via Hostaway's own dashboard.
+    console.log(`[Reservation] ✅ Reservation ${reservation.id} saved to DB. No PMS sync (Hostaway widget mode).`);
 
     // 4. Auto-create a MessageThread for this reservation so chat is immediately ready
     if (data.guestId && data.propertyId) {
@@ -281,7 +157,7 @@ const createReservation = async (req, res) => {
   }
 };
 
-const { fetchGlobalData } = require('../services/uplistingService');
+
 
 const getReservations = async (req, res) => {
   try {

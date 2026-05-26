@@ -1,7 +1,6 @@
 const prisma = require('../db');
 const crypto = require('crypto');
 const telegramService = require('./telegramService');
-const { unblockCalendarDates, updateV2Booking, cancelV2Booking, blockCalendarDates } = require('./uplistingService');
 const stripe = require('../utils/stripeClient');
 
 const createReservation = async (data, paymentIntentId = null) => {
@@ -200,27 +199,9 @@ const handleCancellationCleanup = async (id) => {
 
     if (fullRes && fullRes.property) {
         await processRefundIfApplicable(id);
-        try {
-            const rawCheckIn = fullRes.startDate.toISOString().split('T')[0];
-            const rawCheckOut = fullRes.endDate.toISOString().split('T')[0];
-            const blockPropId = fullRes.property.externalId || fullRes.property.id;
-
-            if (fullRes.uplistingBookingId) {
-                const today = new Date().toISOString().split('T')[0];
-                const uplistingDirectUrl = `https://app.uplisting.io/calendar/bookings/${fullRes.uplistingBookingId}/details?from=${today}`;
-                console.warn(`[ReservationService] ⚠ MANUAL ACTION REQUIRED ══════════════════════════════════════════`);
-                console.warn(`[ReservationService] 👉 Uplisting booking #${fullRes.uplistingBookingId} must be cancelled manually in the dashboard.`);
-                console.warn(`[ReservationService] 🔗 Direct link: ${uplistingDirectUrl}`);
-                console.warn(`[ReservationService] ══════════════════════════════════════════════════════════════════════`);
-            }
-
-            console.log(`[ReservationService] 🔓 Unblocking calendar dates on property ${blockPropId}: ${rawCheckIn} → ${rawCheckOut}`);
-            unblockCalendarDates(blockPropId, rawCheckIn, rawCheckOut).catch(err =>
-                console.error('[ReservationService] ⚠ Failed to unblock calendar dates on Uplisting:', err.message)
-            );
-        } catch (e) {
-            console.error('[ReservationService] ⚠ Error preparing Uplisting cancellation:', e.message);
-        }
+        // NOTE: Uplisting calendar unblock removed — Uplisting access no longer available.
+        // OTA calendar sync is now managed via Hostaway's dashboard.
+        console.log(`[ReservationService] ℹ Cancellation cleanup complete for reservation ${id}. Manual OTA calendar update may be needed in Hostaway.`);
     }
 };
 

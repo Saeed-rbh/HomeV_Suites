@@ -1,11 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const crypto = require('crypto');
-const propertyService = require('../services/propertyService');
-const reservationService = require('../services/reservationService');
-const { fetchGlobalData } = require('../services/uplistingService');
 const { bustCalendarCache } = require('../controllers/propertyController');
-const prisma = require('../db');
 
 // Standard security check for Uplisting Webhooks — enforced in all environments.
 const verifySignature = (req, res, next) => {
@@ -116,26 +111,12 @@ const processWebhook = async (event, timestamp) => {
   }
 };
 
-router.post('/uplisting', verifySignature, (req, res) => {
-  const timestamp = new Date().toISOString();
-  
-  // ── 1. Immediately Acknowledge Webhook (Uplisting requires < 5s) ────
-  res.status(200).json({ received: true, timestamp });
-
-  // ── 2. Log and Process Asynchronously ────────────────────────────────
-  let event;
-  try {
-      event = JSON.parse(req.body.toString('utf8'));
-  } catch (err) {
-      console.error('[Webhook] Failed to parse raw JSON body:', err.message);
-      return;
-  }
-  
-  console.log('\n══════════════════════════════════════════════════════════════');
-  console.log(`[Webhook] 📨 Incoming Uplisting event at ${timestamp}`);
-  console.log('══════════════════════════════════════════════════════════════\n');
-
-  processWebhook(event, timestamp);
+// Uplisting webhooks are disabled — Uplisting access has been removed.
+// Bookings are now managed via Hostaway's dashboard.
+router.post('/uplisting', (req, res) => {
+  res.status(410).json({
+    error: 'Uplisting integration has been removed. This webhook endpoint is no longer active.'
+  });
 });
 
 module.exports = router;
