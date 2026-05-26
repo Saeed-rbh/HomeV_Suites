@@ -426,8 +426,8 @@ export default function DiscoveryView() {
             "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80"
           ],
           price: p.pricePerNight || 200,
-          specs: `${p.bedrooms || 1} Beds, 1 Bath`,
-          rating: 4.8,
+          specs: `${p.bedrooms || 1} Bed${(p.bedrooms || 1) !== 1 ? 's' : ''}, ${p.bathrooms ?? 1} Bath${(p.bathrooms ?? 1) !== 1 ? 's' : ''}`,
+          rating: p.rating || 4.8,
           latitude: p.latitude || 43.65,
           longitude: p.longitude || -79.38
         }));
