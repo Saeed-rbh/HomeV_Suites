@@ -427,7 +427,8 @@ export default function DiscoveryView() {
           ],
           price: p.pricePerNight || 200,
           specs: `${p.bedrooms || 1} Bed${(p.bedrooms || 1) !== 1 ? 's' : ''}, ${p.bathrooms ?? 1} Bath${(p.bathrooms ?? 1) !== 1 ? 's' : ''}`,
-          rating: p.rating || 4.8,
+          rating: p.rating || 5,
+          reviewCount: p.reviewCount || 0,
           latitude: p.latitude || 43.65,
           longitude: p.longitude || -79.38
         }));

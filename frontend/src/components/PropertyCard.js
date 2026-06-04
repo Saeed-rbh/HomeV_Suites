@@ -79,7 +79,7 @@ export default function PropertyCard({ property, booking, highlighted = false, o
         <div className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full glass-chip px-3 py-2 text-sm font-semibold">
           <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
           <span>{property.rating}</span>
-          {property.reviewCount && <span className="text-xs font-normal text-[#0c1929]">({property.reviewCount})</span>}
+          {property.reviewCount != null && <span className="text-xs font-normal text-[#0c1929]">({property.reviewCount})</span>}
         </div>
 
         <button
