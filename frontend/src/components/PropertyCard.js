@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
-import { buildBookingQuery, getStayPriceLabel, buildExternalBookingQuery } from "@/lib/booking";
+import { buildBookingQuery, buildExternalBookingQuery } from "@/lib/booking";
 
 
 function wrapIndex(index, length) {
@@ -16,7 +16,7 @@ function wrapIndex(index, length) {
 export default function PropertyCard({ property, booking, highlighted = false, onHoverChange }) {
   const [imageIndex, setImageIndex] = useState(0);
   const touchStartRef = useRef(null);
-  const price = getStayPriceLabel(property, booking);
+
   const bookingUrl = property.bookingUrl || `https://book.homevsuites.com/listings/${property.id}`;
   const queryParams = new URLSearchParams(buildExternalBookingQuery(booking)).toString();
   const href = queryParams ? `${bookingUrl}?${queryParams}` : bookingUrl;
@@ -75,10 +75,6 @@ export default function PropertyCard({ property, booking, highlighted = false, o
         </div>
 
         <div className="absolute inset-0 bg-gradient-to-t from-[#0c1929]/18 via-transparent to-white/10" />
-
-        <div className="absolute left-4 top-4 rounded-full glass-chip px-3 py-2 text-sm font-semibold">
-          {price.label}
-        </div>
 
         <div className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full glass-chip px-3 py-2 text-sm font-semibold">
           <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
