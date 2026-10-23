@@ -18,7 +18,10 @@ const { Server } = require('socket.io');
 const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
 
-let CORS_WHITELIST = [process.env.FRONTEND_URL].filter(Boolean);
+let CORS_WHITELIST = (process.env.FRONTEND_URL || '')
+  .split(',')
+  .map(origin => origin.trim())
+  .filter(Boolean);
 
 // Add localhost to CORS whitelist only in development
 if (process.env.NODE_ENV === 'development') {

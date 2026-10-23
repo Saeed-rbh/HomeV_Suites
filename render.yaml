@@ -29,7 +29,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: FRONTEND_URL
-        value: https://homev-suites-construction.onrender.com
+        value: https://homevsuites.com,https://www.homevsuites.com,https://homev-suites-construction.onrender.com
       - key: JWT_SECRET
         generateValue: true
       - key: DATABASE_URL
