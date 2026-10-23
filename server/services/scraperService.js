@@ -359,6 +359,18 @@ async function scrapeAndSyncProperties() {
     });
     const existingIds = new Set(existingProps.map(p => p.id));
 
+    // A fresh database does not contain the original deployment's policies.
+    // Only attach those defaults when they exist; leave existing assignments
+    // unchanged otherwise, and allow new listings to have no assigned policy.
+    const policies = await prisma.cancellationPolicy.findMany({
+      where: { id: { in: [SHORT_TERM_POLICY_ID, LONG_TERM_POLICY_ID] } },
+      select: { id: true }
+    });
+    const policyIds = new Set(policies.map(policy => policy.id));
+    const policyDefaults = {};
+    if (policyIds.has(SHORT_TERM_POLICY_ID)) policyDefaults.shortTermPolicyId = SHORT_TERM_POLICY_ID;
+    if (policyIds.has(LONG_TERM_POLICY_ID)) policyDefaults.longTermPolicyId = LONG_TERM_POLICY_ID;
+
     const removedIds = [...existingIds].filter(id => !liveIdsSet.has(id));
     if (removedIds.length) {
       console.log(`[Scraper] ${removedIds.length} listing(s) no longer in Hostaway — marking inactive: [${removedIds.join(', ')}]`);
@@ -450,8 +462,7 @@ async function scrapeAndSyncProperties() {
         suitability:   JSON.stringify({ children: true, pets: false, events: false, smoking: false }),
         cancellationType:        l.cancellationPolicy || 'Moderate',
         cancellationDescription: 'Flexible cancellation for direct bookings.',
-        shortTermPolicyId: SHORT_TERM_POLICY_ID,
-        longTermPolicyId:  LONG_TERM_POLICY_ID,
+        ...policyDefaults,
       };
 
       try {
