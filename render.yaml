@@ -21,7 +21,7 @@ services:
     branch: codex/render-construction
     rootDir: server
     buildCommand: npm ci --include=dev && npx prisma generate
-    startCommand: npx prisma db push --skip-generate && node scripts/initial_hostaway_sync.js && npm start
+    startCommand: npx prisma db push --skip-generate && npm start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_VERSION
