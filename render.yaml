@@ -6,6 +6,8 @@ services:
     region: oregon
     branch: codex/render-construction
     rootDir: frontend
+    domains:
+      - homevsuites.com
     buildCommand: npm ci && npm run build
     startCommand: npm start -- --hostname 0.0.0.0
     envVars:
