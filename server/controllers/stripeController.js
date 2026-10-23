@@ -41,6 +41,9 @@ const previewPrice = async (req, res) => {
  * Returns clientSecret AND the confirmed total so the frontend never needs to guess the amount.
  */
 const createPaymentIntent = async (req, res) => {
+  if (!stripe) {
+    return res.status(503).json({ error: 'Payments are not configured.' });
+  }
   try {
     const { listingId, checkIn, checkOut, guests, selectedNonRefundable, currency = 'cad' } = req.body;
 

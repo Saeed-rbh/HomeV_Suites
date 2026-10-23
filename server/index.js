@@ -139,6 +139,7 @@ try {
   });
 } catch (error) {
   console.error('ERROR LOADING ROUTES:', error);
+  throw error;
 }
 
 // ── Global Error Handler ──────────────────────────────────────────────────────

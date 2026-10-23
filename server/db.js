@@ -5,17 +5,14 @@ if (!process.env.DATABASE_URL) {
 }
 
 const { PrismaClient } = require('@prisma/client');
-const { Pool, neonConfig } = require('@neondatabase/serverless');
-const { PrismaNeon } = require('@prisma/adapter-neon');
-const ws = require('ws');
 
 if (!process.env.DATABASE_URL) {
   throw new Error('DATABASE_URL environment variable is not set');
 }
 
-// Use HTTP adapter as it is more reliable in many serverless environments
-const { PrismaNeonHTTP } = require('@prisma/adapter-neon');
-const adapter = new PrismaNeonHTTP(process.env.DATABASE_URL.trim());
-const prisma = new PrismaClient({ adapter });
+// Use the native PostgreSQL connection for Render's internal database URL.
+const prisma = new PrismaClient({
+  datasources: { db: { url: process.env.DATABASE_URL.trim() } }
+});
 
 module.exports = prisma;
