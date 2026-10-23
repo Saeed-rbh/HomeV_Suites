@@ -1,0 +1,49 @@
+services:
+  - type: web
+    name: homev-suites-construction
+    runtime: node
+    plan: free
+    region: oregon
+    branch: codex/render-construction
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    startCommand: npm start -- --hostname 0.0.0.0
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NEXT_PUBLIC_API_URL
+        value: https://homev-suites-construction-api.onrender.com/api
+  - type: web
+    name: homev-suites-construction-api
+    runtime: node
+    plan: free
+    region: oregon
+    branch: codex/render-construction
+    rootDir: server
+    buildCommand: npm ci --include=dev && npx prisma generate
+    startCommand: npx prisma db push --skip-generate && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_URL
+        value: https://homev-suites-construction.onrender.com
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: homev-suites-construction-db
+          property: connectionString
+      - key: DIRECT_URL
+        fromDatabase:
+          name: homev-suites-construction-db
+          property: connectionString
+databases:
+  - name: homev-suites-construction-db
+    plan: free
+    region: oregon
+    postgresMajorVersion: "18"
+    databaseName: homev_suites
+    ipAllowList: []
