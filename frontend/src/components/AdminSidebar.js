@@ -66,12 +66,12 @@ export default function AdminSidebar() {
                 key={item.name}
                 href={item.path}
                 className={`group flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${isActive
-                        ? 'bg-[#0c1929] text-white shadow-md shadow-[#0c1929]/30'
-                        : 'text-[#0c1929] hover:bg-slate-100 hover:text-[#0c1929]'
+                        ? 'bg-[#411F0F] text-white shadow-md shadow-[#411F0F]/30'
+                        : 'text-[#411F0F] hover:bg-slate-100 hover:text-[#411F0F]'
                     }`}
             >
                 <div className="flex items-center gap-3">
-                    <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-white' : 'text-[#0c1929] group-hover:text-[#0c1929]'}`} />
+                    <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-white' : 'text-[#411F0F] group-hover:text-[#411F0F]'}`} />
                     <span>{item.name}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -91,7 +91,7 @@ export default function AdminSidebar() {
             <div className="flex-1 p-4 pt-6 space-y-6">
                 {sections.map(section => (
                     <div key={section.label}>
-                        <p className="text-[10px] font-bold text-[#0c1929] uppercase tracking-widest mb-2 px-3">
+                        <p className="text-[10px] font-bold text-[#411F0F] uppercase tracking-widest mb-2 px-3">
                             {section.label}
                         </p>
                         <nav className="space-y-0.5">
@@ -105,9 +105,9 @@ export default function AdminSidebar() {
             <div className="p-4 border-t border-slate-100">
                 <button
                     onClick={handleLogout}
-                    className="group flex w-full items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[#0c1929] hover:bg-red-50 hover:text-red-600 transition-all duration-200"
+                    className="group flex w-full items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[#411F0F] hover:bg-red-50 hover:text-red-600 transition-all duration-200"
                 >
-                    <LogOut className="w-4 h-4 text-[#0c1929] group-hover:text-red-500" />
+                    <LogOut className="w-4 h-4 text-[#411F0F] group-hover:text-red-500" />
                     Logout
                 </button>
             </div>

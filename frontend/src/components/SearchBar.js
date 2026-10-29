@@ -4,7 +4,7 @@ export default function SearchBar() {
     return (
         <div className="glass-panel mx-auto flex max-w-5xl flex-col gap-3 rounded-[28px] p-3 md:flex-row md:items-center">
             <div className="glass-input flex-1 rounded-[22px] px-4 py-3 md:px-5">
-                <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.22em] text-[#0c1929]/70">Where</label>
+                <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.22em] text-[#411F0F]/70">Where</label>
                 <input
                     type="text"
                     placeholder="Search destinations"
@@ -13,7 +13,7 @@ export default function SearchBar() {
             </div>
 
             <div className="glass-input flex-1 rounded-[22px] px-4 py-3 md:px-5">
-                <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.22em] text-[#0c1929]/70">Check in - Check out</label>
+                <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.22em] text-[#411F0F]/70">Check in - Check out</label>
                 <input
                     type="text"
                     placeholder="Add dates"
@@ -22,7 +22,7 @@ export default function SearchBar() {
             </div>
 
             <div className="glass-input flex-1 rounded-[22px] px-4 py-3 md:px-5">
-                <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.22em] text-[#0c1929]/70">Who</label>
+                <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.22em] text-[#411F0F]/70">Who</label>
                 <input
                     type="text"
                     placeholder="Add guests"

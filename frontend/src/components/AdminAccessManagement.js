@@ -178,10 +178,10 @@ export default function AdminAccessManagement() {
   return (
     <div className="w-full max-w-6xl mx-auto space-y-8 h-full flex flex-col">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[#0c1929] tracking-tight border-b border-white/40 pb-4">
+        <h1 className="text-3xl font-bold text-[#411F0F] tracking-tight border-b border-white/40 pb-4">
           Team Access Management
         </h1>
-        <p className="mt-2 text-sm font-medium text-[#0c1929]">
+        <p className="mt-2 text-sm font-medium text-[#411F0F]">
           Control who has administrator permissions across HomEV. Upload profile photos and designate one admin as the <strong>Responsible Host</strong> — their photo and name will appear on guest dashboards.
         </p>
       </div>
@@ -202,38 +202,38 @@ export default function AdminAccessManagement() {
       {/* Main Layout Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* ADD STAFF FORM */}
-        <div className="bg-white rounded-[24px] border border-slate-100 shadow-[0_4px_30px_rgba(12,25,41,0.02)] p-6 col-span-1 lg:sticky lg:top-8">
-          <h3 className="text-lg font-semibold text-[#0c1929] mb-6">Authorize New Member</h3>
+        <div className="bg-white rounded-[24px] border border-slate-100 shadow-[0_4px_30px_rgba(65, 31, 15,0.02)] p-6 col-span-1 lg:sticky lg:top-8">
+          <h3 className="text-lg font-semibold text-[#411F0F] mb-6">Authorize New Member</h3>
           <form onSubmit={handleAddStaff} className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-[#0c1929] mb-1 ml-1 uppercase tracking-wider">First Name</label>
+                <label className="block text-xs font-bold text-[#411F0F] mb-1 ml-1 uppercase tracking-wider">First Name</label>
                 <input
                   type="text"
                   value={firstName} onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full rounded-xl bg-white border border-slate-300 placeholder:text-[#0c1929] px-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0c1929] transition-all"
+                  className="w-full rounded-xl bg-white border border-slate-300 placeholder:text-[#411F0F] px-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#411F0F] transition-all"
                   placeholder="Optional"
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-[#0c1929] mb-1 ml-1 uppercase tracking-wider">Last Name</label>
+                <label className="block text-xs font-bold text-[#411F0F] mb-1 ml-1 uppercase tracking-wider">Last Name</label>
                 <input
                   type="text"
                   value={lastName} onChange={(e) => setLastName(e.target.value)}
-                  className="w-full rounded-xl bg-white border border-slate-300 placeholder:text-[#0c1929] px-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0c1929] transition-all"
+                  className="w-full rounded-xl bg-white border border-slate-300 placeholder:text-[#411F0F] px-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#411F0F] transition-all"
                   placeholder="Optional"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#0c1929] mb-1 ml-1 uppercase tracking-wider">Email Address</label>
+              <label className="block text-xs font-bold text-[#411F0F] mb-1 ml-1 uppercase tracking-wider">Email Address</label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#0c1929]" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#411F0F]" />
                 <input
                   type="email"
                   value={email} onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-xl bg-white border border-slate-300 placeholder:text-[#0c1929] pl-10 pr-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0c1929] transition-all"
+                  className="w-full rounded-xl bg-white border border-slate-300 placeholder:text-[#411F0F] pl-10 pr-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#411F0F] transition-all"
                   placeholder="team@example.com"
                 />
               </div>
@@ -241,29 +241,29 @@ export default function AdminAccessManagement() {
 
             <div className="flex items-center">
               <div className="flex-grow border-t border-slate-300"></div>
-              <span className="mx-4 text-xs font-bold text-[#0c1929] uppercase tracking-widest">OR</span>
+              <span className="mx-4 text-xs font-bold text-[#411F0F] uppercase tracking-widest">OR</span>
               <div className="flex-grow border-t border-slate-300"></div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#0c1929] mb-1 ml-1 uppercase tracking-wider">Phone Number</label>
+              <label className="block text-xs font-bold text-[#411F0F] mb-1 ml-1 uppercase tracking-wider">Phone Number</label>
               <div className="relative">
-                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#0c1929]" />
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#411F0F]" />
                 <input
                   type="tel"
                   value={phone} onChange={(e) => setPhone(e.target.value)}
-                  className="w-full rounded-xl bg-white border border-slate-300 placeholder:text-[#0c1929] pl-10 pr-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0c1929] transition-all"
+                  className="w-full rounded-xl bg-white border border-slate-300 placeholder:text-[#411F0F] pl-10 pr-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#411F0F] transition-all"
                   placeholder="+15551234567"
                 />
               </div>
-              <p className="mt-2 text-xs font-medium text-[#0c1929] pl-1">Exactly as they will type it, including country code (e.g. +1...)</p>
+              <p className="mt-2 text-xs font-medium text-[#411F0F] pl-1">Exactly as they will type it, including country code (e.g. +1...)</p>
             </div>
 
             <div className="pt-4">
               <button
                 type="submit"
                 disabled={submitting || (!email && !phone)}
-                className="w-full flex items-center justify-center gap-2 rounded-[16px] bg-[#0c1929] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#152b47] disabled:bg-slate-200 disabled:text-[#0c1929]"
+                className="w-full flex items-center justify-center gap-2 rounded-[16px] bg-[#411F0F] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#472312] disabled:bg-slate-200 disabled:text-[#411F0F]"
               >
                 {submitting ? <LoaderCircle className="w-5 h-5 animate-spin" /> : <Plus className="w-5 h-5" />}
                 Grant Admin Access
@@ -274,7 +274,7 @@ export default function AdminAccessManagement() {
               <button
                 type="button"
                 onClick={copyInviteLink}
-                className="w-full flex justify-center items-center gap-2 text-xs font-medium text-[#0c1929] hover:text-[#0c1929] transition-colors"
+                className="w-full flex justify-center items-center gap-2 text-xs font-medium text-[#411F0F] hover:text-[#411F0F] transition-colors"
                 title="Copy standard login portal URL"
               >
                 {isCopied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
@@ -285,10 +285,10 @@ export default function AdminAccessManagement() {
         </div>
 
         {/* ACTIVE STAFF LIST */}
-        <div className="bg-white rounded-[24px] border border-slate-100 shadow-[0_4px_30px_rgba(12,25,41,0.02)] overflow-hidden col-span-1 lg:col-span-2">
+        <div className="bg-white rounded-[24px] border border-slate-100 shadow-[0_4px_30px_rgba(65, 31, 15,0.02)] overflow-hidden col-span-1 lg:col-span-2">
           <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-            <h3 className="text-base font-semibold text-[#0c1929]">Active Administrators</h3>
-            <span className="text-xs font-medium text-[#0c1929] bg-white border border-slate-200 py-1 px-3 rounded-full shadow-sm">
+            <h3 className="text-base font-semibold text-[#411F0F]">Active Administrators</h3>
+            <span className="text-xs font-medium text-[#411F0F] bg-white border border-slate-200 py-1 px-3 rounded-full shadow-sm">
               {staff.length} {staff.length === 1 ? 'Member' : 'Members'}
             </span>
           </div>
@@ -299,7 +299,7 @@ export default function AdminAccessManagement() {
                 <LoaderCircle className="w-8 h-8 text-slate-300 animate-spin" />
               </div>
             ) : staff.length === 0 ? (
-              <div className="p-12 text-center text-[#0c1929] text-sm">
+              <div className="p-12 text-center text-[#411F0F] text-sm">
                 No administrators found.
               </div>
             ) : (
@@ -316,14 +316,14 @@ export default function AdminAccessManagement() {
                             className="h-12 w-12 rounded-full object-cover border-2 border-slate-200"
                           />
                         ) : (
-                          <div className="h-12 w-12 rounded-full bg-gradient-to-br from-[#0c1929] to-[#24456e] flex items-center justify-center text-white text-lg font-bold">
+                          <div className="h-12 w-12 rounded-full bg-gradient-to-br from-[#411F0F] to-[#8A6A4E] flex items-center justify-center text-white text-lg font-bold">
                             {(user.displayName || user.email || "?").charAt(0).toUpperCase()}
                           </div>
                         )}
                         <button
                           onClick={() => fileRefs.current[user.id]?.click()}
                           disabled={uploadingId === user.id}
-                          className="absolute inset-0 flex items-center justify-center rounded-full bg-[#0c1929]/40 opacity-0 group-hover/avatar:opacity-100 transition-opacity cursor-pointer"
+                          className="absolute inset-0 flex items-center justify-center rounded-full bg-[#411F0F]/40 opacity-0 group-hover/avatar:opacity-100 transition-opacity cursor-pointer"
                         >
                           {uploadingId === user.id ? (
                             <LoaderCircle className="h-4 w-4 animate-spin text-white" />
@@ -347,25 +347,25 @@ export default function AdminAccessManagement() {
                       </div>
 
                       <div>
-                        <h4 className="text-sm font-semibold text-[#0c1929] flex items-center gap-2">
+                        <h4 className="text-sm font-semibold text-[#411F0F] flex items-center gap-2">
                           {editingNameId === user.id ? (
                             <div className="flex items-center gap-2">
                               <input
                                 type="text"
                                 value={tempName}
                                 onChange={(e) => setTempName(e.target.value)}
-                                className="px-2 py-1 text-xs border border-slate-300 rounded outline-none focus:ring-1 focus:ring-[#0c1929]"
+                                className="px-2 py-1 text-xs border border-slate-300 rounded outline-none focus:ring-1 focus:ring-[#411F0F]"
                                 autoFocus
                                 onKeyDown={(e) => e.key === 'Enter' && handleUpdateName(user.id)}
                               />
                               <button onClick={() => handleUpdateName(user.id)} className="text-emerald-600 hover:text-emerald-700 font-bold text-xs underline">Save</button>
-                              <button onClick={() => setEditingNameId(null)} className="text-[#0c1929] hover:text-[#0c1929] font-bold text-xs underline">Cancel</button>
+                              <button onClick={() => setEditingNameId(null)} className="text-[#411F0F] hover:text-[#411F0F] font-bold text-xs underline">Cancel</button>
                             </div>
                           ) : (
                             <>
                               <span 
                                 onClick={() => { setEditingNameId(user.id); setTempName(user.displayName || user.firstName || ""); }}
-                                className="cursor-pointer hover:text-[#0c1929] border-b border-transparent hover:border-slate-300 transition-all"
+                                className="cursor-pointer hover:text-[#411F0F] border-b border-transparent hover:border-slate-300 transition-all"
                                 title="Click to edit name"
                               >
                                 {user.displayName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email?.split('@')[0]}
@@ -375,7 +375,7 @@ export default function AdminAccessManagement() {
                                 className="p-1 rounded bg-slate-100 opacity-0 group-hover:opacity-100 transition-opacity"
                                 title="Edit display name"
                               >
-                                <Plus className="w-2.5 h-2.5 text-[#0c1929] rotate-45" /> {/* Using a rotated plus as a simple edit hint */}
+                                <Plus className="w-2.5 h-2.5 text-[#411F0F] rotate-45" /> {/* Using a rotated plus as a simple edit hint */}
                               </button>
                             </>
                           )}
@@ -386,7 +386,7 @@ export default function AdminAccessManagement() {
                             <span className="bg-amber-100 text-amber-800 text-[10px] uppercase font-bold py-0.5 px-2 rounded-full">Phone Only</span>
                           ) : null}
                         </h4>
-                        <p className="mt-1 flex items-center gap-4 text-xs font-medium text-[#0c1929]">
+                        <p className="mt-1 flex items-center gap-4 text-xs font-medium text-[#411F0F]">
                           {user.email && !user.email.includes('@placeholder.com') && (
                             <span className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> {user.email}</span>
                           )}
@@ -394,7 +394,7 @@ export default function AdminAccessManagement() {
                             <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> {formatPhone(user.phone)}</span>
                           )}
                         </p>
-                        <p className="mt-2 text-[11px] font-medium text-[#0c1929]">
+                        <p className="mt-2 text-[11px] font-medium text-[#411F0F]">
                           Authorized {new Date(user.createdAt).toLocaleDateString()}
                         </p>
                       </div>
@@ -420,7 +420,7 @@ export default function AdminAccessManagement() {
                         }}
                         disabled={staff.length <= 1}
                         className={`p-2.5 rounded-full transition-all focus:outline-none border border-transparent 
-                          ${staff.length <= 1 ? 'text-slate-300 cursor-not-allowed' : 'text-[#0c1929] hover:text-red-600 hover:bg-red-50 hover:border-red-100'}`}
+                          ${staff.length <= 1 ? 'text-slate-300 cursor-not-allowed' : 'text-[#411F0F] hover:text-red-600 hover:bg-red-50 hover:border-red-100'}`}
                         title={staff.length <= 1 ? "Cannot remove the last remaining administrator" : "Revoke Admin Access"}
                       >
                         <Trash2 className="w-5 h-5" />

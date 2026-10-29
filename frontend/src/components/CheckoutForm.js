@@ -134,12 +134,12 @@ export default function CheckoutForm({ listingId, checkIn, checkOut, guests, sel
       {!isLoggedIn && (
         <section className="space-y-4">
           <div>
-            <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#0c1929]">Guest details</p>
-            <h2 className="mt-2 text-2xl font-medium text-[#0c1929]">Tell us who&apos;s checking in</h2>
+            <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#411F0F]">Guest details</p>
+            <h2 className="mt-2 text-2xl font-medium text-[#411F0F]">Tell us who&apos;s checking in</h2>
           </div>
 
           <div className="space-y-4">
-            <label className="block rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm text-[#0c1929] transition hover:border-slate-300 focus-within:ring-2 focus-within:ring-[#0c1929] focus-within:border-transparent">
+            <label className="block rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm text-[#411F0F] transition hover:border-slate-300 focus-within:ring-2 focus-within:ring-[#411F0F] focus-within:border-transparent">
               Full name
               <input 
                 type="text" 
@@ -148,11 +148,11 @@ export default function CheckoutForm({ listingId, checkIn, checkOut, guests, sel
                 onChange={(e) => setName(e.target.value)}
                 required={!isLoggedIn} 
                 placeholder="Your full name" 
-                className="mt-2 w-full bg-transparent text-base text-[#0c1929] outline-none" 
+                className="mt-2 w-full bg-transparent text-base text-[#411F0F] outline-none" 
               />
             </label>
 
-            <label className="block rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm text-[#0c1929] transition hover:border-slate-300 focus-within:ring-2 focus-within:ring-[#0c1929] focus-within:border-transparent">
+            <label className="block rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm text-[#411F0F] transition hover:border-slate-300 focus-within:ring-2 focus-within:ring-[#411F0F] focus-within:border-transparent">
               Email address
               <input 
                 type="email" 
@@ -161,11 +161,11 @@ export default function CheckoutForm({ listingId, checkIn, checkOut, guests, sel
                 onChange={(e) => setEmail(e.target.value)}
                 required={!isAdmin && !isLoggedIn} 
                 placeholder="Your email address" 
-                className="mt-2 w-full bg-transparent text-base text-[#0c1929] outline-none" 
+                className="mt-2 w-full bg-transparent text-base text-[#411F0F] outline-none" 
               />
             </label>
 
-            <label className="block rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm text-[#0c1929] transition hover:border-slate-300 focus-within:ring-2 focus-within:ring-[#0c1929] focus-within:border-transparent">
+            <label className="block rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm text-[#411F0F] transition hover:border-slate-300 focus-within:ring-2 focus-within:ring-[#411F0F] focus-within:border-transparent">
               Phone number
               <input 
                 type="tel" 
@@ -174,7 +174,7 @@ export default function CheckoutForm({ listingId, checkIn, checkOut, guests, sel
                 onChange={(e) => setPhone(e.target.value)}
                 required={!isAdmin && !isLoggedIn} 
                 placeholder="Your phone number" 
-                className="mt-2 w-full bg-transparent text-base text-[#0c1929] outline-none" 
+                className="mt-2 w-full bg-transparent text-base text-[#411F0F] outline-none" 
               />
             </label>
           </div>
@@ -183,13 +183,13 @@ export default function CheckoutForm({ listingId, checkIn, checkOut, guests, sel
 
       <section className="space-y-4">
         <div>
-          <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#0c1929]">Payment</p>
-          <h2 className="mt-2 text-2xl font-medium text-[#0c1929]">Secure card details</h2>
+          <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#411F0F]">Payment</p>
+          <h2 className="mt-2 text-2xl font-medium text-[#411F0F]">Secure card details</h2>
         </div>
 
-        <div className="rounded-[28px] bg-white border border-slate-100 sm:shadow-[0_4px_30px_rgba(12,25,41,0.03)] sm:p-5 w-full">
+        <div className="rounded-[28px] bg-white border border-slate-100 sm:shadow-[0_4px_30px_rgba(65, 31, 15,0.03)] sm:p-5 w-full">
           <div className="mb-4 flex items-center justify-between rounded-[20px] border border-slate-200 bg-slate-50 px-3 sm:px-4 py-3">
-            <div className="flex items-center gap-2 text-sm font-medium text-[#0c1929]">
+            <div className="flex items-center gap-2 text-sm font-medium text-[#411F0F]">
               <CreditCard className="h-4 w-4" />
               Secure Stripe Payment
             </div>
@@ -223,7 +223,7 @@ export default function CheckoutForm({ listingId, checkIn, checkOut, guests, sel
         type="submit"
         disabled={status === "processing" || !stripe || !elements}
         formNoValidate={isAdmin}
-        className="inline-flex w-full items-center justify-center rounded-[24px] bg-[#0c1929] px-6 py-4 text-base font-semibold text-white transition hover:bg-[#152b47] disabled:cursor-wait disabled:bg-[#0c1929]/70"
+        className="inline-flex w-full items-center justify-center rounded-[24px] bg-[#411F0F] px-6 py-4 text-base font-semibold text-white transition hover:bg-[#472312] disabled:cursor-wait disabled:bg-[#411F0F]/70"
       >
         {status === "processing" ? (
           <>

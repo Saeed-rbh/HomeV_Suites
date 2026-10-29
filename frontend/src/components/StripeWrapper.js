@@ -61,9 +61,9 @@ export default function StripeWrapper({ children, listingId, checkIn, checkOut, 
 
   if (!clientSecret) {
     return (
-      <div className="flex h-32 items-center justify-center rounded-[30px] border border-slate-100 bg-white shadow-[0_4px_30px_rgba(12,25,41,0.03)] p-8">
-        <LoaderCircle className="h-6 w-6 animate-spin text-[#0c1929] mr-2" />
-        <span className="text-[#0c1929]">Loading payment details...</span>
+      <div className="flex h-32 items-center justify-center rounded-[30px] border border-slate-100 bg-white shadow-[0_4px_30px_rgba(65, 31, 15,0.03)] p-8">
+        <LoaderCircle className="h-6 w-6 animate-spin text-[#411F0F] mr-2" />
+        <span className="text-[#411F0F]">Loading payment details...</span>
       </div>
     );
   }
@@ -73,9 +73,9 @@ export default function StripeWrapper({ children, listingId, checkIn, checkOut, 
     appearance: {
       theme: "stripe",
       variables: {
-        colorPrimary: "#0c1929",
+        colorPrimary: "#411F0F",
         colorBackground: "#ffffff",
-        colorText: "#0c1929",
+        colorText: "#411F0F",
         colorDanger: "#ef4444",
         fontFamily: "inherit",
         spacingUnit: "4px",

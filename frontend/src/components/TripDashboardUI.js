@@ -96,7 +96,7 @@ export default function TripDashboardUI({ listing, reservation }) {
   const Avatar = ({ size = 40 }) => (
     hostAvatar
       ? <img src={hostAvatar} width={size} height={size} className="rounded-full object-cover ring-2 ring-white shadow" style={{ width: size, height: size }} alt={hostName} />
-      : <div className="rounded-full bg-[#0c1929] flex items-center justify-center text-white font-bold ring-2 ring-white shadow" style={{ width: size, height: size, fontSize: size * 0.38 }}>
+      : <div className="rounded-full bg-[#411F0F] flex items-center justify-center text-white font-bold ring-2 ring-white shadow" style={{ width: size, height: size, fontSize: size * 0.38 }}>
         {hostName.charAt(0).toUpperCase()}
       </div>
   );
@@ -107,9 +107,9 @@ export default function TripDashboardUI({ listing, reservation }) {
         <div className="h-20 w-20 rounded-full bg-red-100 flex items-center justify-center mb-6">
           <XCircle className="h-10 w-10 text-red-500" />
         </div>
-        <h1 className="text-3xl font-semibold text-[#0c1929]">Reservation Cancelled</h1>
-        <p className="mt-3 max-w-sm text-[#0c1929]">Your booking at <strong>{listing.title}</strong> has been cancelled.</p>
-        <Link href="/" className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#0c1929] px-8 py-3.5 text-sm font-semibold text-white hover:bg-[#0c1929] transition">
+        <h1 className="text-3xl font-semibold text-[#411F0F]">Reservation Cancelled</h1>
+        <p className="mt-3 max-w-sm text-[#411F0F]">Your booking at <strong>{listing.title}</strong> has been cancelled.</p>
+        <Link href="/" className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#411F0F] px-8 py-3.5 text-sm font-semibold text-white hover:bg-[#411F0F] transition">
           Explore more stays <ArrowUpRight className="h-4 w-4" />
         </Link>
       </div>
@@ -213,12 +213,12 @@ export default function TripDashboardUI({ listing, reservation }) {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(160deg, #f8fafc 0%, #f1f5f9 100%)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(160deg, #F9F4EC 0%, #F9F4EC 100%)' }}>
       <div className="mx-auto max-w-6xl px-4 md:px-8 py-12">
         {/* Page Title */}
         <div className="mb-10">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#0c1929] mb-1.5">My Trips</p>
-          <h1 className="text-4xl font-black text-[#0c1929] tracking-tight">Upcoming stay</h1>
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#411F0F] mb-1.5">My Trips</p>
+          <h1 className="text-4xl font-black text-[#411F0F] tracking-tight">Upcoming stay</h1>
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
@@ -226,14 +226,14 @@ export default function TripDashboardUI({ listing, reservation }) {
           {/* LEFT: Booking info + Chat */}
           <div className="space-y-6">
             {/* Property Image Card */}
-            <div className="relative rounded-[28px] overflow-hidden shadow-[0_8px_32px_rgba(12,25,41,0.12)] aspect-[16/7] w-full">
+            <div className="relative rounded-[28px] overflow-hidden shadow-[0_8px_32px_rgba(65, 31, 15,0.12)] aspect-[16/7] w-full">
               <img
                 src={propertyImage}
                 alt={listing.title}
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
               />
               {/* Bottom overlay with listing name */}
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0c1929]/75 via-[#0c1929]/30 to-transparent px-7 pt-16 pb-6">
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#411F0F]/75 via-[#411F0F]/30 to-transparent px-7 pt-16 pb-6">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500 px-3 py-1 text-[10px] font-black uppercase tracking-[0.15em] text-white mb-3 shadow-lg">
                   <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" /> Confirmed
                 </span>
@@ -245,21 +245,21 @@ export default function TripDashboardUI({ listing, reservation }) {
             </div>
 
             {/* Stay Details Card */}
-            <div className="rounded-[28px] bg-white border border-zinc-100/80 shadow-[0_2px_12px_rgba(12,25,41,0.06)] overflow-hidden">
+            <div className="rounded-[28px] bg-white border border-zinc-100/80 shadow-[0_2px_12px_rgba(65, 31, 15,0.06)] overflow-hidden">
               <div className="grid grid-cols-3 divide-x divide-zinc-100">
                 <div className="px-6 py-5 flex flex-col justify-center">
-                  <p className="text-[9px] font-black text-[#0c1929] uppercase tracking-[0.18em] mb-2">Check-in</p>
-                  <p className="text-sm font-bold text-[#0c1929] leading-snug">{formatDateLong(checkIn)}</p>
-                  <p className="text-[11px] text-[#0c1929] font-semibold mt-1.5">After 3:00 PM</p>
+                  <p className="text-[9px] font-black text-[#411F0F] uppercase tracking-[0.18em] mb-2">Check-in</p>
+                  <p className="text-sm font-bold text-[#411F0F] leading-snug">{formatDateLong(checkIn)}</p>
+                  <p className="text-[11px] text-[#411F0F] font-semibold mt-1.5">After 3:00 PM</p>
                 </div>
                 <div className="px-6 py-5 flex flex-col justify-center">
-                  <p className="text-[9px] font-black text-[#0c1929] uppercase tracking-[0.18em] mb-2">Checkout</p>
-                  <p className="text-sm font-bold text-[#0c1929] leading-snug">{formatDateLong(checkOut)}</p>
-                  <p className="text-[11px] text-[#0c1929] font-semibold mt-1.5">Before 11:00 AM</p>
+                  <p className="text-[9px] font-black text-[#411F0F] uppercase tracking-[0.18em] mb-2">Checkout</p>
+                  <p className="text-sm font-bold text-[#411F0F] leading-snug">{formatDateLong(checkOut)}</p>
+                  <p className="text-[11px] text-[#411F0F] font-semibold mt-1.5">Before 11:00 AM</p>
                 </div>
                 <div className="px-6 py-5 flex flex-col justify-center">
-                  <p className="text-[9px] font-black text-[#0c1929] uppercase tracking-[0.18em] mb-2">Stay</p>
-                  <p className="text-sm font-bold text-[#0c1929]">{nights} night{nights !== 1 ? "s" : ""}</p>
+                  <p className="text-[9px] font-black text-[#411F0F] uppercase tracking-[0.18em] mb-2">Stay</p>
+                  <p className="text-sm font-bold text-[#411F0F]">{nights} night{nights !== 1 ? "s" : ""}</p>
                   <Link href={`/listing/${listing.id}`} className="inline-flex items-center gap-1 text-[11px] text-indigo-500 font-bold mt-1.5 hover:text-indigo-700 transition-colors">
                     View listing <ArrowUpRight className="h-3 w-3" />
                   </Link>
@@ -268,7 +268,7 @@ export default function TripDashboardUI({ listing, reservation }) {
             </div>
 
             {/* Chat Interface */}
-            <div className="rounded-[28px] bg-white border border-zinc-100/80 shadow-[0_2px_12px_rgba(12,25,41,0.06)] flex flex-col" style={{ height: 580 }}>
+            <div className="rounded-[28px] bg-white border border-zinc-100/80 shadow-[0_2px_12px_rgba(65, 31, 15,0.06)] flex flex-col" style={{ height: 580 }}>
               {/* Chat Header */}
               <div className="flex items-center gap-4 px-6 py-5 border-b border-zinc-100 bg-zinc-50/60">
                 <div className="relative">
@@ -276,7 +276,7 @@ export default function TripDashboardUI({ listing, reservation }) {
                   <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 ring-2 ring-white shadow" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-black text-[#0c1929] tracking-tight">{hostName}</p>
+                  <p className="text-sm font-black text-[#411F0F] tracking-tight">{hostName}</p>
                   <p className="text-[11px] text-emerald-600 font-bold flex items-center gap-1.5 mt-0.5">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />Online · Replies within an hour
                   </p>
@@ -285,13 +285,13 @@ export default function TripDashboardUI({ listing, reservation }) {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto px-6 py-6 space-y-3" style={{ background: 'linear-gradient(180deg, #fafafa 0%, #f8fafc 100%)' }}>
+              <div className="flex-1 overflow-y-auto px-6 py-6 space-y-3" style={{ background: 'linear-gradient(180deg, #fafafa 0%, #F9F4EC 100%)' }}>
                 {messages.length === 0 ? (
                   <div className="h-full flex flex-col items-center justify-center gap-3 select-none">
                     <div className="h-14 w-14 rounded-full border-2 border-dashed border-zinc-200 flex items-center justify-center text-zinc-300">
                       <Send className="h-5 w-5" />
                     </div>
-                    <p className="text-xs font-bold text-[#0c1929] uppercase tracking-widest">No messages yet</p>
+                    <p className="text-xs font-bold text-[#411F0F] uppercase tracking-widest">No messages yet</p>
                   </div>
                 ) : (
                   messages.map((m, i) => {
@@ -308,12 +308,12 @@ export default function TripDashboardUI({ listing, reservation }) {
                         <div className={`flex flex-col gap-1 max-w-[74%] ${isMe ? "items-end" : "items-start"}`}>
                           <div className={`px-4 py-2.5 rounded-[18px] text-[13.5px] leading-relaxed font-medium shadow-sm
                             ${isMe
-                              ? "bg-[#0c1929] text-white rounded-br-sm shadow-[#0c1929]/10"
-                              : "bg-white text-[#0c1929] rounded-bl-sm border border-zinc-100 shadow-zinc-200/40"
+                              ? "bg-[#411F0F] text-white rounded-br-sm shadow-[#411F0F]/10"
+                              : "bg-white text-[#411F0F] rounded-bl-sm border border-zinc-100 shadow-zinc-200/40"
                             }`}>
                             {m.text}
                           </div>
-                          <span className="text-[10px] text-[#0c1929] font-semibold px-1">{formatTime(m.createdAt)}</span>
+                          <span className="text-[10px] text-[#411F0F] font-semibold px-1">{formatTime(m.createdAt)}</span>
                         </div>
                       </div>
                     );
@@ -323,9 +323,9 @@ export default function TripDashboardUI({ listing, reservation }) {
                   <div className="flex items-end gap-2.5">
                     <Avatar size={30} />
                     <div className="bg-zinc-100 rounded-2xl rounded-bl-sm px-4 py-3 flex gap-1">
-                      <span className="h-2 w-2 rounded-full bg-[#0c1929] animate-bounce [animation-delay:0ms]" />
-                      <span className="h-2 w-2 rounded-full bg-[#0c1929] animate-bounce [animation-delay:150ms]" />
-                      <span className="h-2 w-2 rounded-full bg-[#0c1929] animate-bounce [animation-delay:300ms]" />
+                      <span className="h-2 w-2 rounded-full bg-[#411F0F] animate-bounce [animation-delay:0ms]" />
+                      <span className="h-2 w-2 rounded-full bg-[#411F0F] animate-bounce [animation-delay:150ms]" />
+                      <span className="h-2 w-2 rounded-full bg-[#411F0F] animate-bounce [animation-delay:300ms]" />
                     </div>
                   </div>
                 )}
@@ -334,19 +334,19 @@ export default function TripDashboardUI({ listing, reservation }) {
 
               {/* Chat Input */}
               <div className="px-5 py-4 border-t border-zinc-100 bg-white">
-                <div className="flex items-center gap-3 rounded-2xl bg-zinc-50 border border-zinc-200 focus-within:border-[#0c1929] focus-within:bg-white focus-within:shadow-md focus-within:shadow-zinc-100 transition-all duration-200 px-5 py-1.5">
+                <div className="flex items-center gap-3 rounded-2xl bg-zinc-50 border border-zinc-200 focus-within:border-[#411F0F] focus-within:bg-white focus-within:shadow-md focus-within:shadow-zinc-100 transition-all duration-200 px-5 py-1.5">
                   <input
                     type="text"
                     value={newMessage}
                     onChange={e => setNewMessage(e.target.value)}
                     onKeyDown={e => e.key === "Enter" && handleSend()}
                     placeholder={`Message ${hostName}…`}
-                    className="flex-1 bg-transparent text-[13.5px] font-semibold text-[#0c1929] placeholder:text-[#0c1929] placeholder:font-medium outline-none py-2.5"
+                    className="flex-1 bg-transparent text-[13.5px] font-semibold text-[#411F0F] placeholder:text-[#411F0F] placeholder:font-medium outline-none py-2.5"
                   />
                   <button
                     onClick={handleSend}
                     disabled={!newMessage.trim()}
-                    className="h-8 w-8 rounded-full bg-[#0c1929] flex items-center justify-center text-white shrink-0 transition-all hover:bg-[#0c1929] hover:scale-110 active:scale-95 disabled:opacity-20 disabled:scale-100 disabled:cursor-not-allowed"
+                    className="h-8 w-8 rounded-full bg-[#411F0F] flex items-center justify-center text-white shrink-0 transition-all hover:bg-[#411F0F] hover:scale-110 active:scale-95 disabled:opacity-20 disabled:scale-100 disabled:cursor-not-allowed"
                   >
                     <Send className="h-3.5 w-3.5" />
                   </button>
@@ -358,7 +358,7 @@ export default function TripDashboardUI({ listing, reservation }) {
           {/* RIGHT: Actions */}
           <div className="space-y-4 lg:sticky lg:top-8 self-start">
             {/* Quick Actions */}
-            <div className="rounded-[28px] bg-white border border-zinc-100/80 shadow-[0_2px_12px_rgba(12,25,41,0.06)] overflow-hidden divide-y divide-zinc-50">
+            <div className="rounded-[28px] bg-white border border-zinc-100/80 shadow-[0_2px_12px_rgba(65, 31, 15,0.06)] overflow-hidden divide-y divide-zinc-50">
               {actions.map(({ id, icon: Icon, label, sub }) => {
                 const disabled = id === "modify" && isDeadlinePassed;
                 return (
@@ -375,19 +375,19 @@ export default function TripDashboardUI({ listing, reservation }) {
                       disabled={disabled}
                       className={`w-full flex items-center gap-4 px-6 py-5 hover:bg-zinc-50 transition-all duration-150 text-left ${disabled ? "opacity-50 cursor-not-allowed" : "active:bg-zinc-100 group"}`}
                     >
-                      <div className={`h-10 w-10 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-150 shadow-sm ${disabled ? "bg-zinc-100 text-zinc-400" : "bg-zinc-100 group-hover:bg-[#0c1929] group-hover:text-white"}`}>
+                      <div className={`h-10 w-10 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-150 shadow-sm ${disabled ? "bg-zinc-100 text-zinc-400" : "bg-zinc-100 group-hover:bg-[#411F0F] group-hover:text-white"}`}>
                         <Icon className="h-[18px] w-[18px]" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[13.5px] font-bold text-[#0c1929]">{label}</p>
-                        <p className="text-[11px] text-[#0c1929] font-semibold mt-0.5">{sub}</p>
+                        <p className="text-[13.5px] font-bold text-[#411F0F]">{label}</p>
+                        <p className="text-[11px] text-[#411F0F] font-semibold mt-0.5">{sub}</p>
                       </div>
-                      {!disabled && <ChevronRight className="h-4 w-4 text-zinc-300 group-hover:text-[#0c1929] group-hover:translate-x-0.5 transition-all shrink-0" />}
+                      {!disabled && <ChevronRight className="h-4 w-4 text-zinc-300 group-hover:text-[#411F0F] group-hover:translate-x-0.5 transition-all shrink-0" />}
                     </button>
                     {disabled && (
-                      <div className="pointer-events-none absolute left-1/2 -top-10 -translate-x-1/2 rounded-lg bg-[#0c1929] px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 whitespace-nowrap z-10">
+                      <div className="pointer-events-none absolute left-1/2 -top-10 -translate-x-1/2 rounded-lg bg-[#411F0F] px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 whitespace-nowrap z-10">
                         Cancellation deadline has passed
-                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-[#0c1929]" />
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-[#411F0F]" />
                       </div>
                     )}
                   </div>
@@ -396,12 +396,12 @@ export default function TripDashboardUI({ listing, reservation }) {
             </div>
 
             {/* Host Card */}
-            <div className="rounded-[28px] overflow-hidden border border-zinc-100/80 shadow-[0_2px_12px_rgba(12,25,41,0.06)]" style={{ background: 'linear-gradient(135deg, #0c1929 0%, #1e293b 100%)' }}>
+            <div className="rounded-[28px] overflow-hidden border border-zinc-100/80 shadow-[0_2px_12px_rgba(65, 31, 15,0.06)]" style={{ background: 'linear-gradient(135deg, #411F0F 0%, #1e293b 100%)' }}>
               <div className="p-6">
                 <div className="flex items-center gap-4">
                   <div className="relative">
                     <Avatar size={52} />
-                    <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-400 ring-2 ring-[#0c1929]" />
+                    <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-400 ring-2 ring-[#411F0F]" />
                   </div>
                   <div>
                     <p className="text-sm font-black text-white tracking-tight">{hostName}</p>
@@ -419,15 +419,15 @@ export default function TripDashboardUI({ listing, reservation }) {
               <button
                 onClick={() => { if (!isDeadlinePassed) setActiveModal("cancel"); }}
                 disabled={isDeadlinePassed}
-                className={`w-full flex items-center justify-center gap-2.5 rounded-[28px] border py-4 text-[13px] font-bold transition-all duration-150 ${isDeadlinePassed ? "border-zinc-200/50 bg-zinc-50 text-zinc-400 opacity-50 cursor-not-allowed" : "border-zinc-200/80 bg-white/80 text-[#0c1929] hover:border-red-200 hover:bg-red-50 hover:text-red-600"}`}
+                className={`w-full flex items-center justify-center gap-2.5 rounded-[28px] border py-4 text-[13px] font-bold transition-all duration-150 ${isDeadlinePassed ? "border-zinc-200/50 bg-zinc-50 text-zinc-400 opacity-50 cursor-not-allowed" : "border-zinc-200/80 bg-white/80 text-[#411F0F] hover:border-red-200 hover:bg-red-50 hover:text-red-600"}`}
               >
                 <XCircle className="h-4 w-4" />
                 Cancel reservation
               </button>
               {isDeadlinePassed && (
-                <div className="pointer-events-none absolute left-1/2 -top-10 -translate-x-1/2 rounded-lg bg-[#0c1929] px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 whitespace-nowrap z-10">
+                <div className="pointer-events-none absolute left-1/2 -top-10 -translate-x-1/2 rounded-lg bg-[#411F0F] px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 whitespace-nowrap z-10">
                   Cancellation deadline has passed
-                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-[#0c1929]" />
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-[#411F0F]" />
                 </div>
               )}
             </div>
@@ -438,7 +438,7 @@ export default function TripDashboardUI({ listing, reservation }) {
       {/* ——— MODALS ——— */}
       {activeModal && (
         <div
-          className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-[#0c1929]/50 backdrop-blur-sm p-4"
+          className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-[#411F0F]/50 backdrop-blur-sm p-4"
           onClick={e => e.target === e.currentTarget && setActiveModal(null)}
         >
           <div className={`w-full bg-white rounded-[32px] shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 ${activeModal === "modify" ? "max-w-4xl" : "max-w-lg"}`}>
@@ -446,12 +446,12 @@ export default function TripDashboardUI({ listing, reservation }) {
             {/* MODIFY */}
             {activeModal === "modify" && <>
               <div className="flex items-center justify-between px-8 py-6 border-b border-zinc-100">
-                <h3 className="text-xl font-bold text-[#0c1929]">Modify Trip</h3>
-                <button onClick={() => setActiveModal(null)} className="h-9 w-9 rounded-full bg-zinc-100 flex items-center justify-center text-[#0c1929] hover:bg-zinc-200 transition"><X className="h-4.5 w-4.5" /></button>
+                <h3 className="text-xl font-bold text-[#411F0F]">Modify Trip</h3>
+                <button onClick={() => setActiveModal(null)} className="h-9 w-9 rounded-full bg-zinc-100 flex items-center justify-center text-[#411F0F] hover:bg-zinc-200 transition"><X className="h-4.5 w-4.5" /></button>
               </div>
               <div className="p-8 space-y-8 max-h-[75vh] overflow-y-auto">
                 <div>
-                  <p className="text-xs font-black text-[#0c1929] uppercase tracking-[0.18em] mb-4">Select Dates</p>
+                  <p className="text-xs font-black text-[#411F0F] uppercase tracking-[0.18em] mb-4">Select Dates</p>
                   <div className="rounded-2xl border border-zinc-100 bg-zinc-50/50 overflow-hidden">
                     <AvailabilityCalendar 
                         blockedDates={listing.blockedDates || []} 
@@ -466,21 +466,21 @@ export default function TripDashboardUI({ listing, reservation }) {
                 </div>
                 <div className="flex flex-col gap-6 pt-2">
                   <div className="w-full">
-                    <p className="text-xs font-black text-[#0c1929] uppercase tracking-[0.18em] mb-4">Guests</p>
+                    <p className="text-xs font-black text-[#411F0F] uppercase tracking-[0.18em] mb-4">Guests</p>
                     <div className="flex items-center justify-between rounded-2xl border border-zinc-100 bg-zinc-50 px-6 py-5">
                       <div>
-                        <p className="text-sm font-bold text-[#0c1929]">Adults</p>
-                        <p className="text-xs text-[#0c1929] font-semibold">Age 13 or above</p>
+                        <p className="text-sm font-bold text-[#411F0F]">Adults</p>
+                        <p className="text-xs text-[#411F0F] font-semibold">Age 13 or above</p>
                       </div>
                       <div className="flex items-center gap-5">
-                        <button onClick={() => setGuests(Math.max(1, guests - 1))} className="h-9 w-9 rounded-full border border-zinc-200 flex items-center justify-center text-[#0c1929] hover:border-[#0c1929] hover:text-[#0c1929] transition bg-white"><Minus className="h-4 w-4" /></button>
-                        <span className="text-xl font-black text-[#0c1929] w-5 text-center">{guests}</span>
-                        <button onClick={() => setGuests(guests + 1)} className="h-9 w-9 rounded-full border border-zinc-200 flex items-center justify-center text-[#0c1929] hover:border-[#0c1929] hover:text-[#0c1929] transition bg-white"><Plus className="h-4 w-4" /></button>
+                        <button onClick={() => setGuests(Math.max(1, guests - 1))} className="h-9 w-9 rounded-full border border-zinc-200 flex items-center justify-center text-[#411F0F] hover:border-[#411F0F] hover:text-[#411F0F] transition bg-white"><Minus className="h-4 w-4" /></button>
+                        <span className="text-xl font-black text-[#411F0F] w-5 text-center">{guests}</span>
+                        <button onClick={() => setGuests(guests + 1)} className="h-9 w-9 rounded-full border border-zinc-200 flex items-center justify-center text-[#411F0F] hover:border-[#411F0F] hover:text-[#411F0F] transition bg-white"><Plus className="h-4 w-4" /></button>
                       </div>
                     </div>
                   </div>
                   <div className="w-full mt-2">
-                    <button onClick={() => setActiveModal(null)} className="w-full rounded-2xl bg-[#0c1929] py-5 text-sm font-bold text-white hover:bg-[#152b47] transition shadow-[0_8px_20px_rgba(12,25,41,0.15)] hover:shadow-[0_12px_24px_rgba(12,25,41,0.2)] hover:-translate-y-0.5 active:translate-y-0">
+                    <button onClick={() => setActiveModal(null)} className="w-full rounded-2xl bg-[#411F0F] py-5 text-sm font-bold text-white hover:bg-[#472312] transition shadow-[0_8px_20px_rgba(65, 31, 15,0.15)] hover:shadow-[0_12px_24px_rgba(65, 31, 15,0.2)] hover:-translate-y-0.5 active:translate-y-0">
                       Save changes
                     </button>
                   </div>
@@ -492,8 +492,8 @@ export default function TripDashboardUI({ listing, reservation }) {
             {activeModal === "directions" && (
               <div className="max-h-[90vh] w-full flex flex-col overflow-hidden bg-white">
                 <div className="flex items-center justify-between px-8 py-6 shrink-0 relative z-10">
-                  <h3 className="text-xl font-bold text-[#0c1929]">Directions</h3>
-                  <button onClick={() => setActiveModal(null)} className="h-9 w-9 rounded-full bg-zinc-100 flex items-center justify-center text-[#0c1929] hover:bg-zinc-200 transition"><X className="h-4.5 w-4.5" /></button>
+                  <h3 className="text-xl font-bold text-[#411F0F]">Directions</h3>
+                  <button onClick={() => setActiveModal(null)} className="h-9 w-9 rounded-full bg-zinc-100 flex items-center justify-center text-[#411F0F] hover:bg-zinc-200 transition"><X className="h-4.5 w-4.5" /></button>
                 </div>
                 <div className="flex-1 overflow-y-auto pb-6">
                   <div className="h-[280px] w-full px-6">
@@ -502,14 +502,14 @@ export default function TripDashboardUI({ listing, reservation }) {
                   <div className="px-8 mt-8 space-y-5">
                     <div className="flex items-start justify-between gap-5 rounded-[24px] bg-slate-50/80 border border-slate-100 p-6 shadow-sm">
                       <div>
-                        <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#0c1929] mb-2">Address</p>
-                        <p className="text-base font-bold text-[#0c1929] leading-snug">{listing.address || "703, 360 Assiniboine Road"}<br />{listing.city || "North York"}, {listing.province || "ON"}</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#411F0F] mb-2">Address</p>
+                        <p className="text-base font-bold text-[#411F0F] leading-snug">{listing.address || "703, 360 Assiniboine Road"}<br />{listing.city || "North York"}, {listing.province || "ON"}</p>
                       </div>
-                      <button onClick={() => { navigator.clipboard.writeText(listing.address || "703, 360 Assiniboine Road, North York"); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="h-11 w-11 shrink-0 rounded-[16px] border border-slate-200 bg-white flex items-center justify-center text-[#0c1929] shadow-sm hover:bg-[#0c1929] hover:text-white hover:border-[#0c1929] hover:shadow-md transition-all duration-200 active:scale-95">
+                      <button onClick={() => { navigator.clipboard.writeText(listing.address || "703, 360 Assiniboine Road, North York"); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="h-11 w-11 shrink-0 rounded-[16px] border border-slate-200 bg-white flex items-center justify-center text-[#411F0F] shadow-sm hover:bg-[#411F0F] hover:text-white hover:border-[#411F0F] hover:shadow-md transition-all duration-200 active:scale-95">
                         {copied ? <Check className="h-4.5 w-4.5 text-emerald-500" /> : <Copy className="h-4.5 w-4.5" />}
                       </button>
                     </div>
-                    <a href={`https://www.google.com/maps/search/?api=1&query=${listing.latitude},${listing.longitude}`} target="_blank" rel="noreferrer" className="flex w-full items-center justify-center gap-2 rounded-[20px] bg-[#0c1929] py-4 text-sm font-bold text-white hover:bg-[#152b47] transition shadow-[0_4px_14px_rgba(12,25,41,0.15)] hover:shadow-[0_6px_20px_rgba(12,25,41,0.2)]">
+                    <a href={`https://www.google.com/maps/search/?api=1&query=${listing.latitude},${listing.longitude}`} target="_blank" rel="noreferrer" className="flex w-full items-center justify-center gap-2 rounded-[20px] bg-[#411F0F] py-4 text-sm font-bold text-white hover:bg-[#472312] transition shadow-[0_4px_14px_rgba(65, 31, 15,0.15)] hover:shadow-[0_6px_20px_rgba(65, 31, 15,0.2)]">
                       <ExternalLink className="h-4 w-4" /> Open in Google Maps
                     </a>
                   </div>
@@ -520,8 +520,8 @@ export default function TripDashboardUI({ listing, reservation }) {
             {/* RULES */}
             {activeModal === "rules" && <>
               <div className="flex items-center justify-between px-8 py-6 border-b border-zinc-100">
-                <h3 className="text-xl font-bold text-[#0c1929]">House Rules</h3>
-                <button onClick={() => setActiveModal(null)} className="h-9 w-9 rounded-full bg-zinc-100 flex items-center justify-center text-[#0c1929] hover:bg-zinc-200 transition"><X className="h-4.5 w-4.5" /></button>
+                <h3 className="text-xl font-bold text-[#411F0F]">House Rules</h3>
+                <button onClick={() => setActiveModal(null)} className="h-9 w-9 rounded-full bg-zinc-100 flex items-center justify-center text-[#411F0F] hover:bg-zinc-200 transition"><X className="h-4.5 w-4.5" /></button>
               </div>
               <div className="p-8 space-y-5">
                 {[
@@ -531,11 +531,11 @@ export default function TripDashboardUI({ listing, reservation }) {
                   `Pets are ${listing.petsAllowed ? "allowed (register during booking)" : "not permitted"}.`
                 ].map((rule, i) => (
                   <div key={i} className="flex items-start gap-4">
-                    <span className="h-6 w-6 rounded-full bg-[#0c1929] text-white text-[11px] font-black flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
-                    <p className="text-sm font-semibold text-[#0c1929] leading-relaxed">{rule}</p>
+                    <span className="h-6 w-6 rounded-full bg-[#411F0F] text-white text-[11px] font-black flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
+                    <p className="text-sm font-semibold text-[#411F0F] leading-relaxed">{rule}</p>
                   </div>
                 ))}
-                <button onClick={() => setActiveModal(null)} className="w-full mt-4 rounded-2xl bg-zinc-100 py-4 text-sm font-bold text-[#0c1929] hover:bg-zinc-200 transition">Got it</button>
+                <button onClick={() => setActiveModal(null)} className="w-full mt-4 rounded-2xl bg-zinc-100 py-4 text-sm font-bold text-[#411F0F] hover:bg-zinc-200 transition">Got it</button>
               </div>
             </>}
 
@@ -543,10 +543,10 @@ export default function TripDashboardUI({ listing, reservation }) {
             {activeModal === "cancel" && <>
               <div className="flex items-center justify-between px-8 py-6 border-b border-red-50 bg-red-50/40">
                 <h3 className="text-xl font-bold text-red-600">Cancel Reservation</h3>
-                <button onClick={() => setActiveModal(null)} className="h-9 w-9 rounded-full bg-white border border-red-100 flex items-center justify-center text-[#0c1929] hover:text-red-600 transition"><X className="h-4.5 w-4.5" /></button>
+                <button onClick={() => setActiveModal(null)} className="h-9 w-9 rounded-full bg-white border border-red-100 flex items-center justify-center text-[#411F0F] hover:text-red-600 transition"><X className="h-4.5 w-4.5" /></button>
               </div>
               <div className="p-8 space-y-6">
-                <p className="text-sm font-semibold text-[#0c1929] leading-relaxed">Are you sure you want to cancel your upcoming stay at <strong className="text-[#0c1929]">{listing.title}</strong>?</p>
+                <p className="text-sm font-semibold text-[#411F0F] leading-relaxed">Are you sure you want to cancel your upcoming stay at <strong className="text-[#411F0F]">{listing.title}</strong>?</p>
                 <div className="rounded-2xl border border-red-100 bg-red-50/30 p-5">
                   <p className="text-[10px] font-black uppercase tracking-[0.18em] text-red-500 mb-2">Cancellation Policy</p>
                   <p className="text-sm font-semibold text-red-900/80 leading-relaxed mb-3">{cancellationText}</p>
@@ -579,7 +579,7 @@ export default function TripDashboardUI({ listing, reservation }) {
                   }} className="w-full rounded-2xl bg-red-600 py-4 text-sm font-bold text-white hover:bg-red-700 transition">
                     Yes, cancel reservation
                   </button>
-                  <button onClick={() => setActiveModal(null)} className="w-full rounded-2xl border border-zinc-200 py-4 text-sm font-bold text-[#0c1929] hover:bg-zinc-50 transition">
+                  <button onClick={() => setActiveModal(null)} className="w-full rounded-2xl border border-zinc-200 py-4 text-sm font-bold text-[#411F0F] hover:bg-zinc-50 transition">
                     Keep my reservation
                   </button>
                 </div>

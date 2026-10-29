@@ -61,12 +61,12 @@ function CalendarRangePicker({ monthCursor, onMonthChange, checkIn, checkOut, on
         disabled={isPast}
         onClick={() => onDayClick(date)}
         className={`h-10 rounded-xl text-sm transition ${isStart || isEnd
-          ? "bg-[#0c1929] font-semibold text-white"
+          ? "bg-[#411F0F] font-semibold text-white"
           : isInRange
-            ? "bg-slate-200 text-[#0c1929]"
+            ? "bg-slate-200 text-[#411F0F]"
             : isPast
               ? "text-slate-300 cursor-not-allowed line-through decoration-slate-300 font-medium"
-              : "text-[#0c1929] hover:bg-slate-100"
+              : "text-[#411F0F] hover:bg-slate-100"
           }`}
       >
         {day}
@@ -80,28 +80,28 @@ function CalendarRangePicker({ monthCursor, onMonthChange, checkIn, checkOut, on
         <button
           type="button"
           onClick={() => onMonthChange(new Date(monthCursor.getFullYear(), monthCursor.getMonth() - 1, 1))}
-          className="rounded-full border border-slate-200 bg-white px-3 py-1 text-sm text-[#0c1929] hover:bg-slate-50"
+          className="rounded-full border border-slate-200 bg-white px-3 py-1 text-sm text-[#411F0F] hover:bg-slate-50"
         >
           Prev
         </button>
-        <p className="text-sm font-semibold text-[#0c1929]">
+        <p className="text-sm font-semibold text-[#411F0F]">
           {monthCursor.toLocaleDateString(undefined, { month: "long", year: "numeric" })}
         </p>
         <button
           type="button"
           onClick={() => onMonthChange(new Date(monthCursor.getFullYear(), monthCursor.getMonth() + 1, 1))}
-          className="rounded-full border border-slate-200 bg-white px-3 py-1 text-sm text-[#0c1929] hover:bg-slate-50"
+          className="rounded-full border border-slate-200 bg-white px-3 py-1 text-sm text-[#411F0F] hover:bg-slate-50"
         >
           Next
         </button>
       </div>
-      <div className="mb-2 grid grid-cols-7 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-[#0c1929]">
+      <div className="mb-2 grid grid-cols-7 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-[#411F0F]">
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((dayLabel) => (
           <span key={dayLabel}>{dayLabel}</span>
         ))}
       </div>
       <div className="grid grid-cols-7 gap-1">{dayCells}</div>
-      <p className="mt-3 text-xs text-[#0c1929]">Pick check-in first, then check-out. The popup closes after selecting the end date.</p>
+      <p className="mt-3 text-xs text-[#411F0F]">Pick check-in first, then check-out. The popup closes after selecting the end date.</p>
     </div>
   );
 }
@@ -110,15 +110,15 @@ function GuestRow({ label, sublabel, value, onDecrement, onIncrement, canDecreme
   return (
     <div className="flex items-center justify-between py-2">
       <div>
-        <h4 className="font-semibold text-[#0c1929]">{label}</h4>
-        <p className="text-sm text-[#0c1929]">{sublabel}</p>
+        <h4 className="font-semibold text-[#411F0F]">{label}</h4>
+        <p className="text-sm text-[#411F0F]">{sublabel}</p>
       </div>
       <div className="flex items-center gap-3">
-        <button type="button" onClick={onDecrement} disabled={!canDecrement} className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-[#0c1929] hover:border-[#0c1929] hover:text-[#0c1929] disabled:opacity-30 disabled:hover:border-slate-300 transition">
+        <button type="button" onClick={onDecrement} disabled={!canDecrement} className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-[#411F0F] hover:border-[#411F0F] hover:text-[#411F0F] disabled:opacity-30 disabled:hover:border-slate-300 transition">
           <Minus className="h-4 w-4" />
         </button>
         <span className="w-4 text-center text-base">{value}</span>
-        <button type="button" onClick={onIncrement} disabled={!canIncrement} className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-[#0c1929] hover:border-[#0c1929] hover:text-[#0c1929] disabled:opacity-30 disabled:hover:border-slate-300 transition">
+        <button type="button" onClick={onIncrement} disabled={!canIncrement} className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-[#411F0F] hover:border-[#411F0F] hover:text-[#411F0F] disabled:opacity-30 disabled:hover:border-slate-300 transition">
           <Plus className="h-4 w-4" />
         </button>
       </div>
@@ -247,7 +247,7 @@ function DiscoverySearchForm({ booking, variant = "default" }) {
 
   if (variant === "pill") {
     return (
-      <div ref={formRef} className="relative flex items-center rounded-full border border-slate-200 bg-white text-sm font-medium text-[#0c1929] shadow-sm transition hover:shadow-md">
+      <div ref={formRef} className="relative flex items-center rounded-full border border-slate-200 bg-white text-sm font-medium text-[#411F0F] shadow-sm transition hover:shadow-md">
         <button type="button" onClick={() => setOpenPanel(openPanel === "dates" ? null : "dates")} className={`px-4 py-2 rounded-l-full border-r border-slate-200 transition ${openPanel === "dates" ? "bg-slate-100 shadow-inner" : "hover:bg-slate-50"}`}>
           {formatDateRangeField()}
         </button>
@@ -255,13 +255,13 @@ function DiscoverySearchForm({ booking, variant = "default" }) {
           {getGuestLabel()}
         </button>
         <div className="pl-3 pr-1 py-1">
-          <button type="button" onClick={handleSearch} className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0c1929] text-white hover:bg-[#152b47] transition">
+          <button type="button" onClick={handleSearch} className="flex h-8 w-8 items-center justify-center rounded-full bg-[#411F0F] text-white hover:bg-[#472312] transition">
             <Search className="h-4 w-4" />
           </button>
         </div>
 
         {mounted && openPanel === "dates" && (
-          <div className="absolute right-0 top-[calc(100%+12px)] w-[min(100vw-32px,400px)] md:w-[850px] z-[9999] rounded-[32px] bg-white shadow-[0_8px_40px_rgba(12,25,41,0.12)] ring-1 ring-slate-200 animate-in fade-in zoom-in-95 duration-200">
+          <div className="absolute right-0 top-[calc(100%+12px)] w-[min(100vw-32px,400px)] md:w-[850px] z-[9999] rounded-[32px] bg-white shadow-[0_8px_40px_rgba(65, 31, 15,0.12)] ring-1 ring-slate-200 animate-in fade-in zoom-in-95 duration-200">
             <AvailabilityCalendar
               blockedDates={[]}
               checkIn={checkIn}
@@ -278,7 +278,7 @@ function DiscoverySearchForm({ booking, variant = "default" }) {
         )}
 
         {mounted && openPanel === "guests" && (
-          <div className="absolute right-0 top-[calc(100%+12px)] w-[400px] z-[9999] rounded-[32px] bg-white shadow-[0_8px_40px_rgba(12,25,41,0.12)] ring-1 ring-slate-200 p-8 animate-in fade-in zoom-in-95 duration-200">
+          <div className="absolute right-0 top-[calc(100%+12px)] w-[400px] z-[9999] rounded-[32px] bg-white shadow-[0_8px_40px_rgba(65, 31, 15,0.12)] ring-1 ring-slate-200 p-8 animate-in fade-in zoom-in-95 duration-200">
             <GuestRow label="Adults" sublabel="Age 13+" value={adults} onDecrement={() => setAdults(Math.max(1, adults - 1))} onIncrement={() => setAdults(Math.min(16, adults + 1))} canDecrement={adults > 1} canIncrement={adults + childrenCount < 16} />
             <div className="w-full border-b border-slate-100 my-1"></div>
             <GuestRow label="Children" sublabel="Ages 2–12" value={childrenCount} onDecrement={() => setChildrenCount(Math.max(0, childrenCount - 1))} onIncrement={() => setChildrenCount(Math.min(16 - adults, childrenCount + 1))} canDecrement={childrenCount > 0} canIncrement={adults + childrenCount < 16} />
@@ -287,7 +287,7 @@ function DiscoverySearchForm({ booking, variant = "default" }) {
             <div className="w-full border-b border-slate-100 my-1"></div>
             <GuestRow label="Pets" sublabel="Service animals aren't pets" value={pets} onDecrement={() => setPets(Math.max(0, pets - 1))} onIncrement={() => setPets(pets + 1)} canDecrement={pets > 0} canIncrement={true} />
             <div className="pt-2 mt-auto">
-              <button type="button" onClick={(e) => { setOpenPanel(null); handleSearch(e); }} className="w-full rounded-[20px] bg-[#0c1929] py-4 text-base font-bold text-white shadow-lg shadow-[#0c1929]/20 transition hover:bg-[#152b47] active:scale-[0.98]">
+              <button type="button" onClick={(e) => { setOpenPanel(null); handleSearch(e); }} className="w-full rounded-[20px] bg-[#411F0F] py-4 text-base font-bold text-white shadow-lg shadow-[#411F0F]/20 transition hover:bg-[#472312] active:scale-[0.98]">
                 Apply
               </button>
             </div>
@@ -299,33 +299,33 @@ function DiscoverySearchForm({ booking, variant = "default" }) {
 
   return (
     <form ref={formRef} onSubmit={handleSearch} className="relative flex flex-1 flex-col gap-3 md:max-w-3xl md:flex-row md:items-center">
-      <div className="relative flex-1 rounded-[24px] bg-slate-50 border border-slate-200 px-4 py-3 transition hover:bg-slate-100 hover:border-slate-300 focus-within:ring-2 focus-within:ring-[#0c1929] focus-within:bg-white">
+      <div className="relative flex-1 rounded-[24px] bg-slate-50 border border-slate-200 px-4 py-3 transition hover:bg-slate-100 hover:border-slate-300 focus-within:ring-2 focus-within:ring-[#411F0F] focus-within:bg-white">
         <button type="button" onClick={() => setOpenPanel(openPanel === "dates" ? null : "dates")} className="block w-full cursor-pointer text-left">
-          <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#0c1929]">
+          <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#411F0F]">
             <CalendarDays className="h-4 w-4" />
             Check-in / Check-out
           </span>
-          <span className="mt-2 block text-sm font-medium text-[#0c1929]">{formatDateRangeField()}</span>
+          <span className="mt-2 block text-sm font-medium text-[#411F0F]">{formatDateRangeField()}</span>
         </button>
       </div>
 
-      <div className="relative rounded-[24px] bg-slate-50 border border-slate-200 px-4 py-3 transition hover:bg-slate-100 hover:border-slate-300 focus-within:ring-2 focus-within:ring-[#0c1929] focus-within:bg-white md:w-56">
+      <div className="relative rounded-[24px] bg-slate-50 border border-slate-200 px-4 py-3 transition hover:bg-slate-100 hover:border-slate-300 focus-within:ring-2 focus-within:ring-[#411F0F] focus-within:bg-white md:w-56">
         <button type="button" onClick={() => setOpenPanel(openPanel === "guests" ? null : "guests")} className="w-full cursor-pointer text-left">
-          <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#0c1929]">
+          <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#411F0F]">
             <Users className="h-4 w-4" />
             Guests
           </span>
-          <span className="mt-2 block text-sm font-medium text-[#0c1929]">{getGuestLabel()}</span>
+          <span className="mt-2 block text-sm font-medium text-[#411F0F]">{getGuestLabel()}</span>
         </button>
       </div>
 
-      <button type="submit" className="inline-flex h-[70px] w-[70px] cursor-pointer items-center justify-center rounded-full bg-[#0c1929] text-white transition hover:bg-[#152b47]" aria-label="Search">
+      <button type="submit" className="inline-flex h-[70px] w-[70px] cursor-pointer items-center justify-center rounded-full bg-[#411F0F] text-white transition hover:bg-[#472312]" aria-label="Search">
         <Search className="h-5 w-5" />
       </button>
 
       {/* Discovery Default Mode Floating Popovers */}
       {mounted && openPanel === "dates" && (
-        <div className="absolute left-0 md:left-1/2 md:-translate-x-1/2 top-[calc(100%+16px)] w-[min(100vw-32px,400px)] md:w-[850px] z-[9999] rounded-[32px] bg-white shadow-[0_8px_40px_rgba(12,25,41,0.12)] ring-1 ring-slate-200 animate-in fade-in zoom-in-95 duration-200">
+        <div className="absolute left-0 md:left-1/2 md:-translate-x-1/2 top-[calc(100%+16px)] w-[min(100vw-32px,400px)] md:w-[850px] z-[9999] rounded-[32px] bg-white shadow-[0_8px_40px_rgba(65, 31, 15,0.12)] ring-1 ring-slate-200 animate-in fade-in zoom-in-95 duration-200">
           <AvailabilityCalendar
             blockedDates={[]}
             checkIn={checkIn}
@@ -342,7 +342,7 @@ function DiscoverySearchForm({ booking, variant = "default" }) {
       )}
 
       {mounted && openPanel === "guests" && (
-        <div className="absolute right-0 top-[calc(100%+16px)] w-[400px] z-[9999] rounded-[32px] bg-white shadow-[0_8px_40px_rgba(12,25,41,0.12)] ring-1 ring-slate-200 p-8 animate-in fade-in zoom-in-95 duration-200">
+        <div className="absolute right-0 top-[calc(100%+16px)] w-[400px] z-[9999] rounded-[32px] bg-white shadow-[0_8px_40px_rgba(65, 31, 15,0.12)] ring-1 ring-slate-200 p-8 animate-in fade-in zoom-in-95 duration-200">
           <GuestRow label="Adults" sublabel="Age 13+" value={adults} onDecrement={() => setAdults(Math.max(1, adults - 1))} onIncrement={() => setAdults(Math.min(16, adults + 1))} canDecrement={adults > 1} canIncrement={adults + childrenCount < 16} />
           <div className="w-full border-b border-slate-100 my-1"></div>
           <GuestRow label="Children" sublabel="Ages 2–12" value={childrenCount} onDecrement={() => setChildrenCount(Math.max(0, childrenCount - 1))} onIncrement={() => setChildrenCount(Math.min(16 - adults, childrenCount + 1))} canDecrement={childrenCount > 0} canIncrement={adults + childrenCount < 16} />
@@ -351,7 +351,7 @@ function DiscoverySearchForm({ booking, variant = "default" }) {
           <div className="w-full border-b border-slate-100 my-1"></div>
           <GuestRow label="Pets" sublabel="Service animals aren't pets" value={pets} onDecrement={() => setPets(Math.max(0, pets - 1))} onIncrement={() => setPets(pets + 1)} canDecrement={pets > 0} canIncrement={true} />
           <div className="pt-2 mt-auto">
-            <button type="button" onClick={(e) => { setOpenPanel(null); handleSearch(e); }} className="w-full rounded-[20px] bg-[#0c1929] py-4 text-base font-bold text-white shadow-lg shadow-[#0c1929]/20 transition hover:bg-[#152b47] active:scale-[0.98]">
+            <button type="button" onClick={(e) => { setOpenPanel(null); handleSearch(e); }} className="w-full rounded-[20px] bg-[#411F0F] py-4 text-base font-bold text-white shadow-lg shadow-[#411F0F]/20 transition hover:bg-[#472312] active:scale-[0.98]">
               Apply
             </button>
           </div>
@@ -424,27 +424,27 @@ function AccountButton() {
       <button
         type="button"
         onClick={() => setIsOpen(c => !c)}
-        className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white pl-1 pr-4 py-1 text-sm font-semibold text-[#0c1929] transition hover:border-slate-300 hover:shadow-sm"
+        className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white pl-1 pr-4 py-1 text-sm font-semibold text-[#411F0F] transition hover:border-slate-300 hover:shadow-sm"
       >
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0c1929] text-xs font-bold text-white">
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#411F0F] text-xs font-bold text-white">
           {initials}
         </span>
         {firstName}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-[calc(100%+10px)] z-50 w-52 overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-[0_8px_30px_rgba(12,25,41,0.12)] animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute right-0 top-[calc(100%+10px)] z-50 w-52 overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-[0_8px_30px_rgba(65, 31, 15,0.12)] animate-in fade-in zoom-in-95 duration-150">
           <div className="px-4 py-3 border-b border-slate-100">
-            <p className="text-sm font-semibold text-[#0c1929] truncate">{session.name}</p>
-            <p className="text-xs text-[#0c1929] mt-0.5">{session.role === "GUEST" ? "Guest" : "Admin"}</p>
+            <p className="text-sm font-semibold text-[#411F0F] truncate">{session.name}</p>
+            <p className="text-xs text-[#411F0F] mt-0.5">{session.role === "GUEST" ? "Guest" : "Admin"}</p>
           </div>
           <div className="p-1.5">
             <Link
               href={session.role === "GUEST" ? "/trips" : "/admin"}
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-[#0c1929] transition hover:bg-slate-50 hover:text-[#0c1929]"
+              className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-[#411F0F] transition hover:bg-slate-50 hover:text-[#411F0F]"
             >
-              <UserCircle2 className="h-4 w-4 text-[#0c1929]" />
+              <UserCircle2 className="h-4 w-4 text-[#411F0F]" />
               {session.role === "GUEST" ? "My Trips" : "Dashboard"}
             </Link>
             <button
@@ -534,23 +534,23 @@ export default function NavBar() {
         <div className="flex w-full items-center justify-between bg-white/80 backdrop-blur-xl shadow-sm border-b border-white/60 px-6 py-4 md:px-10">
           <div className="flex items-center gap-5">
             <Link href="/" className="flex items-center">
-              <img src="/suites-logo.png" alt="HomEV" className="h-10 w-auto object-contain mix-blend-multiply opacity-80" />
+              <img src="/homev-suites-logo.png" alt="HomEV Suites" className="h-10 w-auto object-contain mix-blend-multiply" />
             </Link>
             
             <div className="hidden sm:block h-5 w-px bg-slate-200" />
 
             {(isTrips && !tripsDetail) ? (
-              <Link href="/" className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-[#0c1929] transition">
+              <Link href="/" className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-[#411F0F] transition">
                 <ChevronLeft className="h-4 w-4" />
                 Back to search
               </Link>
             ) : backAction ? (
-              <button onClick={backAction} className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-[#0c1929] transition">
+              <button onClick={backAction} className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-[#411F0F] transition">
                 <ChevronLeft className="h-4 w-4" />
                 {backLabel}
               </button>
             ) : (
-              <Link href={backHref} className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-[#0c1929] transition">
+              <Link href={backHref} className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-[#411F0F] transition">
                 <ChevronLeft className="h-4 w-4" />
                 {backLabel}
               </Link>
@@ -562,10 +562,10 @@ export default function NavBar() {
               <div className="flex items-center gap-4 animate-in fade-in slide-in-from-right-4 duration-300 mr-2">
                 {reserveInfo.hasBooking && (
                   <div className="hidden sm:flex flex-col items-end text-right">
-                    <span className="text-[15px] font-semibold text-[#0c1929]">
+                    <span className="text-[15px] font-semibold text-[#411F0F]">
                       {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(reserveInfo.total)} total
                     </span>
-                    <span className="text-xs text-[#0c1929]">
+                    <span className="text-xs text-[#411F0F]">
                       {reserveInfo.nights} night{reserveInfo.nights !== 1 ? "s" : ""}
                     </span>
                   </div>
@@ -573,7 +573,7 @@ export default function NavBar() {
                 <button
                   onClick={handleStickyReserve}
                   disabled={!reserveInfo.hasBooking}
-                  className="rounded-full bg-gradient-to-r from-[#0c1929] to-[#152b47] px-6 py-2.5 text-sm font-bold text-white shadow-[0_4px_12px_rgba(12,25,41,0.2)] transition hover:from-[#152b47] hover:to-[#0c1929] active:scale-[0.97] disabled:opacity-50"
+                  className="rounded-full bg-gradient-to-r from-[#411F0F] to-[#472312] px-6 py-2.5 text-sm font-bold text-white shadow-[0_4px_12px_rgba(65, 31, 15,0.2)] transition hover:from-[#472312] hover:to-[#411F0F] active:scale-[0.97] disabled:opacity-50"
                 >
                   {reserveInfo.hasBooking ? "Reserve" : "Check availability"}
                 </button>

@@ -38,7 +38,7 @@ export default function InboxModule() {
                         guest: guestName,
                         property: propTitle,
                         status: isArchived ? 'Archived' : 'Active',
-                        statusColor: isArchived ? 'text-[#0c1929]' : 'text-blue-500',
+                        statusColor: isArchived ? 'text-[#411F0F]' : 'text-blue-500',
                         time: lastMsgTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                         lastMsgDate: lastMsgTime,
                         unread: t.unreadCount > 0,
@@ -126,15 +126,15 @@ export default function InboxModule() {
     return (
         <div className="h-full flex flex-col">
             <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-bold text-[#0c1929] tracking-tight">Inbox Threads</h1>
+                <h1 className="text-3xl font-bold text-[#411F0F] tracking-tight">Inbox Threads</h1>
 
                 <div className="flex gap-4 items-center">
                     <div className="relative flex items-center">
-                        <Filter className="absolute left-3 w-4 h-4 text-[#0c1929]" />
+                        <Filter className="absolute left-3 w-4 h-4 text-[#411F0F]" />
                         <select
                             value={selectedProperty}
                             onChange={(e) => setSelectedProperty(e.target.value)}
-                            className="w-full bg-white border border-slate-200 shadow-sm pl-9 pr-8 py-2 rounded-xl text-sm text-[#0c1929] outline-none cursor-pointer font-medium min-w-[240px] focus:ring-2 focus:ring-[#0c1929]"
+                            className="w-full bg-white border border-slate-200 shadow-sm pl-9 pr-8 py-2 rounded-xl text-sm text-[#411F0F] outline-none cursor-pointer font-medium min-w-[240px] focus:ring-2 focus:ring-[#411F0F]"
                         >
                             <option value="All Listings">All Listings</option>
                             {allProperties.map(p => <option key={p} value={p}>{p}</option>)}
@@ -148,11 +148,11 @@ export default function InboxModule() {
                 <div className="w-80 border-r border-slate-200 flex flex-col bg-slate-50/50">
                     <div className="p-4 border-b border-slate-200 flex flex-col gap-4">
                         <div className="relative">
-                            <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#0c1929]" />
+                            <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#411F0F]" />
                             <input
                                 type="text"
                                 placeholder="Search messages..."
-                                className="w-full bg-white border border-slate-300 placeholder:text-[#0c1929] pl-9 pr-4 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0c1929] shadow-sm transition-all"
+                                className="w-full bg-white border border-slate-300 placeholder:text-[#411F0F] pl-9 pr-4 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#411F0F] shadow-sm transition-all"
                             />
                         </div>
 
@@ -161,8 +161,8 @@ export default function InboxModule() {
                                 <button
                                     onClick={() => setShowArchived(!showArchived)}
                                     className={`text-[10px] font-bold px-3 py-1.5 rounded-full transition flex items-center gap-1.5 uppercase tracking-wider ${showArchived
-                                            ? 'bg-[#0c1929] text-white shadow-md border border-[#0c1929]'
-                                            : 'bg-white text-[#0c1929] hover:bg-slate-100 border border-slate-200'
+                                            ? 'bg-[#411F0F] text-white shadow-md border border-[#411F0F]'
+                                            : 'bg-white text-[#411F0F] hover:bg-slate-100 border border-slate-200'
                                         }`}
                                 >
                                     Archived
@@ -171,7 +171,7 @@ export default function InboxModule() {
                                     onClick={() => setShowUnreadOnly(!showUnreadOnly)}
                                     className={`text-[10px] font-bold px-3 py-1.5 rounded-full transition flex items-center gap-1.5 uppercase tracking-wider ${showUnreadOnly
                                             ? 'bg-blue-500 text-white shadow-md border border-blue-600'
-                                            : 'bg-white text-[#0c1929] hover:bg-slate-100 border border-slate-200'
+                                            : 'bg-white text-[#411F0F] hover:bg-slate-100 border border-slate-200'
                                         }`}
                                 >
                                     <Mail className="w-3 h-3" />
@@ -197,28 +197,28 @@ export default function InboxModule() {
                                 >
                                     <div className="flex justify-between items-start mb-1">
                                         <div className="flex items-center gap-2">
-                                            <h4 className={`text-sm ${t.unread ? 'font-bold text-[#0c1929]' : 'font-semibold text-[#0c1929]'}`}>{t.guest}</h4>
+                                            <h4 className={`text-sm ${t.unread ? 'font-bold text-[#411F0F]' : 'font-semibold text-[#411F0F]'}`}>{t.guest}</h4>
                                             {t.unreadCount > 0 && (
                                                 <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
                                                     {t.unreadCount}
                                                 </span>
                                             )}
                                         </div>
-                                        <span className="text-[11px] text-[#0c1929] font-bold">{t.time}</span>
+                                        <span className="text-[11px] text-[#411F0F] font-bold">{t.time}</span>
                                     </div>
                                     <p className="text-xs text-blue-600 font-bold mb-2 truncate">{t.property}</p>
                                     {lastMsg ? (
-                                        <p className={`text-xs truncate ${t.unread ? 'font-semibold text-[#0c1929]' : 'text-[#0c1929]'}`}>
+                                        <p className={`text-xs truncate ${t.unread ? 'font-semibold text-[#411F0F]' : 'text-[#411F0F]'}`}>
                                             {lastMsg.sender === 'Host' ? 'You: ' : ''}{lastMsg.text}
                                         </p>
                                     ) : (
-                                        <p className="text-xs text-[#0c1929] italic font-medium">No messages yet.</p>
+                                        <p className="text-xs text-[#411F0F] italic font-medium">No messages yet.</p>
                                     )}
                                 </div>
                             );
                         })}
                         {filteredThreads.length === 0 && (
-                            <div className="p-8 text-center text-[#0c1929] text-sm font-medium">
+                            <div className="p-8 text-center text-[#411F0F] text-sm font-medium">
                                 No matching messages.
                             </div>
                         )}
@@ -230,20 +230,20 @@ export default function InboxModule() {
                     <div className="flex-1 flex flex-col bg-white">
                         <div className="p-5 border-b border-slate-200 flex justify-between items-center bg-slate-50/30">
                             <div>
-                                <h3 className="font-bold text-[#0c1929]">{activeThread.guest}</h3>
-                                <p className="text-xs text-[#0c1929] font-bold flex items-center gap-1 mt-1">
+                                <h3 className="font-bold text-[#411F0F]">{activeThread.guest}</h3>
+                                <p className="text-xs text-[#411F0F] font-bold flex items-center gap-1 mt-1">
                                     <CheckCircle2 className={`w-3 h-3 ${activeThread.statusColor}`} />
                                     {activeThread.status} • {activeThread.property}
                                 </p>
                             </div>
-                            <button onClick={() => router.push('/admin/reservations')} className="px-4 py-1.5 text-xs font-bold shadow-sm hover:shadow transition bg-white text-[#0c1929] border border-slate-200 rounded-[12px]">
+                            <button onClick={() => router.push('/admin/reservations')} className="px-4 py-1.5 text-xs font-bold shadow-sm hover:shadow transition bg-white text-[#411F0F] border border-slate-200 rounded-[12px]">
                                 View Reservation
                             </button>
                         </div>
 
                         <div className="flex-1 p-6 overflow-y-auto space-y-6 scroll-smooth bg-slate-50/20" ref={scrollRef}>
                             <div className="flex justify-center">
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-[#0c1929] bg-white border border-slate-200 px-3 py-1 rounded-full shadow-sm">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-[#411F0F] bg-white border border-slate-200 px-3 py-1 rounded-full shadow-sm">
                                     Conversation History
                                 </span>
                             </div>
@@ -252,11 +252,11 @@ export default function InboxModule() {
                                 <div key={i} className={`flex flex-col gap-1 ${msg.sender === 'Host' ? 'items-end' : 'items-start'}`}>
                                     <div className={`p-4 rounded-2xl max-w-[80%] border shadow-sm ${msg.sender === 'Host'
                                             ? 'bg-blue-500 text-white rounded-tr-sm border-blue-600'
-                                            : 'bg-white text-[#0c1929] rounded-tl-sm border-slate-100'
+                                            : 'bg-white text-[#411F0F] rounded-tl-sm border-slate-100'
                                         }`}>
                                         <p className="text-sm font-medium leading-relaxed">{msg.text}</p>
                                     </div>
-                                    <span className="text-[11px] text-[#0c1929] font-bold mx-1 mt-0.5">{msg.time}</span>
+                                    <span className="text-[11px] text-[#411F0F] font-bold mx-1 mt-0.5">{msg.time}</span>
                                 </div>
                             ))}
                         </div>
@@ -268,7 +268,7 @@ export default function InboxModule() {
                                     value={newMessage}
                                     onChange={(e) => setNewMessage(e.target.value)}
                                     placeholder="Type a reply…"
-                                    className="w-full pr-12 pl-4 py-3 rounded-2xl border border-slate-300 placeholder:text-[#0c1929] text-[#0c1929] bg-white outline-none focus:ring-2 focus:ring-[#0c1929] transition shadow-sm"
+                                    className="w-full pr-12 pl-4 py-3 rounded-2xl border border-slate-300 placeholder:text-[#411F0F] text-[#411F0F] bg-white outline-none focus:ring-2 focus:ring-[#411F0F] transition shadow-sm"
                                 />
                                 <button type="submit" className="absolute right-2 p-1.5 bg-blue-500 text-white rounded-xl hover:bg-blue-600 active:bg-blue-700 transition shadow-sm hover:shadow-md">
                                     <Send className="w-5 h-5" />
@@ -277,7 +277,7 @@ export default function InboxModule() {
                         </div>
                     </div>
                 ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center text-[#0c1929] bg-slate-50">
+                    <div className="flex-1 flex flex-col items-center justify-center text-[#411F0F] bg-slate-50">
                         <MessageSquare className="w-12 h-12 mb-4 opacity-30" />
                         <p className="font-semibold">Select a thread to view messages</p>
                     </div>

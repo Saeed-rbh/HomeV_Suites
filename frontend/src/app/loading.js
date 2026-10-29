@@ -15,7 +15,7 @@ function CardSkeleton() {
 
 export default function Loading() {
   return (
-    <div className="flex-1 bg-[#f3f5f8] px-4 pb-8 pt-4 md:px-6">
+    <div className="flex-1 bg-[#FBF6EC] px-4 pb-8 pt-4 md:px-6">
       <div className="mx-auto max-w-[1600px]">
         <div className="skeleton-pulse skeleton-surface mb-6 h-24 rounded-[30px]" />
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1.04fr)_minmax(360px,0.96fr)]">

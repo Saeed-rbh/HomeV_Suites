@@ -44,8 +44,8 @@ export default function FavoriteButton({ id, className = "" }) {
       <Heart
         className={`h-4 w-4 transition ${
           isFavorited
-            ? "fill-[#0c1929] text-[#0c1929]"
-            : "fill-transparent text-[#0c1929] group-hover:text-[#0c1929]"
+            ? "fill-[#411F0F] text-[#411F0F]"
+            : "fill-transparent text-[#411F0F] group-hover:text-[#411F0F]"
         }`}
       />
     </button>
