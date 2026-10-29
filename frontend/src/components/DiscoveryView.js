@@ -26,17 +26,17 @@ function MobilePropertyCard({ listing, booking }) {
         <div className="flex flex-col justify-between py-1 min-w-0">
           <div>
             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.18em] mb-0.5">{listing.neighborhood || "Toronto"}</p>
-            <h3 className="text-[14px] font-semibold text-[#0c1929] leading-snug line-clamp-2">{listing.title}</h3>
+            <h3 className="text-[14px] font-semibold text-[#411F0F] leading-snug line-clamp-2">{listing.title}</h3>
             <p className="text-xs text-slate-500 mt-1">{listing.specs}</p>
           </div>
           <div className="flex items-center justify-between mt-2">
             <div>
-              <span className="text-[15px] font-bold text-[#0c1929]">{price.label}</span>
+              <span className="text-[15px] font-bold text-[#411F0F]">{price.label}</span>
               {price.sublabel && <span className="text-[11px] text-slate-400 ml-1">{price.sublabel}</span>}
             </div>
             <div className="flex items-center gap-1">
               <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-              <span className="text-xs font-semibold text-[#0c1929]">{listing.rating}</span>
+              <span className="text-xs font-semibold text-[#411F0F]">{listing.rating}</span>
             </div>
           </div>
         </div>
@@ -50,15 +50,15 @@ function GuestRow({ label, sublabel, value, onDecrement, onIncrement, canDecreme
   return (
     <div className="flex items-center justify-between py-2">
       <div>
-        <h4 className="font-semibold text-[#0c1929]">{label}</h4>
-        <p className="text-sm text-[#0c1929]">{sublabel}</p>
+        <h4 className="font-semibold text-[#411F0F]">{label}</h4>
+        <p className="text-sm text-[#411F0F]">{sublabel}</p>
       </div>
       <div className="flex items-center gap-3">
-        <button type="button" onClick={onDecrement} disabled={!canDecrement} className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-[#0c1929] hover:border-[#0c1929] hover:text-[#0c1929] disabled:opacity-30 transition">
+        <button type="button" onClick={onDecrement} disabled={!canDecrement} className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-[#411F0F] hover:border-[#411F0F] hover:text-[#411F0F] disabled:opacity-30 transition">
           <Minus className="h-4 w-4" />
         </button>
         <span className="w-4 text-center text-base">{value}</span>
-        <button type="button" onClick={onIncrement} disabled={!canIncrement} className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-[#0c1929] hover:border-[#0c1929] hover:text-[#0c1929] disabled:opacity-30 transition">
+        <button type="button" onClick={onIncrement} disabled={!canIncrement} className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-[#411F0F] hover:border-[#411F0F] hover:text-[#411F0F] disabled:opacity-30 transition">
           <Plus className="h-4 w-4" />
         </button>
       </div>
@@ -134,16 +134,16 @@ function HeroSearchBar({ booking, openBelow = false, globalBlockedDates = [], pa
         <div className="hero-glass-bar flex items-center rounded-full px-1 py-1 min-w-[280px]">
           <button type="button" onClick={() => setOpenPanel(openPanel === "dates" ? null : "dates")}
             className={`flex items-center gap-2 rounded-full px-5 py-3.5 text-left transition ${openPanel === "dates" ? "bg-white/20" : "hover:bg-white/10"}`}>
-            <CalendarDays className="h-4 w-4 text-[#0c1929]/75 shrink-0" />
+            <CalendarDays className="h-4 w-4 text-[#411F0F]/75 shrink-0" />
             <div className="flex items-center gap-5">
               <div>
-                <span className="block text-[9px] font-bold uppercase tracking-[0.2em] text-[#0c1929]/65">Check-in</span>
-                <span className="block text-xs font-semibold text-[#0c1929] mt-0.5 tracking-wide">{formatFieldDate(checkIn)}</span>
+                <span className="block text-[9px] font-bold uppercase tracking-[0.2em] text-[#411F0F]/65">Check-in</span>
+                <span className="block text-xs font-semibold text-[#411F0F] mt-0.5 tracking-wide">{formatFieldDate(checkIn)}</span>
               </div>
-              <div className="h-7 w-px bg-[#0c1929]/10" />
+              <div className="h-7 w-px bg-[#411F0F]/10" />
               <div>
-                <span className="block text-[9px] font-bold uppercase tracking-[0.2em] text-[#0c1929]/65">Check-out</span>
-                <span className="block text-xs font-semibold text-[#0c1929] mt-0.5 tracking-wide">{formatFieldDate(checkOut)}</span>
+                <span className="block text-[9px] font-bold uppercase tracking-[0.2em] text-[#411F0F]/65">Check-out</span>
+                <span className="block text-xs font-semibold text-[#411F0F] mt-0.5 tracking-wide">{formatFieldDate(checkOut)}</span>
               </div>
             </div>
           </button>
@@ -153,10 +153,10 @@ function HeroSearchBar({ booking, openBelow = false, globalBlockedDates = [], pa
         <div className="hero-glass-bar flex items-center rounded-full px-1 py-1 min-w-[150px] relative">
           <button type="button" onClick={() => setOpenPanel(openPanel === "guests" ? null : "guests")}
             className={`flex items-center gap-2 rounded-full px-5 py-3.5 text-left transition ${openPanel === "guests" ? "bg-white/20" : "hover:bg-white/10"}`}>
-            <Users className="h-4 w-4 text-[#0c1929]/75 shrink-0" />
+            <Users className="h-4 w-4 text-[#411F0F]/75 shrink-0" />
             <div>
-              <span className="block text-[9px] font-bold uppercase tracking-[0.2em] text-[#0c1929]/65">Add Guests</span>
-              <span className="block text-xs font-semibold text-[#0c1929] mt-0.5 tracking-wide">{adults + childrenCount} Guests</span>
+              <span className="block text-[9px] font-bold uppercase tracking-[0.2em] text-[#411F0F]/65">Add Guests</span>
+              <span className="block text-xs font-semibold text-[#411F0F] mt-0.5 tracking-wide">{adults + childrenCount} Guests</span>
             </div>
           </button>
 
@@ -164,7 +164,7 @@ function HeroSearchBar({ booking, openBelow = false, globalBlockedDates = [], pa
           {mounted && openPanel === "guests" && (
             <>
               <div className="fixed inset-0 bg-transparent z-[9998]" onClick={() => setOpenPanel(null)} />
-              <div className={`absolute right-0 ${openBelow ? "top-[calc(100%+16px)]" : "bottom-[calc(100%+16px)]"} w-[calc(100vw-32px)] max-w-[380px] z-[9999] rounded-[32px] bg-white shadow-[0_20px_60px_rgba(12,25,41,0.2)] ring-1 ring-slate-200 p-8 cursor-default`}>
+              <div className={`absolute right-0 ${openBelow ? "top-[calc(100%+16px)]" : "bottom-[calc(100%+16px)]"} w-[calc(100vw-32px)] max-w-[380px] z-[9999] rounded-[32px] bg-white shadow-[0_20px_60px_rgba(65, 31, 15,0.2)] ring-1 ring-slate-200 p-8 cursor-default`}>
                 <GuestRow label="Adults" sublabel="Age 13+" value={adults}
                   onDecrement={() => setAdults(Math.max(1, adults - 1))} onIncrement={() => setAdults(Math.min(16, adults + 1))}
                   canDecrement={adults > 1} canIncrement={adults + childrenCount < 16} />
@@ -173,7 +173,7 @@ function HeroSearchBar({ booking, openBelow = false, globalBlockedDates = [], pa
                   onDecrement={() => setChildrenCount(Math.max(0, childrenCount - 1))} onIncrement={() => setChildrenCount(Math.min(16 - adults, childrenCount + 1))}
                   canDecrement={childrenCount > 0} canIncrement={adults + childrenCount < 16} />
                 <div className="pt-2 mt-2">
-                  <button type="button" onClick={() => { setOpenPanel(null); handleSearch(); }} className="w-full rounded-[20px] bg-[#0c1929] py-4 text-base font-bold text-white shadow-lg transition hover:bg-[#152b47] active:scale-[0.98]">Apply</button>
+                  <button type="button" onClick={() => { setOpenPanel(null); handleSearch(); }} className="w-full rounded-[20px] bg-[#411F0F] py-4 text-base font-bold text-white shadow-lg transition hover:bg-[#472312] active:scale-[0.98]">Apply</button>
                 </div>
               </div>
             </>
@@ -191,8 +191,8 @@ function HeroSearchBar({ booking, openBelow = false, globalBlockedDates = [], pa
       <div className="md:hidden w-full max-w-md mx-auto">
         <button type="button" onClick={() => setOpenPanel("mobile-search")}
           className="hero-glass-bar w-full flex items-center justify-center gap-3 rounded-full px-6 py-4 text-sm font-bold shadow-lg transition-all hover:scale-[1.02]">
-          {(!checkIn || !checkOut) && <Search className="h-5 w-5 text-[#0c1929]" />}
-          <span className="text-[#0c1929]">
+          {(!checkIn || !checkOut) && <Search className="h-5 w-5 text-[#411F0F]" />}
+          <span className="text-[#411F0F]">
             {checkIn && checkOut ? (
               <>
                 {new Date(checkIn + "T00:00:00").toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} - {new Date(checkOut + "T00:00:00").toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
@@ -207,7 +207,7 @@ function HeroSearchBar({ booking, openBelow = false, globalBlockedDates = [], pa
       {/* Mobile Search Panel */}
       {mounted && (openPanel === "mobile-search" || closingPanel) && createPortal(
         <>
-          <div className={`fixed inset-0 bg-[#0c1929]/40 z-[9998] ${closingPanel ? "mobile-backdrop-close" : "mobile-backdrop-animate"}`} onClick={handleClosePanel} />
+          <div className={`fixed inset-0 bg-[#411F0F]/40 z-[9998] ${closingPanel ? "mobile-backdrop-close" : "mobile-backdrop-animate"}`} onClick={handleClosePanel} />
           <div className={`fixed inset-x-0 bottom-0 top-[100px] z-[9999] bg-white flex flex-col rounded-t-[32px] ${closingPanel ? "mobile-modal-close" : "mobile-modal-animate"}`}>
             <div className="flex-1 overflow-y-auto p-0 pb-32">
               <div className="flex justify-between items-center px-5 pt-6 mb-4">
@@ -238,9 +238,9 @@ function HeroSearchBar({ booking, openBelow = false, globalBlockedDates = [], pa
               </div>
             </div>
 
-            <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-slate-200 flex justify-between items-center z-10 rounded-t-[24px] shadow-[0_-4px_20px_rgba(12,25,41,0.05)]">
+            <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-slate-200 flex justify-between items-center z-10 rounded-t-[24px] shadow-[0_-4px_20px_rgba(65, 31, 15,0.05)]">
               <button type="button" onClick={() => { setCheckIn(null); setCheckOut(null); setAdults(2); setChildrenCount(0); }} className="text-base font-semibold underline decoration-2 underline-offset-2">Clear all</button>
-              <button type="button" onClick={(e) => { handleClosePanel(); handleSearch(e); }} className="rounded-full bg-[#0c1929] px-8 py-4 text-base font-bold text-white shadow-lg transition flex items-center gap-2 hover:scale-[1.02]">
+              <button type="button" onClick={(e) => { handleClosePanel(); handleSearch(e); }} className="rounded-full bg-[#411F0F] px-8 py-4 text-base font-bold text-white shadow-lg transition flex items-center gap-2 hover:scale-[1.02]">
                 <Search className="h-4 w-4" />
                 Search
               </button>
@@ -252,9 +252,9 @@ function HeroSearchBar({ booking, openBelow = false, globalBlockedDates = [], pa
 
       {/* Calendar popover */}
       {mounted && openPanel === "dates" && createPortal(
-        <div ref={calendarPortalRef} className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-[#0c1929]/20">
+        <div ref={calendarPortalRef} className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-[#411F0F]/20">
           <div className="absolute inset-0" onClick={() => setOpenPanel(null)} />
-          <div className="relative w-full max-w-[850px] rounded-[32px] bg-white shadow-[0_20px_60px_rgba(12,25,41,0.2)] ring-1 ring-slate-200 overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-[850px] rounded-[32px] bg-white shadow-[0_20px_60px_rgba(65, 31, 15,0.2)] ring-1 ring-slate-200 overflow-hidden animate-in zoom-in-95 duration-200">
             <AvailabilityCalendar blockedDates={globalBlockedDates} partiallyBlockedDates={partiallyBlockedDates} allListingsBlocked={allListingsBlocked} checkIn={checkIn} checkOut={checkOut}
               onCheckInChange={setCheckIn} onCheckOutChange={(v) => {
                 setCheckOut(v);
@@ -319,7 +319,7 @@ function HeroCarousel({ visibleListings, slideIndex, booking }) {
           />
         </div>
       ))}
-      <div className="absolute bottom-0 left-0 right-0 h-[50vh] bg-gradient-to-t from-[#0c1929]/95 via-[#0c1929]/40 to-transparent z-[2] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-[50vh] bg-gradient-to-t from-[#411F0F]/95 via-[#411F0F]/40 to-transparent z-[2] pointer-events-none" />
 
       {visibleListings.map((listing, i) => {
         const bookingUrl = listing.bookingUrl || `https://book.homevsuites.com/listings/${listing.id}`;
@@ -331,12 +331,12 @@ function HeroCarousel({ visibleListings, slideIndex, booking }) {
             <Link href={lHref}
               className="block hero-dark-glass featured-card-hover w-[280px] sm:w-[400px] h-[120px] sm:h-[150px] cursor-pointer rounded-[32px] relative overflow-hidden">
               <div className="absolute top-[15px] left-[15px] sm:top-[20px] sm:left-[20px] w-[140px] sm:w-[205px]">
-                <p className="text-[14px] sm:text-[20px] font-medium text-[#0c1929] leading-tight line-clamp-2">{listing.title}</p>
+                <p className="text-[14px] sm:text-[20px] font-medium text-[#411F0F] leading-tight line-clamp-2">{listing.title}</p>
               </div>
-              <div className="absolute bottom-[15px] left-[15px] sm:bottom-[20px] sm:left-[20px] flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full bg-[#0c1929] text-white group-hover:bg-[#0c1929]/80 transition-all z-20 shadow-sm">
+              <div className="absolute bottom-[15px] left-[15px] sm:bottom-[20px] sm:left-[20px] flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full bg-[#411F0F] text-white group-hover:bg-[#411F0F]/80 transition-all z-20 shadow-sm">
                 <ArrowUpRight className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
-              <div className="absolute inset-y-[4px] right-[4px] aspect-square shrink-0 rounded-[28px] overflow-hidden p-[2px] bg-white/5 ring-1 ring-[#0c1929]/5">
+              <div className="absolute inset-y-[4px] right-[4px] aspect-square shrink-0 rounded-[28px] overflow-hidden p-[2px] bg-white/5 ring-1 ring-[#411F0F]/5">
                 <div className="relative w-full h-full rounded-[26px] overflow-hidden">
                   <Image src={listing.images?.[0] || "/hero-villa.png"} alt="" fill className="object-cover" sizes="142px" />
                 </div>
@@ -346,7 +346,7 @@ function HeroCarousel({ visibleListings, slideIndex, booking }) {
         );
       })}
 
-      <div className="absolute bottom-[180px] sm:bottom-[250px] left-1/2 -translate-x-1/2 w-[70%] h-[1px] sm:h-[2px] bg-[#0c1929]/30 z-10" />
+      <div className="absolute bottom-[180px] sm:bottom-[250px] left-1/2 -translate-x-1/2 w-[70%] h-[1px] sm:h-[2px] bg-[#411F0F]/30 z-10" />
 
       <div className="absolute bottom-16 sm:bottom-[118px] left-0 right-0 z-10 px-7 pb-4 pointer-events-none">
         <div className="relative h-16 sm:h-20 pointer-events-none">
@@ -473,15 +473,15 @@ export default function DiscoveryView() {
 
   if (isMobile === null || isLoading) {
     const loadingScreen = (
-      <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#f3f5f8] min-h-[100dvh] overflow-hidden">
+      <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#FBF6EC] min-h-[100dvh] overflow-hidden">
         <div className="relative flex flex-col items-center animate-in fade-in duration-1000">
-          <img src="/suites-logo.png" alt="HomEV" className="h-12 w-auto object-contain mix-blend-multiply opacity-80 mb-6" />
+          <img src="/homev-suites-logo.png" alt="HomEV Suites" className="h-12 w-auto object-contain mix-blend-multiply mb-6" />
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-[#0c1929] animate-bounce" style={{ animationDelay: '0ms' }} />
-            <div className="w-2 h-2 rounded-full bg-[#0c1929] animate-bounce" style={{ animationDelay: '150ms' }} />
-            <div className="w-2 h-2 rounded-full bg-[#0c1929] animate-bounce" style={{ animationDelay: '300ms' }} />
+            <div className="w-2 h-2 rounded-full bg-[#411F0F] animate-bounce" style={{ animationDelay: '0ms' }} />
+            <div className="w-2 h-2 rounded-full bg-[#411F0F] animate-bounce" style={{ animationDelay: '150ms' }} />
+            <div className="w-2 h-2 rounded-full bg-[#411F0F] animate-bounce" style={{ animationDelay: '300ms' }} />
           </div>
-          <p className="mt-6 text-[10px] font-bold text-[#0c1929] tracking-[0.3em] uppercase">Curating Premium Stays...</p>
+          <p className="mt-6 text-[10px] font-bold text-[#411F0F] tracking-[0.3em] uppercase">Curating Premium Stays...</p>
         </div>
       </div>
     );
@@ -508,12 +508,12 @@ export default function DiscoveryView() {
             <div className="absolute inset-0"><Image src="/hero-villa.png" alt="Property" fill className="object-cover" sizes="100vw" /></div>
           )}
           {/* Gradient */}
-          <div className="absolute bottom-0 left-0 right-0 h-[50vh] bg-gradient-to-t from-[#0c1929]/95 via-[#0c1929]/40 to-transparent z-[2] pointer-events-none" />
+          <div className="absolute bottom-0 left-0 right-0 h-[50vh] bg-gradient-to-t from-[#411F0F]/95 via-[#411F0F]/40 to-transparent z-[2] pointer-events-none" />
 
           {/* Top bar */}
           <div className="absolute top-0 left-0 right-0 z-[10] flex items-center justify-start px-5 pt-5">
             <Link href="/">
-              <img src="/suites-logo.png" alt="HomEV" className="h-9 w-auto object-contain mix-blend-multiply opacity-80" />
+              <img src="/homev-suites-logo.png" alt="HomEV Suites" className="h-9 w-auto object-contain mix-blend-multiply" />
             </Link>
           </div>
 
@@ -538,7 +538,7 @@ export default function DiscoveryView() {
         <div className="mobile-sheet">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-[16px] font-bold text-[#0c1929]">Available Stays</h2>
+              <h2 className="text-[16px] font-bold text-[#411F0F]">Available Stays</h2>
               <p className="text-xs text-slate-400 mt-0.5">{visibleListings.length} propert{visibleListings.length !== 1 ? "ies" : "y"} found</p>
             </div>
             <div className="flex items-center gap-1.5 bg-emerald-50 rounded-full px-3 py-1.5">
@@ -556,7 +556,7 @@ export default function DiscoveryView() {
                 <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-3">
                   <Search className="h-5 w-5 text-slate-400" />
                 </div>
-                <p className="text-[#0c1929] font-semibold text-sm">No properties found</p>
+                <p className="text-[#411F0F] font-semibold text-sm">No properties found</p>
                 <p className="text-slate-400 text-xs mt-1">Try adjusting your search</p>
               </div>
             )}
@@ -572,7 +572,7 @@ export default function DiscoveryView() {
         <div className="hero-left-inner">
           <div className="flex items-center justify-between mb-8">
             <Link href="/" className="flex items-center">
-              <img src="/suites-logo.png" alt="HomEV" className="h-11 w-auto object-contain mix-blend-multiply opacity-80" />
+              <img src="/homev-suites-logo.png" alt="HomEV Suites" className="h-11 w-auto object-contain mix-blend-multiply" />
             </Link>
           </div>
           <div className="hero-card-scroll" onScroll={handleScroll}>
@@ -583,7 +583,7 @@ export default function DiscoveryView() {
               </div>
               <div className="mt-6 flex items-center gap-3 w-full">
                 <div className="w-10 h-px bg-slate-200 shrink-0" />
-                <p className="text-[#0c1929] text-[11px] font-bold tracking-[0.3em] uppercase whitespace-nowrap">Explore the Extraordinary</p>
+                <p className="text-[#411F0F] text-[11px] font-bold tracking-[0.3em] uppercase whitespace-nowrap">Explore the Extraordinary</p>
                 <div className="flex-1 h-px bg-slate-200" />
               </div>
             </div>
@@ -592,7 +592,7 @@ export default function DiscoveryView() {
                 <PropertyCard key={listing.id} property={listing} booking={booking} highlighted={hoveredId === listing.id} onHoverChange={setHoveredId} />
               ))}
               {visibleListings.length === 0 && (
-                <div className="col-span-2 flex items-center justify-center py-12 text-[#0c1929] text-sm">No properties match your criteria</div>
+                <div className="col-span-2 flex items-center justify-center py-12 text-[#411F0F] text-sm">No properties match your criteria</div>
               )}
             </div>
           </div>

@@ -1,27 +1,27 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f3f5f8;
-  --foreground: #142033;
+  --background: #FBF6EC;
+  --foreground: #2A1F1A;
   --surface-border: rgba(255, 255, 255, 0.45);
-  --text-muted: #64748b;
-  --accent-start: #58a9ff;
-  --accent-end: #4f8cff;
+  --text-muted: #7A6A5C;
+  --accent-start: #8A6A4E;
+  --accent-end: #472312;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
-  --color-black: #0c1929;
+  --color-black: #411F0F;
 }
 
 html {
   background:
-    radial-gradient(circle at 15% 10%, rgba(200, 220, 248, 0.5), transparent 30%),
-    radial-gradient(circle at 85% 90%, rgba(255, 230, 240, 0.4), transparent 30%),
+    radial-gradient(circle at 15% 10%, rgba(234, 220, 198, 0.55), transparent 30%),
+    radial-gradient(circle at 85% 90%, rgba(243, 233, 215, 0.6), transparent 30%),
     radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8), transparent 100%),
-    #eef2f6;
+    #FBF6EC;
   background-attachment: fixed;
   color-scheme: light;
 }
@@ -64,12 +64,12 @@ input {
 }
 
 ::selection {
-  background: rgba(125, 211, 252, 0.4);
-  color: #0c1929;
+  background: rgba(217, 197, 168, 0.4);
+  color: #411F0F;
 }
 
 .app-shell {
-  background: #f3f5f8 !important;
+  background: #FBF6EC !important;
   position: relative;
   isolation: isolate;
 }
@@ -79,9 +79,9 @@ input {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 100%);
     border: 1px solid rgba(255, 255, 255, 0.6);
     box-shadow:
-      0 10px 40px -10px rgba(12, 25, 41, 0.05),
+      0 10px 40px -10px rgba(65, 31, 15, 0.05),
       inset 0 1px 0 rgba(255, 255, 255, 0.8),
-      inset 0 -1px 0 rgba(12, 25, 41, 0.02);
+      inset 0 -1px 0 rgba(65, 31, 15, 0.02);
     backdrop-filter: blur(20px) saturate(140%) !important;
     -webkit-backdrop-filter: blur(24px) saturate(140%);
     border-radius: 28px;
@@ -91,7 +91,7 @@ input {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.4) 100%);
     border: 1px solid rgba(255, 255, 255, 0.7);
     box-shadow:
-      0 16px 48px -12px rgba(12, 25, 41, 0.08),
+      0 16px 48px -12px rgba(65, 31, 15, 0.08),
       inset 0 1px 0 rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(32px) saturate(150%) !important;
     -webkit-backdrop-filter: blur(32px) saturate(150%);
@@ -102,11 +102,11 @@ input {
     background: rgba(255, 255, 255, 0.5);
     border: 1px solid rgba(255, 255, 255, 0.5);
     box-shadow:
-      0 4px 12px rgba(12, 25, 41, 0.03),
+      0 4px 12px rgba(65, 31, 15, 0.03),
       inset 0 1px 0 rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(16px) saturate(150%) !important;
     -webkit-backdrop-filter: blur(16px) saturate(150%);
-    color: #0c1929;
+    color: #411F0F;
     border-radius: 9999px;
   }
 }
@@ -114,23 +114,23 @@ input {
 .glass-input {
   background: rgba(255, 255, 255, 0.719);
   border: 1px solid rgba(255, 255, 255, 0.55);
-  color: #0c1929;
+  color: #411F0F;
 }
 
 .glass-input::placeholder {
-  color: rgba(100, 116, 139, 0.72);
+  color: rgba(122, 106, 92, 0.72);
 }
 
 .glass-input:focus {
   outline: none;
-  border-color: rgba(96, 165, 250, 0.42);
-  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.12);
+  border-color: rgba(138, 106, 78, 0.42);
+  box-shadow: 0 0 0 4px rgba(138, 106, 78, 0.12);
 }
 
 .glass-button {
   background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
   box-shadow:
-    0 12px 30px rgba(79, 140, 255, 0.22),
+    0 12px 30px rgba(71, 35, 18, 0.22),
     inset 0 1px 0 rgba(255, 255, 255, 0.32);
   color: white;
 }
@@ -138,12 +138,12 @@ input {
 .glass-button:hover {
   transform: translateY(-1px);
   box-shadow:
-    0 16px 38px rgba(79, 140, 255, 0.28),
+    0 16px 38px rgba(71, 35, 18, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.38);
 }
 
 .ambient-divider {
-  border-color: rgba(226, 232, 240, 0.75);
+  border-color: rgba(234, 220, 198, 0.75);
 }
 
 .grid-glow {
@@ -159,7 +159,7 @@ input {
     linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
   background-size: 32px 32px;
-  mask-image: linear-gradient(180deg, rgba(12, 25, 41, 0.55), transparent 88%);
+  mask-image: linear-gradient(180deg, rgba(65, 31, 15, 0.55), transparent 88%);
   opacity: 0.2;
   pointer-events: none;
 }
@@ -177,7 +177,7 @@ input {
 }
 
 .skeleton-surface {
-  background: linear-gradient(90deg, rgba(226, 232, 240, 0.9), rgba(241, 245, 249, 0.95), rgba(226, 232, 240, 0.9));
+  background: linear-gradient(90deg, rgba(234, 220, 198, 0.9), rgba(245, 236, 221, 0.95), rgba(234, 220, 198, 0.9));
   background-size: 200% 100%;
 }
 
@@ -239,7 +239,7 @@ input {
   font-size: clamp(3rem, 4vw, 4.5rem);
   font-weight: 500;
   line-height: 1.05;
-  color: #0c1929;
+  color: #411F0F;
   letter-spacing: -0.04em;
 }
 
@@ -251,7 +251,7 @@ input {
   overflow-x: hidden;
   padding-right: 4px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(148, 163, 184, 0.25) transparent;
+  scrollbar-color: rgba(168, 145, 122, 0.25) transparent;
 }
 
 .hero-card-scroll::-webkit-scrollbar {
@@ -259,7 +259,7 @@ input {
 }
 
 .hero-card-scroll::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.25);
+  background: rgba(168, 145, 122, 0.25);
   border-radius: 9999px;
 }
 
@@ -274,10 +274,10 @@ input {
   position: absolute;
   inset: 0;
   background: linear-gradient(to top,
-      rgba(12, 25, 41, 0.72) 0%,
-      rgba(12, 25, 41, 0.28) 35%,
-      rgba(12, 25, 41, 0.06) 65%,
-      rgba(12, 25, 41, 0.15) 100%);
+      rgba(65, 31, 15, 0.72) 0%,
+      rgba(65, 31, 15, 0.28) 35%,
+      rgba(65, 31, 15, 0.06) 65%,
+      rgba(65, 31, 15, 0.15) 100%);
   pointer-events: none;
 }
 
@@ -286,7 +286,7 @@ input {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow:
-    0 8px 32px rgba(12, 25, 41, 0.22),
+    0 8px 32px rgba(65, 31, 15, 0.22),
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(24px) saturate(140%);
   -webkit-backdrop-filter: blur(24px) saturate(140%);
@@ -303,7 +303,7 @@ input {
 .hero-search-btn {
   -webkit-backdrop-filter: blur(27px);
   backdrop-filter: blur(27px);
-  background: #0c1929a8;
+  background: #411F0Fa8;
   border: solid 3px white;
   color: white;
 }
@@ -326,7 +326,7 @@ input {
 
 .featured-card-hover:hover {
   transform: translateY(-6px) !important;
-  box-shadow: 0 25px 50px -12px rgba(12, 25, 41, 0.15) !important;
+  box-shadow: 0 25px 50px -12px rgba(65, 31, 15, 0.15) !important;
 }
 
 .left-10 {
@@ -476,7 +476,7 @@ input {
   display: flex;
   flex-direction: column;
   min-height: 100%;
-  background: #f5f6f8;
+  background: #FBF6EC;
 }
 
 /* Full-bleed hero: 58vh tall, relative so absolute children work */
@@ -507,5 +507,79 @@ input {
   padding: 24px 16px 0;
   position: relative;
   z-index: 5;
-  box-shadow: 0 -4px 24px rgba(12, 25, 41, 0.08);
+  box-shadow: 0 -4px 24px rgba(65, 31, 15, 0.08);
+}
+/* HomEV brand palette (matches homevconstruction.ca): the neutral greys become warm
+   cream/stone and the blue accents become chocolate/bronze, so every Tailwind
+   colour class in the app picks up the brand without touching each component. */
+@theme {
+  --color-slate-50: #FBF6EC;
+  --color-slate-100: #F5ECDD;
+  --color-slate-200: #EADCC6;
+  --color-slate-300: #D9C5A8;
+  --color-slate-400: #A8917A;
+  --color-slate-500: #7A6A5C;
+  --color-slate-600: #5E4C3E;
+  --color-slate-700: #47372B;
+  --color-slate-800: #33241B;
+  --color-slate-900: #2A1F1A;
+  --color-slate-950: #1D140F;
+
+  --color-zinc-50: #FBF6EC;
+  --color-zinc-100: #F5ECDD;
+  --color-zinc-200: #EADCC6;
+  --color-zinc-300: #D9C5A8;
+  --color-zinc-400: #A8917A;
+  --color-zinc-500: #7A6A5C;
+  --color-zinc-600: #5E4C3E;
+  --color-zinc-700: #47372B;
+  --color-zinc-800: #33241B;
+  --color-zinc-900: #2A1F1A;
+  --color-zinc-950: #1D140F;
+
+  --color-gray-50: #FBF6EC;
+  --color-gray-100: #F5ECDD;
+  --color-gray-200: #EADCC6;
+  --color-gray-300: #D9C5A8;
+  --color-gray-400: #A8917A;
+  --color-gray-500: #7A6A5C;
+  --color-gray-600: #5E4C3E;
+  --color-gray-700: #47372B;
+  --color-gray-800: #33241B;
+  --color-gray-900: #2A1F1A;
+  --color-gray-950: #1D140F;
+
+  --color-blue-50: #FAF1E6;
+  --color-blue-100: #F2E0CA;
+  --color-blue-200: #E4C4A0;
+  --color-blue-300: #CFA077;
+  --color-blue-400: #A9774F;
+  --color-blue-500: #8A5A3B;
+  --color-blue-600: #6E4329;
+  --color-blue-700: #5A3420;
+  --color-blue-800: #472312;
+  --color-blue-900: #411F0F;
+  --color-blue-950: #2A140A;
+
+  --color-sky-50: #FAF1E6;
+  --color-sky-100: #F2E0CA;
+  --color-sky-200: #E4C4A0;
+  --color-sky-300: #CFA077;
+  --color-sky-400: #A9774F;
+  --color-sky-500: #8A5A3B;
+  --color-sky-600: #6E4329;
+  --color-sky-700: #5A3420;
+  --color-sky-800: #472312;
+  --color-sky-900: #411F0F;
+
+  --color-indigo-50: #FAF1E6;
+  --color-indigo-100: #F2E0CA;
+  --color-indigo-200: #E4C4A0;
+  --color-indigo-300: #CFA077;
+  --color-indigo-400: #A9774F;
+  --color-indigo-500: #8A5A3B;
+  --color-indigo-600: #6E4329;
+  --color-indigo-700: #5A3420;
+  --color-indigo-800: #472312;
+  --color-indigo-900: #411F0F;
 }

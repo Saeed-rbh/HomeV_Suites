@@ -78,7 +78,7 @@ export default function SettingsPage() {
     if (!profile) {
         return (
             <div className="flex items-center justify-center h-64">
-                <LoaderCircle className="h-8 w-8 animate-spin text-[#0c1929]" />
+                <LoaderCircle className="h-8 w-8 animate-spin text-[#411F0F]" />
             </div>
         );
     }
@@ -90,13 +90,13 @@ export default function SettingsPage() {
     return (
         <div className="max-w-2xl mx-auto">
             <div className="mb-8">
-                <h1 className="text-2xl font-bold text-[#0c1929]">Profile Settings</h1>
-                <p className="mt-1 text-sm text-[#0c1929]">Update your profile information. This will be visible to your guests.</p>
+                <h1 className="text-2xl font-bold text-[#411F0F]">Profile Settings</h1>
+                <p className="mt-1 text-sm text-[#411F0F]">Update your profile information. This will be visible to your guests.</p>
             </div>
 
             {/* Avatar Section */}
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm mb-6">
-                <p className="text-xs font-bold uppercase tracking-widest text-[#0c1929] mb-4">Profile Photo</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-[#411F0F] mb-4">Profile Photo</p>
                 <div className="flex items-center gap-6">
                     <div className="relative group">
                         {avatarSrc ? (
@@ -106,14 +106,14 @@ export default function SettingsPage() {
                                 className="h-24 w-24 rounded-full object-cover border-2 border-slate-200 shadow-sm"
                             />
                         ) : (
-                            <div className="h-24 w-24 rounded-full bg-gradient-to-br from-[#0c1929] to-[#24456e] flex items-center justify-center text-white text-3xl font-bold shadow-sm">
+                            <div className="h-24 w-24 rounded-full bg-gradient-to-br from-[#411F0F] to-[#8A6A4E] flex items-center justify-center text-white text-3xl font-bold shadow-sm">
                                 {displayName ? displayName.charAt(0).toUpperCase() : <User className="h-10 w-10" />}
                             </div>
                         )}
                         <button
                             onClick={() => fileRef.current?.click()}
                             disabled={uploading}
-                            className="absolute inset-0 flex items-center justify-center rounded-full bg-[#0c1929]/40 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                            className="absolute inset-0 flex items-center justify-center rounded-full bg-[#411F0F]/40 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                         >
                             {uploading ? (
                                 <LoaderCircle className="h-6 w-6 animate-spin text-white" />
@@ -130,11 +130,11 @@ export default function SettingsPage() {
                         />
                     </div>
                     <div>
-                        <p className="text-sm font-medium text-[#0c1929]">Upload a photo</p>
-                        <p className="text-xs text-[#0c1929] mt-1">JPG, PNG or WebP. Max 5MB.</p>
+                        <p className="text-sm font-medium text-[#411F0F]">Upload a photo</p>
+                        <p className="text-xs text-[#411F0F] mt-1">JPG, PNG or WebP. Max 5MB.</p>
                         <button
                             onClick={() => fileRef.current?.click()}
-                            className="mt-3 text-sm font-semibold text-[#0c1929] hover:text-[#24456e] transition"
+                            className="mt-3 text-sm font-semibold text-[#411F0F] hover:text-[#8A6A4E] transition"
                         >
                             {avatarSrc ? "Change photo" : "Upload photo"}
                         </button>
@@ -144,54 +144,54 @@ export default function SettingsPage() {
 
             {/* Info Section */}
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <p className="text-xs font-bold uppercase tracking-widest text-[#0c1929] mb-4">Personal Information</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-[#411F0F] mb-4">Personal Information</p>
                 <div className="space-y-5">
                     <div>
-                        <label className="block text-sm font-medium text-[#0c1929] mb-1.5">Display Name</label>
+                        <label className="block text-sm font-medium text-[#411F0F] mb-1.5">Display Name</label>
                         <input
                             type="text"
                             value={displayName}
                             onChange={(e) => setDisplayName(e.target.value)}
                             placeholder="How guests will see you"
-                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-[#0c1929] outline-none focus:border-[#0c1929] focus:ring-2 focus:ring-[#0c1929]/10 transition"
+                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-[#411F0F] outline-none focus:border-[#411F0F] focus:ring-2 focus:ring-[#411F0F]/10 transition"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-[#0c1929] mb-1.5">Bio</label>
+                        <label className="block text-sm font-medium text-[#411F0F] mb-1.5">Bio</label>
                         <textarea
                             value={bio}
                             onChange={(e) => setBio(e.target.value)}
                             placeholder="A short description about yourself"
                             rows={3}
-                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-[#0c1929] outline-none resize-none focus:border-[#0c1929] focus:ring-2 focus:ring-[#0c1929]/10 transition"
+                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-[#411F0F] outline-none resize-none focus:border-[#411F0F] focus:ring-2 focus:ring-[#411F0F]/10 transition"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-[#0c1929] mb-1.5">Phone Number</label>
+                        <label className="block text-sm font-medium text-[#411F0F] mb-1.5">Phone Number</label>
                         <input
                             type="tel"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
                             placeholder="+1 (555) 000-0000"
-                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-[#0c1929] outline-none focus:border-[#0c1929] focus:ring-2 focus:ring-[#0c1929]/10 transition"
+                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-[#411F0F] outline-none focus:border-[#411F0F] focus:ring-2 focus:ring-[#411F0F]/10 transition"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-[#0c1929] mb-1.5">Email</label>
+                        <label className="block text-sm font-medium text-[#411F0F] mb-1.5">Email</label>
                         <input
                             type="email"
                             value={profile.email}
                             disabled
-                            className="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm text-[#0c1929] outline-none cursor-not-allowed"
+                            className="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm text-[#411F0F] outline-none cursor-not-allowed"
                         />
-                        <p className="text-xs text-[#0c1929] mt-1">Email cannot be changed here.</p>
+                        <p className="text-xs text-[#411F0F] mt-1">Email cannot be changed here.</p>
                     </div>
                 </div>
 
                 <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0c1929] px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-[#0c1929]/20 transition hover:bg-[#152b47] disabled:opacity-60"
+                    className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#411F0F] px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-[#411F0F]/20 transition hover:bg-[#472312] disabled:opacity-60"
                 >
                     {saving ? (
                         <><LoaderCircle className="h-4 w-4 animate-spin" /> Saving...</>

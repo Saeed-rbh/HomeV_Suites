@@ -19,8 +19,8 @@ export default function HostawayCalendarWidget({ listingId, widgetId }) {
         },
         clearButtonText: "Clear dates",
         color: {
-          mainColor: "#0c1929",
-          frameColor: "#0c1929",
+          mainColor: "#411F0F",
+          frameColor: "#411F0F",
           textColor: "#ffffff",
         },
       });

@@ -24,13 +24,13 @@ function BookingCard({ reservation, onClick }) {
   const statusColor = isCurrent
     ? "bg-emerald-100 text-emerald-700"
     : isPast
-      ? "bg-slate-100 text-[#0c1929]"
+      ? "bg-slate-100 text-[#411F0F]"
       : "bg-blue-50 text-blue-600";
 
   return (
     <button
       onClick={onClick}
-      className="group flex w-full items-center gap-5 rounded-[28px] bg-white border border-slate-100 shadow-[0_2px_16px_rgba(12,25,41,0.04)] p-4 text-left transition hover:shadow-[0_4px_24px_rgba(12,25,41,0.08)] hover:border-slate-200"
+      className="group flex w-full items-center gap-5 rounded-[28px] bg-white border border-slate-100 shadow-[0_2px_16px_rgba(65, 31, 15,0.04)] p-4 text-left transition hover:shadow-[0_4px_24px_rgba(65, 31, 15,0.08)] hover:border-slate-200"
     >
       {/* Thumbnail */}
       <div className="w-32 self-stretch shrink-0 overflow-hidden rounded-[18px] bg-slate-100">
@@ -42,12 +42,12 @@ function BookingCard({ reservation, onClick }) {
         <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold tracking-wide ${statusColor} mb-2`}>
           {statusLabel}
         </span>
-        <h3 className="text-base font-medium text-[#0c1929] truncate">{property.title || "Your booking"}</h3>
-        <div className="mt-1 flex items-center gap-1 text-sm text-[#0c1929]">
+        <h3 className="text-base font-medium text-[#411F0F] truncate">{property.title || "Your booking"}</h3>
+        <div className="mt-1 flex items-center gap-1 text-sm text-[#411F0F]">
           <MapPin className="h-3.5 w-3.5 shrink-0" />
           <span className="truncate">{property.address || property.location || "Location on file"}</span>
         </div>
-        <div className="mt-2 flex items-center gap-1 text-sm text-[#0c1929]">
+        <div className="mt-2 flex items-center gap-1 text-sm text-[#411F0F]">
           <Calendar className="h-3.5 w-3.5 shrink-0" />
           <span>
             {start.toLocaleDateString("en-US", { month: "short", day: "numeric" })} –{" "}
@@ -57,7 +57,7 @@ function BookingCard({ reservation, onClick }) {
         </div>
       </div>
 
-      <ChevronRight className="h-5 w-5 shrink-0 self-center text-slate-300 group-hover:text-[#0c1929] transition" />
+      <ChevronRight className="h-5 w-5 shrink-0 self-center text-slate-300 group-hover:text-[#411F0F] transition" />
     </button>
   );
 }
@@ -78,8 +78,8 @@ function PastTripCard({ reservation, onClick }) {
         <img src={image} alt={property.title} className="h-full w-full object-cover transition group-hover:scale-105" />
       </div>
       <div className="p-3 text-left">
-        <h4 className="text-sm font-semibold text-[#0c1929] truncate">{property.title || "Trip"}</h4>
-        <p className="text-[11px] text-[#0c1929] mt-0.5">
+        <h4 className="text-sm font-semibold text-[#411F0F] truncate">{property.title || "Trip"}</h4>
+        <p className="text-[11px] text-[#411F0F] mt-0.5">
           {new Date(reservation.startDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
         </p>
       </div>
@@ -136,8 +136,8 @@ export default function TripsPageClient() {
 
   if (loading) {
     return (
-      <div className="flex h-[calc(100vh-100px)] w-full items-center justify-center bg-[#f3f5f8]">
-        <LoaderCircle className="w-8 h-8 animate-spin text-[#0c1929]" />
+      <div className="flex h-[calc(100vh-100px)] w-full items-center justify-center bg-[#FBF6EC]">
+        <LoaderCircle className="w-8 h-8 animate-spin text-[#411F0F]" />
       </div>
     );
   }
@@ -173,18 +173,18 @@ export default function TripsPageClient() {
   const past = activeReservations.filter(r => new Date(r.endDate) < now).sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
 
   return (
-    <div className="min-h-screen px-4 pb-20 pt-10 md:px-8" style={{ background: 'linear-gradient(160deg, #f8fafc 0%, #f1f5f9 100%)' }}>
+    <div className="min-h-screen px-4 pb-20 pt-10 md:px-8" style={{ background: 'linear-gradient(160deg, #F9F4EC 0%, #F9F4EC 100%)' }}>
       <div className="mx-auto max-w-[1100px]">
         {/* Header */}
         <div className="mb-10">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#0c1929] mb-1.5">My Account</p>
-          <h1 className="text-4xl font-black tracking-tight text-[#0c1929]">Your trips</h1>
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#411F0F] mb-1.5">My Account</p>
+          <h1 className="text-4xl font-black tracking-tight text-[#411F0F]">Your trips</h1>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-12">
           {/* Upcoming Bookings - Left 60% */}
           <div className="lg:w-[60%]">
-            <h2 className="text-xl font-bold text-[#0c1929] mb-6 flex items-center gap-2.5">
+            <h2 className="text-xl font-bold text-[#411F0F] mb-6 flex items-center gap-2.5">
               Upcoming Bookings
               <span className="inline-flex h-6 min-w-[32px] items-center justify-center rounded-lg bg-emerald-100 px-2 text-[12px] font-bold text-emerald-700 border border-emerald-200 shadow-sm">
                 {upcoming.length}
@@ -193,12 +193,12 @@ export default function TripsPageClient() {
 
             {upcoming.length === 0 ? (
               <div className="rounded-[28px] bg-white border border-slate-100 shadow-sm p-12 text-center">
-                <p className="text-[#0c1929] text-sm">
+                <p className="text-[#411F0F] text-sm">
                   You have no upcoming trips. Book a stay to get started!
                 </p>
                 <a
                   href="/"
-                  className="mt-6 inline-flex items-center justify-center gap-2 rounded-[24px] bg-[#0c1929] px-7 py-3 text-sm font-semibold text-white transition hover:bg-[#152b47]"
+                  className="mt-6 inline-flex items-center justify-center gap-2 rounded-[24px] bg-[#411F0F] px-7 py-3 text-sm font-semibold text-white transition hover:bg-[#472312]"
                 >
                   Explore stays →
                 </a>
@@ -214,16 +214,16 @@ export default function TripsPageClient() {
 
           {/* Past Reservations - Right 40% */}
           <div className="lg:w-[40%]">
-            <h2 className="text-xl font-bold text-[#0c1929] mb-6 flex items-center gap-2.5">
+            <h2 className="text-xl font-bold text-[#411F0F] mb-6 flex items-center gap-2.5">
               Past Reservations
-              <span className="inline-flex h-6 min-w-[32px] items-center justify-center rounded-lg bg-slate-100 px-2 text-[12px] font-bold text-[#0c1929] border border-slate-200">
+              <span className="inline-flex h-6 min-w-[32px] items-center justify-center rounded-lg bg-slate-100 px-2 text-[12px] font-bold text-[#411F0F] border border-slate-200">
                 {past.length}
               </span>
             </h2>
 
             {past.length === 0 ? (
               <div className="rounded-[28px] bg-white/50 border border-dashed border-slate-200 p-8 text-center">
-                <p className="text-[#0c1929] text-sm italic">No past trips yet.</p>
+                <p className="text-[#411F0F] text-sm italic">No past trips yet.</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 gap-4">

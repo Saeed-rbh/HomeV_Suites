@@ -31,14 +31,14 @@ function StatCard({ label, value, sub, icon: Icon, accent, loading }) {
         <div className={`p-2.5 rounded-xl ${c.icon}`}>
           <Icon className="w-5 h-5" />
         </div>
-        <span className="text-[10px] font-bold text-[#0c1929] uppercase tracking-widest">{sub}</span>
+        <span className="text-[10px] font-bold text-[#411F0F] uppercase tracking-widest">{sub}</span>
       </div>
       {loading ? (
         <div className="h-8 w-24 bg-slate-100 rounded-lg animate-pulse mb-1" />
       ) : (
-        <p className="text-3xl font-bold text-[#0c1929] tracking-tight mb-0.5">{value}</p>
+        <p className="text-3xl font-bold text-[#411F0F] tracking-tight mb-0.5">{value}</p>
       )}
-      <p className="text-xs font-semibold text-[#0c1929] uppercase tracking-wider">{label}</p>
+      <p className="text-xs font-semibold text-[#411F0F] uppercase tracking-wider">{label}</p>
     </div>
   );
 }
@@ -144,7 +144,7 @@ export default function AdminDashboard() {
     const getStatusStyle = (status) => {
         if (['Confirmed', 'confirmed', 'CONFIRMED'].includes(status)) return 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200';
         if (['Pending', 'pending', 'PENDING'].includes(status)) return 'bg-amber-50 text-amber-700 ring-1 ring-amber-200';
-        return 'bg-slate-50 text-[#0c1929] ring-1 ring-slate-200';
+        return 'bg-slate-50 text-[#411F0F] ring-1 ring-slate-200';
     };
 
     const formatDate = (d) => d ? new Date(d).toLocaleDateString(undefined, { month: 'short', day: '2-digit' }) : '—';
@@ -154,14 +154,14 @@ export default function AdminDashboard() {
             {/* Page Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-[#0c1929] tracking-tight">Dashboard</h1>
-                    <p className="text-sm text-[#0c1929] mt-0.5">
+                    <h1 className="text-2xl font-bold text-[#411F0F] tracking-tight">Dashboard</h1>
+                    <p className="text-sm text-[#411F0F] mt-0.5">
                         {new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
                     </p>
                 </div>
                 <button 
                     onClick={() => window.location.reload()}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-sm font-semibold text-[#0c1929] hover:bg-slate-50 shadow-sm transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-sm font-semibold text-[#411F0F] hover:bg-slate-50 shadow-sm transition-colors"
                 >
                     <RefreshCw className="w-4 h-4" /> Refresh
                 </button>
@@ -181,10 +181,10 @@ export default function AdminDashboard() {
                 <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-2">
-                            <BarChart2 className="w-4 h-4 text-[#0c1929]" />
-                            <h2 className="text-sm font-bold text-[#0c1929]">Monthly Revenue</h2>
+                            <BarChart2 className="w-4 h-4 text-[#411F0F]" />
+                            <h2 className="text-sm font-bold text-[#411F0F]">Monthly Revenue</h2>
                         </div>
-                        <span className="text-xs text-[#0c1929] font-medium">Past 12 months</span>
+                        <span className="text-xs text-[#411F0F] font-medium">Past 12 months</span>
                     </div>
 
                     <div className="flex items-end gap-1.5 h-48 border-b border-slate-100 pb-3 mb-3 relative">
@@ -196,18 +196,18 @@ export default function AdminDashboard() {
                                 onMouseLeave={() => setHoveredBar(null)}
                             >
                                 {hoveredBar === i && data.value > 0 && (
-                                    <span className="text-[10px] font-bold text-[#0c1929] bg-white border border-slate-200 shadow px-1.5 py-0.5 rounded-md whitespace-nowrap">
+                                    <span className="text-[10px] font-bold text-[#411F0F] bg-white border border-slate-200 shadow px-1.5 py-0.5 rounded-md whitespace-nowrap">
                                         ${(data.value / 1000).toFixed(1)}k
                                     </span>
                                 )}
                                 <div 
-                                    className={`w-full rounded-t-md transition-all duration-200 ${hoveredBar === i ? 'bg-[#0c1929]' : 'bg-slate-200'}`} 
+                                    className={`w-full rounded-t-md transition-all duration-200 ${hoveredBar === i ? 'bg-[#411F0F]' : 'bg-slate-200'}`} 
                                     style={{ height: `${data.height}%` }}
                                 />
                             </div>
                         ))}
                     </div>
-                    <div className="flex justify-between text-[10px] text-[#0c1929] font-semibold uppercase tracking-wider">
+                    <div className="flex justify-between text-[10px] text-[#411F0F] font-semibold uppercase tracking-wider">
                         {MONTHS.map(m => <span key={m}>{m}</span>)}
                     </div>
                 </div>
@@ -219,8 +219,8 @@ export default function AdminDashboard() {
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
                 <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
                     <div className="flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4 text-[#0c1929]" />
-                        <h2 className="text-sm font-bold text-[#0c1929]">Recent Bookings</h2>
+                        <TrendingUp className="w-4 h-4 text-[#411F0F]" />
+                        <h2 className="text-sm font-bold text-[#411F0F]">Recent Bookings</h2>
                     </div>
                     <button 
                         onClick={() => router.push('/admin/reservations')}
@@ -235,12 +235,12 @@ export default function AdminDashboard() {
                         {[1,2,3,4].map(i => <div key={i} className="h-12 bg-slate-50 rounded-xl animate-pulse" />)}
                     </div>
                 ) : recentBookings.length === 0 ? (
-                    <div className="p-12 text-center text-[#0c1929] text-sm">No bookings found.</div>
+                    <div className="p-12 text-center text-[#411F0F] text-sm">No bookings found.</div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm">
                             <thead>
-                                <tr className="text-[10px] text-[#0c1929] uppercase tracking-widest bg-slate-50 border-b border-slate-100">
+                                <tr className="text-[10px] text-[#411F0F] uppercase tracking-widest bg-slate-50 border-b border-slate-100">
                                     <th className="px-6 py-3 font-bold">Guest</th>
                                     <th className="px-6 py-3 font-bold">Property</th>
                                     <th className="px-6 py-3 font-bold">Dates</th>
@@ -252,15 +252,15 @@ export default function AdminDashboard() {
                             <tbody className="divide-y divide-slate-50">
                                 {recentBookings.map((b, idx) => (
                                     <tr key={idx} className="hover:bg-slate-50/60 transition-colors">
-                                        <td className="px-6 py-4 font-semibold text-[#0c1929]">{b.guest}</td>
-                                        <td className="px-6 py-4 text-[#0c1929] font-mono text-xs">{b.property}</td>
-                                        <td className="px-6 py-4 text-[#0c1929] text-xs">
+                                        <td className="px-6 py-4 font-semibold text-[#411F0F]">{b.guest}</td>
+                                        <td className="px-6 py-4 text-[#411F0F] font-mono text-xs">{b.property}</td>
+                                        <td className="px-6 py-4 text-[#411F0F] text-xs">
                                             {formatDate(b.checkIn)} → {formatDate(b.checkOut)}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className="text-xs font-semibold text-[#0c1929] bg-slate-100 px-2 py-1 rounded-md">{b.channel}</span>
+                                            <span className="text-xs font-semibold text-[#411F0F] bg-slate-100 px-2 py-1 rounded-md">{b.channel}</span>
                                         </td>
-                                        <td className="px-6 py-4 text-right font-bold text-[#0c1929]">
+                                        <td className="px-6 py-4 text-right font-bold text-[#411F0F]">
                                             ${b.amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                                         </td>
                                         <td className="px-6 py-4">

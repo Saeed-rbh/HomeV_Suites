@@ -204,9 +204,9 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
     }
   }
 
-  const inputCls = "w-full bg-transparent text-base text-[#0c1929] outline-none placeholder:text-[#0c1929]";
-  const labelCls = "block rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm text-[#0c1929] transition hover:border-slate-300 focus-within:ring-2 focus-within:ring-[#0c1929] focus-within:border-transparent";
-  const spanCls = "flex items-center gap-2 mb-1 text-[#0c1929] font-medium";
+  const inputCls = "w-full bg-transparent text-base text-[#411F0F] outline-none placeholder:text-[#411F0F]";
+  const labelCls = "block rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm text-[#411F0F] transition hover:border-slate-300 focus-within:ring-2 focus-within:ring-[#411F0F] focus-within:border-transparent";
+  const spanCls = "flex items-center gap-2 mb-1 text-[#411F0F] font-medium";
 
   const getStepTitle = () => {
     if (step === 1) return subtitle;
@@ -221,17 +221,17 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-100px)] w-full items-center justify-center bg-[#f3f5f8] px-4">
-      <div className="w-full max-w-md rounded-[30px] bg-white border border-slate-100 shadow-[0_4px_30px_rgba(12,25,41,0.03)] p-8">
-        <div className="mb-8 text-center text-[#0c1929]">
+    <div className="flex min-h-[calc(100vh-100px)] w-full items-center justify-center bg-[#FBF6EC] px-4">
+      <div className="w-full max-w-md rounded-[30px] bg-white border border-slate-100 shadow-[0_4px_30px_rgba(65, 31, 15,0.03)] p-8">
+        <div className="mb-8 text-center text-[#411F0F]">
           {icon && (
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-[#0c1929]/10 text-[#0c1929]">
+            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-[#411F0F]/10 text-[#411F0F]">
               {icon}
             </div>
           )}
-          <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#0c1929]">{title}</p>
-          <h2 className="mt-2 text-3xl font-medium tracking-tight text-[#0c1929]">{getStepTitle()}</h2>
-          <p className="mt-3 text-sm text-[#0c1929]">{getStepSubtitle()}</p>
+          <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#411F0F]">{title}</p>
+          <h2 className="mt-2 text-3xl font-medium tracking-tight text-[#411F0F]">{getStepTitle()}</h2>
+          <p className="mt-3 text-sm text-[#411F0F]">{getStepSubtitle()}</p>
         </div>
 
         {error && (
@@ -243,11 +243,11 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
           <form onSubmit={requestOtp} className="space-y-6">
             <div className="flex rounded-xl bg-slate-100 p-1 border border-slate-200">
               <button type="button" onClick={() => { setLoginMethod("email"); setIdentifier(""); setError(""); }}
-                className={`flex-1 rounded-lg py-2 text-sm font-medium transition-all ${loginMethod === "email" ? "bg-white text-[#0c1929] shadow" : "text-[#0c1929] hover:text-[#0c1929] hover:bg-slate-50"}`}>
+                className={`flex-1 rounded-lg py-2 text-sm font-medium transition-all ${loginMethod === "email" ? "bg-white text-[#411F0F] shadow" : "text-[#411F0F] hover:text-[#411F0F] hover:bg-slate-50"}`}>
                 Email
               </button>
               <button type="button" onClick={() => { setLoginMethod("phone"); setIdentifier(""); setError(""); }}
-                className={`flex-1 rounded-lg py-2 text-sm font-medium transition-all ${loginMethod === "phone" ? "bg-white text-[#0c1929] shadow" : "text-[#0c1929] hover:text-[#0c1929] hover:bg-slate-50"}`}>
+                className={`flex-1 rounded-lg py-2 text-sm font-medium transition-all ${loginMethod === "phone" ? "bg-white text-[#411F0F] shadow" : "text-[#411F0F] hover:text-[#411F0F] hover:bg-slate-50"}`}>
                 Phone
               </button>
             </div>
@@ -259,10 +259,10 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
               </label>
             ) : (
               <div className="flex flex-col gap-1">
-                <span className="flex items-center gap-2 mb-1 px-1 text-[#0c1929] text-sm font-medium"><Phone className="w-4 h-4" />Phone Number</span>
+                <span className="flex items-center gap-2 mb-1 px-1 text-[#411F0F] text-sm font-medium"><Phone className="w-4 h-4" />Phone Number</span>
                 <div className="flex gap-2">
                   <select value={countryCode} onChange={(e) => setCountryCode(e.target.value)}
-                    className="w-[100px] rounded-2xl border border-slate-200 bg-white px-3 py-4 text-base text-[#0c1929] transition hover:border-slate-300 focus-within:ring-2 focus-within:ring-[#0c1929] outline-none appearance-none">
+                    className="w-[100px] rounded-2xl border border-slate-200 bg-white px-3 py-4 text-base text-[#411F0F] transition hover:border-slate-300 focus-within:ring-2 focus-within:ring-[#411F0F] outline-none appearance-none">
                     <option value="+1">🇺🇸 CA/US (+1)</option>
                     <option value="+44">🇬🇧 UK (+44)</option>
                     <option value="+61">🇦🇺 AU (+61)</option>
@@ -270,13 +270,13 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
                     <option value="+49">🇩🇪 DE (+49)</option>
                   </select>
                   <input type="tel" value={identifier} onChange={handlePhoneChange} required placeholder="555-123-4567"
-                    className="flex-1 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-base text-[#0c1929] transition hover:border-slate-300 focus-within:ring-2 focus-within:ring-[#0c1929] focus-within:border-transparent outline-none placeholder:text-[#0c1929]" />
+                    className="flex-1 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-base text-[#411F0F] transition hover:border-slate-300 focus-within:ring-2 focus-within:ring-[#411F0F] focus-within:border-transparent outline-none placeholder:text-[#411F0F]" />
                 </div>
               </div>
             )}
 
             <button type="submit" disabled={loading}
-              className="flex w-full items-center justify-center rounded-[24px] bg-[#0c1929] px-6 py-4 text-base font-semibold text-white transition hover:bg-[#152b47] disabled:opacity-70">
+              className="flex w-full items-center justify-center rounded-[24px] bg-[#411F0F] px-6 py-4 text-base font-semibold text-white transition hover:bg-[#472312] disabled:opacity-70">
               {loading ? <LoaderCircle className="w-5 h-5 animate-spin mr-2" /> : null}
               Continue
             </button>
@@ -308,13 +308,13 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
             </label>
 
             <button type="submit" disabled={loading}
-              className="flex w-full items-center justify-center rounded-[24px] bg-[#0c1929] px-6 py-4 text-base font-semibold text-white transition hover:bg-[#152b47] disabled:opacity-70 mt-2">
+              className="flex w-full items-center justify-center rounded-[24px] bg-[#411F0F] px-6 py-4 text-base font-semibold text-white transition hover:bg-[#472312] disabled:opacity-70 mt-2">
               {loading ? <LoaderCircle className="w-5 h-5 animate-spin mr-2" /> : null}
               Create Account & Get Code
             </button>
 
             <button type="button" onClick={() => { setStep(1); setError(""); }}
-              className="flex w-full items-center justify-center gap-2 text-sm text-[#0c1929] hover:text-[#0c1929] transition-colors pt-1">
+              className="flex w-full items-center justify-center gap-2 text-sm text-[#411F0F] hover:text-[#411F0F] transition-colors pt-1">
               <ArrowLeft className="w-4 h-4" /> Back to Login
             </button>
           </form>
@@ -326,21 +326,21 @@ export default function UnifiedAuthForm({ onLoginSuccess, title = "Secure Access
             <label className={labelCls}>
               <span className={spanCls}><KeyRound className="w-4 h-4" />Verification Code</span>
               <input type="text" value={otp} onChange={(e) => setOtp(e.target.value)} required placeholder="000 000"
-                className="w-full bg-transparent text-lg tracking-[0.3em] font-medium text-center text-[#0c1929] outline-none placeholder:text-[#0c1929]" />
+                className="w-full bg-transparent text-lg tracking-[0.3em] font-medium text-center text-[#411F0F] outline-none placeholder:text-[#411F0F]" />
             </label>
             <button type="submit" disabled={loading}
-              className="flex w-full items-center justify-center rounded-[24px] bg-[#0c1929] px-6 py-4 text-base font-semibold text-white transition hover:bg-[#152b47] disabled:opacity-70">
+              className="flex w-full items-center justify-center rounded-[24px] bg-[#411F0F] px-6 py-4 text-base font-semibold text-white transition hover:bg-[#472312] disabled:opacity-70">
               {loading ? <LoaderCircle className="w-5 h-5 animate-spin mr-2" /> : null}
               Verify and Sign In
             </button>
 
             <div className="flex items-center justify-between pt-2 px-1">
               <button type="button" onClick={() => { setStep(1); setError(""); }}
-                className="text-sm text-[#0c1929] hover:text-[#0c1929] font-medium transition-colors focus:outline-none">
+                className="text-sm text-[#411F0F] hover:text-[#411F0F] font-medium transition-colors focus:outline-none">
                 &larr; Back
               </button>
               <button type="button" onClick={requestOtp} disabled={loading}
-                className="text-sm font-semibold text-[#0c1929] hover:text-[#152b47] transition-colors focus:outline-none disabled:opacity-50">
+                className="text-sm font-semibold text-[#411F0F] hover:text-[#472312] transition-colors focus:outline-none disabled:opacity-50">
                 Resend Code
               </button>
             </div>
