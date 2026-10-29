@@ -2,7 +2,7 @@ services:
   - type: web
     name: homev-suites-construction
     runtime: node
-    plan: free
+    plan: starter
     region: oregon
     branch: codex/render-construction
     rootDir: frontend
@@ -18,7 +18,7 @@ services:
   - type: web
     name: homev-suites-construction-api
     runtime: node
-    plan: free
+    plan: starter
     region: oregon
     branch: codex/render-construction
     rootDir: server
