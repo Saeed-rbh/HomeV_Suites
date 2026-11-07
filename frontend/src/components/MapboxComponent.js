@@ -104,8 +104,8 @@ export default function MapboxComponent({ properties = [], booking, hoveredId, o
                 <div className={`
                   group flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-bold transition-all
                   ${isHovered 
-                    ? "border-white bg-white shadow-xl text-[#0c1929] scale-105" 
-                    : "border-[#0c1929] bg-[#0c1929] text-white shadow-md hover:bg-[#152b47] hover:border-[#152b47]"
+                    ? "border-white bg-white shadow-xl text-[#411F0F] scale-105" 
+                    : "border-[#411F0F] bg-[#411F0F] text-white shadow-md hover:bg-[#472312] hover:border-[#472312]"
                   }
                 `}>
                   <span className="text-[10px] opacity-70">$</span>
@@ -115,7 +115,7 @@ export default function MapboxComponent({ properties = [], booking, hoveredId, o
                 {/* Pointer tip */}
                 <div className={`
                   mx-auto -mt-0.5 h-2 w-2 rotate-45 border-b border-r transition-colors
-                  ${isHovered ? "border-[#0c1929]/40 bg-white" : "border-white/80 bg-white/75 backdrop-blur-md"}
+                  ${isHovered ? "border-[#411F0F]/40 bg-white" : "border-white/80 bg-white/75 backdrop-blur-md"}
                 `} />
               </Link>
             </Marker>
@@ -124,7 +124,7 @@ export default function MapboxComponent({ properties = [], booking, hoveredId, o
       </Map>
 
       <div className="pointer-events-none absolute bottom-5 left-5 z-20">
-        <div className="rounded-full border border-white/80 bg-white/65 px-4 py-2 text-sm font-medium text-[#0c1929] backdrop-blur-md shadow-sm">
+        <div className="rounded-full border border-white/80 bg-white/65 px-4 py-2 text-sm font-medium text-[#411F0F] backdrop-blur-md shadow-sm">
           {properties.length} curated stays in view
         </div>
       </div>

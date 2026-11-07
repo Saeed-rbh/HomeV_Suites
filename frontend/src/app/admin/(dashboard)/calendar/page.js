@@ -93,12 +93,12 @@ export default function MultiHostCalendar() {
     }, [startDate, daysToShow]);
 
     return (
-        <div className="h-full flex flex-col bg-white overflow-hidden text-[#0c1929] text-sm">
+        <div className="h-full flex flex-col bg-white overflow-hidden text-[#411F0F] text-sm">
             {/* Top Toolbar */}
             <div className="flex items-center justify-between p-4 border-b border-slate-200">
                 <div className="flex items-center gap-4">
                     <div className="relative">
-                        <Search className="w-4 h-4 text-[#0c1929] absolute left-3 top-1/2 -translate-y-1/2" />
+                        <Search className="w-4 h-4 text-[#411F0F] absolute left-3 top-1/2 -translate-y-1/2" />
                         <input 
                             type="text" 
                             placeholder="Search for guest name or booking code..." 
@@ -110,14 +110,14 @@ export default function MultiHostCalendar() {
                 <div className="flex items-center gap-4">
                     <div className="relative">
                         <button onClick={() => setIsViewOpen(!isViewOpen)} className="flex items-center gap-2 font-medium text-sm px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50 transition">
-                            <Eye className="w-4 h-4 text-[#0c1929]" /> 
+                            <Eye className="w-4 h-4 text-[#411F0F]" /> 
                             Calendar Views ({selectedCalendars.includes('all') ? 'All' : selectedCalendars.length})
-                            <ChevronDown className="w-4 h-4 text-[#0c1929]" />
+                            <ChevronDown className="w-4 h-4 text-[#411F0F]" />
                         </button>
                         
                         {isViewOpen && (
                             <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-slate-200 shadow-xl rounded-xl p-2 z-50">
-                                <label className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer text-sm font-bold text-[#0c1929]">
+                                <label className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer text-sm font-bold text-[#411F0F]">
                                     <input 
                                         type="checkbox" 
                                         checked={selectedCalendars.includes('all')}
@@ -125,14 +125,14 @@ export default function MultiHostCalendar() {
                                             if (e.target.checked) setSelectedCalendars(['all']);
                                             else setSelectedCalendars([]);
                                         }}
-                                        className="rounded border-slate-300 w-4 h-4 accent-[#0c1929]"
+                                        className="rounded border-slate-300 w-4 h-4 accent-[#411F0F]"
                                     /> 
                                     All Calendars
                                 </label>
                                 <div className="h-px bg-slate-100 my-1"></div>
                                 <div className="max-h-60 overflow-y-auto hidden-scrollbar">
                                     {properties.map(p => (
-                                        <label key={`sel-${p.id}`} className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer text-sm text-[#0c1929] font-medium">
+                                        <label key={`sel-${p.id}`} className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer text-sm text-[#411F0F] font-medium">
                                             <input 
                                                 type="checkbox" 
                                                 checked={!selectedCalendars.includes('all') && selectedCalendars.includes(p.id)}
@@ -145,7 +145,7 @@ export default function MultiHostCalendar() {
                                                         setSelectedCalendars(next.length === 0 ? ['all'] : next);
                                                     }
                                                 }}
-                                                className="rounded border-slate-300 w-4 h-4 accent-[#0c1929]"
+                                                className="rounded border-slate-300 w-4 h-4 accent-[#411F0F]"
                                             /> 
                                             {p.nickname || p.neighborhood || p.title || p.name}
                                         </label>
@@ -156,17 +156,17 @@ export default function MultiHostCalendar() {
                     </div>
                     
                     <div className="flex items-center rounded-lg border border-slate-200 shadow-sm bg-white overflow-hidden p-0.5">
-                        <button onClick={prevDays} className="p-1.5 rounded-md hover:bg-slate-100 transition text-[#0c1929]">
+                        <button onClick={prevDays} className="p-1.5 rounded-md hover:bg-slate-100 transition text-[#411F0F]">
                             <ChevronLeft className="w-4 h-4" />
                         </button>
                         <div 
                             onClick={() => setIsDatePickerOpen(!isDatePickerOpen)} 
-                            className="flex items-center justify-center gap-2 px-3 font-semibold text-[#0c1929] text-sm cursor-pointer select-none min-w-[140px] hover:text-emerald-600 transition"
+                            className="flex items-center justify-center gap-2 px-3 font-semibold text-[#411F0F] text-sm cursor-pointer select-none min-w-[140px] hover:text-emerald-600 transition"
                         >
                             <CalendarDays className="w-4 h-4 text-emerald-600" /> 
                             {dates[0].toLocaleString('default', { month: 'long', year: 'numeric' })}
                         </div>
-                        <button onClick={nextDays} className="p-1.5 rounded-md hover:bg-slate-100 transition text-[#0c1929]">
+                        <button onClick={nextDays} className="p-1.5 rounded-md hover:bg-slate-100 transition text-[#411F0F]">
                             <ChevronRight className="w-4 h-4" />
                         </button>
                     </div>
@@ -178,10 +178,10 @@ export default function MultiHostCalendar() {
 
             {/* Sub Filter Toolbar */}
             <div className="flex items-center gap-2 px-4 py-2 border-b border-slate-100">
-                <button className="flex items-center gap-1 font-semibold text-[#0c1929]">
+                <button className="flex items-center gap-1 font-semibold text-[#411F0F]">
                     <Filter className="w-4 h-4" /> Filter
                 </button>
-                <div className="ml-4 font-medium text-[#0c1929]">
+                <div className="ml-4 font-medium text-[#411F0F]">
                     Properties ({properties.length})
                 </div>
             </div>
@@ -210,9 +210,9 @@ export default function MultiHostCalendar() {
                                 const isToday = new Date().toDateString() === d.toDateString();
                                 return (
                                     <div key={i} className={`flex-shrink-0 w-24 flex flex-col items-center justify-center border-r border-slate-200 ${isToday ? 'bg-slate-50' : ''}`}>
-                                        <div className="text-xs font-medium text-[#0c1929]">{d.toLocaleString('default', { weekday: 'short' })}</div>
-                                        <div className={`font-bold text-sm ${isToday ? 'bg-emerald-800 text-white w-6 h-6 rounded-full flex items-center justify-center' : isWeekend ? 'text-[#0c1929]' : 'text-[#0c1929]'}`}>
-                                            {d.getDate()} <span className={isToday ? "hidden" : `font-normal text-xs ${isWeekend ? 'text-[#0c1929]' : 'text-[#0c1929]'} ml-0.5`}>{d.toLocaleString('default', { month: 'short' })}</span>
+                                        <div className="text-xs font-medium text-[#411F0F]">{d.toLocaleString('default', { weekday: 'short' })}</div>
+                                        <div className={`font-bold text-sm ${isToday ? 'bg-emerald-800 text-white w-6 h-6 rounded-full flex items-center justify-center' : isWeekend ? 'text-[#411F0F]' : 'text-[#411F0F]'}`}>
+                                            {d.getDate()} <span className={isToday ? "hidden" : `font-normal text-xs ${isWeekend ? 'text-[#411F0F]' : 'text-[#411F0F]'} ml-0.5`}>{d.toLocaleString('default', { month: 'short' })}</span>
                                         </div>
                                     </div>
                                 )
@@ -235,18 +235,18 @@ export default function MultiHostCalendar() {
                                         >
                                             <div className="w-16 h-12 bg-slate-200 rounded-md overflow-hidden bg-cover bg-center flex-shrink-0" style={{backgroundImage: `url(${p.images?.[0] || 'https://images.unsplash.com/photo-1554995207-c18c203602cb'})`}}></div>
                                             <div className="min-w-0">
-                                                <div className="font-bold text-[#0c1929] text-base truncate">{p.nickname || p.neighborhood || p.title || p.name}</div>
+                                                <div className="font-bold text-[#411F0F] text-base truncate">{p.nickname || p.neighborhood || p.title || p.name}</div>
                                                 <div className="text-xs font-semibold text-emerald-600 tracking-wide mt-1">Detailed calendar</div>
                                             </div>
                                         </div>
                                         <button onClick={() => toggleRow(p.id)} className="p-1 hover:bg-slate-200 rounded">
-                                            {expandedRows[p.id] ? <ChevronUp className="w-5 h-5 text-[#0c1929]" /> : <ChevronDown className="w-5 h-5 text-[#0c1929]" />}
+                                            {expandedRows[p.id] ? <ChevronUp className="w-5 h-5 text-[#411F0F]" /> : <ChevronDown className="w-5 h-5 text-[#411F0F]" />}
                                         </button>
                                     </div>
                                     
                                     {expandedRows[p.id] && (
-                                        <div className="flex flex-col text-xs font-medium text-[#0c1929] bg-white">
-                                            <div className="h-8 flex items-center px-4 border-t border-slate-100 gap-2"><span className="text-[#0c1929]">🛏️</span> Minimum length of stay</div>
+                                        <div className="flex flex-col text-xs font-medium text-[#411F0F] bg-white">
+                                            <div className="h-8 flex items-center px-4 border-t border-slate-100 gap-2"><span className="text-[#411F0F]">🛏️</span> Minimum length of stay</div>
                                             <div className="h-8 flex items-center px-4 border-t border-slate-100 gap-2"><span className="text-blue-500">U</span> Uplisting rate</div>
                                         </div>
                                     )}
@@ -328,7 +328,7 @@ export default function MultiHostCalendar() {
                                                     return (
                                                         <div 
                                                             key={`block-${idx}`} 
-                                                            className="absolute bottom-2 h-6 bg-slate-300/60 rounded border border-[#0c1929] px-2 flex items-center justify-center text-[11px] font-bold text-[#0c1929] shadow-sm"
+                                                            className="absolute bottom-2 h-6 bg-slate-300/60 rounded border border-[#411F0F] px-2 flex items-center justify-center text-[11px] font-bold text-[#411F0F] shadow-sm"
                                                             style={{ left: `${leftPx + 8}px`, width: `${widthPx - 16}px` }}
                                                         >
                                                             Imported from Uplisting
@@ -348,7 +348,7 @@ export default function MultiHostCalendar() {
                                                     const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
                                                     const minLOS = p.calendarMinStays?.[iso] || p.minStay || 2;
                                                     return (
-                                                        <div key={`min-${i}`} className="flex-shrink-0 w-24 border-r border-slate-200 flex items-center px-3 text-xs text-[#0c1929] font-medium">
+                                                        <div key={`min-${i}`} className="flex-shrink-0 w-24 border-r border-slate-200 flex items-center px-3 text-xs text-[#411F0F] font-medium">
                                                             {minLOS}
                                                         </div>
                                                     );
@@ -360,7 +360,7 @@ export default function MultiHostCalendar() {
                                                     const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
                                                     const spotRate = p.calendarRates?.[iso] || p.pricePerNight || p.price || 240;
                                                     return (
-                                                        <div key={`air-${i}`} className="flex-shrink-0 w-24 border-r border-slate-200 flex items-center px-3 text-xs text-[#0c1929] font-medium">
+                                                        <div key={`air-${i}`} className="flex-shrink-0 w-24 border-r border-slate-200 flex items-center px-3 text-xs text-[#411F0F] font-medium">
                                                             ${spotRate}
                                                         </div>
                                                     );

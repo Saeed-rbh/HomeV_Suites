@@ -93,7 +93,7 @@ export default function FinancialsModule() {
     return (
         <div className="h-full flex flex-col">
             <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-bold text-[#0c1929] tracking-tight">Trust Accounting Ledger</h1>
+                <h1 className="text-3xl font-bold text-[#411F0F] tracking-tight">Trust Accounting Ledger</h1>
                 <div className="flex gap-4">
                     <button className="glass-button rounded-xl px-5 py-2.5 text-sm font-medium transition-all flex items-center gap-2">
                         <Download className="w-4 h-4" /> Export CSV
@@ -105,22 +105,22 @@ export default function FinancialsModule() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div className="glass-panel p-6 rounded-3xl border border-white/60 relative overflow-hidden">
                     <div className="floating-orb w-24 h-24 bg-emerald-400/20 -top-6 -right-6"></div>
-                    <p className="text-sm font-semibold text-[#0c1929] mb-1 relative z-10">Escrow Balance</p>
-                    <h3 className="text-3xl font-bold text-[#0c1929] relative z-10">
+                    <p className="text-sm font-semibold text-[#411F0F] mb-1 relative z-10">Escrow Balance</p>
+                    <h3 className="text-3xl font-bold text-[#411F0F] relative z-10">
                         ${stats.escrow.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </h3>
                 </div>
                 <div className="glass-panel p-6 rounded-3xl border border-white/60 relative overflow-hidden">
                     <div className="floating-orb w-24 h-24 bg-blue-400/20 -top-6 -right-6"></div>
-                    <p className="text-sm font-semibold text-[#0c1929] mb-1 relative z-10">Pending Payouts</p>
-                    <h3 className="text-3xl font-bold text-[#0c1929] relative z-10">
+                    <p className="text-sm font-semibold text-[#411F0F] mb-1 relative z-10">Pending Payouts</p>
+                    <h3 className="text-3xl font-bold text-[#411F0F] relative z-10">
                         ${stats.pending.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </h3>
                 </div>
                 <div className="glass-panel p-6 rounded-3xl border border-white/60 relative overflow-hidden">
                     <div className="floating-orb w-24 h-24 bg-purple-400/20 -top-6 -right-6"></div>
-                    <p className="text-sm font-semibold text-[#0c1929] mb-1 relative z-10">YTD Revenue</p>
-                    <h3 className="text-3xl font-bold text-[#0c1929] relative z-10">
+                    <p className="text-sm font-semibold text-[#411F0F] mb-1 relative z-10">YTD Revenue</p>
+                    <h3 className="text-3xl font-bold text-[#411F0F] relative z-10">
                         ${stats.ytd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </h3>
                 </div>
@@ -130,7 +130,7 @@ export default function FinancialsModule() {
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="border-b border-white/40 text-xs text-[#0c1929] uppercase tracking-wider bg-white/10">
+                            <tr className="border-b border-white/40 text-xs text-[#411F0F] uppercase tracking-wider bg-white/10">
                                 <th className="px-6 py-5 font-bold">Transaction</th>
                                 <th className="px-6 py-5 font-bold">Description</th>
                                 <th className="px-6 py-5 font-bold">Category</th>
@@ -139,12 +139,12 @@ export default function FinancialsModule() {
                                 <th className="px-6 py-5 font-bold text-right">Running Balance</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/30 text-sm text-[#0c1929]">
+                        <tbody className="divide-y divide-white/30 text-sm text-[#411F0F]">
                             {loading ? (
                                 <tr>
                                     <td colSpan="6" className="px-6 py-12 text-center">
-                                        <LoaderCircle className="w-8 h-8 text-[#0c1929] animate-spin mx-auto mb-3" />
-                                        <span className="text-[#0c1929] font-medium">Reconciling ledger data...</span>
+                                        <LoaderCircle className="w-8 h-8 text-[#411F0F] animate-spin mx-auto mb-3" />
+                                        <span className="text-[#411F0F] font-medium">Reconciling ledger data...</span>
                                     </td>
                                 </tr>
                             ) : error ? (
@@ -155,22 +155,22 @@ export default function FinancialsModule() {
                                 </tr>
                             ) : list.length === 0 ? (
                                 <tr>
-                                    <td colSpan="6" className="px-6 py-12 text-center text-[#0c1929] font-medium">
+                                    <td colSpan="6" className="px-6 py-12 text-center text-[#411F0F] font-medium">
                                         No journal entries found in the trust ledger.
                                     </td>
                                 </tr>
                             ) : list.map((entry, idx) => (
                                 <tr key={idx} className="hover:bg-white/40 transition-colors backdrop-blur-md">
                                     <td className="px-6 py-5">
-                                        <span className="font-bold text-[#0c1929] block">{entry.id}</span>
-                                        <span className="text-xs text-[#0c1929]">{entry.date}</span>
+                                        <span className="font-bold text-[#411F0F] block">{entry.id}</span>
+                                        <span className="text-xs text-[#411F0F]">{entry.date}</span>
                                     </td>
-                                    <td className="px-6 py-5 font-medium text-[#0c1929]">{entry.desc}</td>
+                                    <td className="px-6 py-5 font-medium text-[#411F0F]">{entry.desc}</td>
                                     <td className="px-6 py-5">
                                         <span className={`px-2 py-1 flex items-center w-max gap-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${entry.type === 'Income' ? 'bg-emerald-100 text-emerald-700' :
                                                 entry.type === 'Payout' ? 'bg-blue-100 text-blue-700' :
                                                     entry.type === 'Expense' ? 'bg-amber-100 text-amber-700' :
-                                                        'bg-slate-200 text-[#0c1929]'
+                                                        'bg-slate-200 text-[#411F0F]'
                                             }`}>
                                             {entry.type === 'Income' || entry.type === 'Payout' ? <ArrowRightLeft className="w-3 h-3" /> : <FileText className="w-3 h-3" />}
                                             {entry.type}
@@ -178,7 +178,7 @@ export default function FinancialsModule() {
                                     </td>
                                     <td className="px-6 py-5 text-right font-bold text-emerald-600">{entry.credit}</td>
                                     <td className="px-6 py-5 text-right font-bold text-rose-500">{entry.debit}</td>
-                                    <td className="px-6 py-5 text-right font-bold text-[#0c1929]">{entry.balance}</td>
+                                    <td className="px-6 py-5 text-right font-bold text-[#411F0F]">{entry.balance}</td>
                                 </tr>
                             ))}
                         </tbody>

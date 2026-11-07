@@ -74,7 +74,7 @@ export default function PropertyCard({ property, booking, highlighted = false, o
           ))}
         </div>
 
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0c1929]/18 via-transparent to-white/10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#411F0F]/18 via-transparent to-white/10" />
 
         <div className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full glass-chip px-3 py-2 text-sm font-semibold">
           <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
@@ -85,7 +85,7 @@ export default function PropertyCard({ property, booking, highlighted = false, o
           type="button"
           aria-label="Previous image"
           onClick={(event) => goToImage(wrapIndex(imageIndex - 1, property.images.length), event)}
-          className="absolute left-3 bottom-3 z-20 rounded-full glass-chip p-2 text-[#0c1929] hover:bg-white/52"
+          className="absolute left-3 bottom-3 z-20 rounded-full glass-chip p-2 text-[#411F0F] hover:bg-white/52"
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
@@ -94,7 +94,7 @@ export default function PropertyCard({ property, booking, highlighted = false, o
           type="button"
           aria-label="Next image"
           onClick={(event) => goToImage(wrapIndex(imageIndex + 1, property.images.length), event)}
-          className="absolute right-3 bottom-3 z-20 rounded-full glass-chip p-2 text-[#0c1929] hover:bg-white/52"
+          className="absolute right-3 bottom-3 z-20 rounded-full glass-chip p-2 text-[#411F0F] hover:bg-white/52"
         >
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -104,8 +104,8 @@ export default function PropertyCard({ property, booking, highlighted = false, o
       <Link href={href} className="mt-4 block px-1">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h3 className="text-base font-semibold text-[#0c1929] leading-snug">{property.title}</h3>
-            <p className="mt-1 text-sm text-[#0c1929]">{property.specs}</p>
+            <h3 className="text-base font-semibold text-[#411F0F] leading-snug">{property.title}</h3>
+            <p className="mt-1 text-sm text-[#411F0F]">{property.specs}</p>
           </div>
         </div>
       </Link>

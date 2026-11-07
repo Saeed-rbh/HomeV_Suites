@@ -207,13 +207,13 @@ export default function AvailabilityCalendar({ blockedDates = [], partiallyBlock
       <div key={iso} className="flex h-12 w-full justify-center relative group">
         {/* Seamless Range Backgrounds */}
         {isStartOfRange && (
-          <div className="absolute top-0 right-0 h-full w-1/2 bg-[#0c1929]/10 z-0" />
+          <div className="absolute top-0 right-0 h-full w-1/2 bg-[#411F0F]/10 z-0" />
         )}
         {isEndOfRange && (
-          <div className="absolute top-0 left-0 h-full w-1/2 bg-[#0c1929]/10 z-0" />
+          <div className="absolute top-0 left-0 h-full w-1/2 bg-[#411F0F]/10 z-0" />
         )}
         {isInRange && (
-          <div className="absolute top-0 left-0 h-full w-full bg-[#0c1929]/10 z-0" />
+          <div className="absolute top-0 left-0 h-full w-full bg-[#411F0F]/10 z-0" />
         )}
 
         <button
@@ -221,27 +221,27 @@ export default function AvailabilityCalendar({ blockedDates = [], partiallyBlock
           onClick={() => handleDateClick(iso)}
           disabled={isDisabled}
           className={`flex h-12 w-12 items-center justify-center rounded-full text-sm font-semibold transition-all relative z-10 ${isSelected
-            ? "bg-gradient-to-tr from-[#0c1929] to-[#152b47] text-white shadow-md shadow-[#0c1929]/30"
+            ? "bg-gradient-to-tr from-[#411F0F] to-[#472312] text-white shadow-md shadow-[#411F0F]/30"
             : isInRange
-              ? "text-[#152b47] w-full max-w-[48px]"
+              ? "text-[#472312] w-full max-w-[48px]"
               : isBookedStyle
-                ? "bg-transparent text-[#0c1929] opacity-25 line-through decoration-[#0c1929]/50 font-medium cursor-not-allowed"
+                ? "bg-transparent text-[#411F0F] opacity-25 line-through decoration-[#411F0F]/50 font-medium cursor-not-allowed"
                 : isConstraintStyle
-                  ? "bg-slate-100 text-[#0c1929] font-medium cursor-not-allowed border border-slate-200"
-                  : "bg-transparent text-[#0c1929] hover:bg-slate-100 hover:text-[#0c1929] border border-transparent"
+                  ? "bg-slate-100 text-[#411F0F] font-medium cursor-not-allowed border border-slate-200"
+                  : "bg-transparent text-[#411F0F] hover:bg-slate-100 hover:text-[#411F0F] border border-transparent"
             }`}
         >
           {cell.getDate()}
         </button>
         {isDisabled && tooltipText && (
-          <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 hidden group-hover:block z-50 w-max bg-[#0c1929] text-white text-[11px] px-2.5 py-1.5 rounded-[8px] shadow-lg font-medium tracking-wide pointer-events-none before:content-[''] before:absolute before:top-full before:left-1/2 before:-translate-x-1/2 before:border-4 before:border-transparent before:border-t-[#0c1929]">
+          <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 hidden group-hover:block z-50 w-max bg-[#411F0F] text-white text-[11px] px-2.5 py-1.5 rounded-[8px] shadow-lg font-medium tracking-wide pointer-events-none before:content-[''] before:absolute before:top-full before:left-1/2 before:-translate-x-1/2 before:border-4 before:border-transparent before:border-t-[#411F0F]">
             {tooltipText}
           </div>
         )}
         {isPartial && !isSelected && !isInRange && !isDisabled && (
           <>
             <div className="absolute bottom-1 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full bg-amber-400 z-20" />
-            <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 hidden group-hover:block z-50 w-max bg-[#0c1929] text-white text-[11px] px-2.5 py-1.5 rounded-[8px] shadow-lg font-medium tracking-wide pointer-events-none before:content-[''] before:absolute before:top-full before:left-1/2 before:-translate-x-1/2 before:border-4 before:border-transparent before:border-t-[#0c1929]">
+            <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 hidden group-hover:block z-50 w-max bg-[#411F0F] text-white text-[11px] px-2.5 py-1.5 rounded-[8px] shadow-lg font-medium tracking-wide pointer-events-none before:content-[''] before:absolute before:top-full before:left-1/2 before:-translate-x-1/2 before:border-4 before:border-transparent before:border-t-[#411F0F]">
               Limited availability
             </div>
           </>
@@ -255,10 +255,10 @@ export default function AvailabilityCalendar({ blockedDates = [], partiallyBlock
       {/* Header section identical to the image */}
       {showHeader && (
         <div className="mb-6">
-          <h2 className="text-[22px] font-semibold tracking-tight text-[#0c1929]">
+          <h2 className="text-[22px] font-semibold tracking-tight text-[#411F0F]">
             Select check-in date
           </h2>
-          <p className="mt-1 text-sm text-[#0c1929]">
+          <p className="mt-1 text-sm text-[#411F0F]">
             Add your travel dates for exact pricing
           </p>
         </div>
@@ -272,20 +272,20 @@ export default function AvailabilityCalendar({ blockedDates = [], partiallyBlock
           onClick={prevMonth}
           className="absolute left-0 top-[5px] z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/50 border border-slate-200/40 shadow-sm hover:bg-white hover:shadow transition backdrop-blur-sm group"
         >
-          <ChevronLeft className="h-5 w-5 text-[#0c1929] group-hover:text-[#0c1929] transition" />
+          <ChevronLeft className="h-5 w-5 text-[#411F0F] group-hover:text-[#411F0F] transition" />
         </button>
         <button
           type="button"
           onClick={nextMonth}
           className="absolute right-0 top-[5px] z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/50 border border-slate-200/40 shadow-sm hover:bg-white hover:shadow transition backdrop-blur-sm group"
         >
-          <ChevronRight className="h-5 w-5 text-[#0c1929] group-hover:text-[#0c1929] transition" />
+          <ChevronRight className="h-5 w-5 text-[#411F0F] group-hover:text-[#411F0F] transition" />
         </button>
 
         {/* Left Grid */}
         <div>
-          <h3 className="mb-10 text-center text-base font-semibold text-[#0c1929]">{leftLabel}</h3>
-          <div className="mb-2 grid grid-cols-7 text-center text-[12px] font-bold text-[#0c1929]">
+          <h3 className="mb-10 text-center text-base font-semibold text-[#411F0F]">{leftLabel}</h3>
+          <div className="mb-2 grid grid-cols-7 text-center text-[12px] font-bold text-[#411F0F]">
             {WEEK_DAYS.map((day, idx) => (
               <div key={`l-day-${idx}`}>{day}</div>
             ))}
@@ -297,8 +297,8 @@ export default function AvailabilityCalendar({ blockedDates = [], partiallyBlock
 
         {/* Right Grid */}
         <div className="hidden md:block">
-          <h3 className="mb-6 text-center text-base font-semibold text-[#0c1929]">{rightLabel}</h3>
-          <div className="mb-2 grid grid-cols-7 text-center text-[12px] font-bold text-[#0c1929]">
+          <h3 className="mb-6 text-center text-base font-semibold text-[#411F0F]">{rightLabel}</h3>
+          <div className="mb-2 grid grid-cols-7 text-center text-[12px] font-bold text-[#411F0F]">
             {WEEK_DAYS.map((day, idx) => (
               <div key={`r-day-${idx}`}>{day}</div>
             ))}
@@ -312,7 +312,7 @@ export default function AvailabilityCalendar({ blockedDates = [], partiallyBlock
       {/* Footer accessories mimicking the layout structure below the double grid */}
       <div className="flex items-center justify-between pt-2">
         {onClose ? (
-          <button type="button" onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-slate-200/50 text-[#0c1929] hover:text-[#0c1929] transition">
+          <button type="button" onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-slate-200/50 text-[#411F0F] hover:text-[#411F0F] transition">
             <X className="h-5 w-5" strokeWidth={2.2} />
           </button>
         ) : (
@@ -323,7 +323,7 @@ export default function AvailabilityCalendar({ blockedDates = [], partiallyBlock
           <button
             type="button"
             onClick={clearDates}
-            className="text-sm font-semibold underline text-[#0c1929] hover:text-[#0c1929] px-3 py-2 rounded-xl hover:bg-slate-200/50 transition"
+            className="text-sm font-semibold underline text-[#411F0F] hover:text-[#411F0F] px-3 py-2 rounded-xl hover:bg-slate-200/50 transition"
           >
             Clear dates
           </button>

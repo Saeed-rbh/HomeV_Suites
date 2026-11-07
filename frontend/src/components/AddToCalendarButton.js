@@ -47,7 +47,7 @@ export default function AddToCalendarButton({ listing, booking, resId }) {
   return (
     <button
       onClick={handleDownload}
-      className="w-full inline-flex items-center justify-center gap-2 rounded-[24px] border border-slate-200 bg-white px-6 py-4 text-base font-semibold text-[#0c1929] transition hover:bg-slate-50 mb-3"
+      className="w-full inline-flex items-center justify-center gap-2 rounded-[24px] border border-slate-200 bg-white px-6 py-4 text-base font-semibold text-[#411F0F] transition hover:bg-slate-50 mb-3"
     >
       <Download className="h-4 w-4" />
       Add to calendar (.ics)

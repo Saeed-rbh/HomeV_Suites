@@ -208,17 +208,17 @@ export default function CancellationPoliciesPage() {
   };
 
   return (
-    <div className="flex h-screen bg-[#f8fafc] font-sans text-[#0c1929]">
+    <div className="flex h-screen bg-[#F9F4EC] font-sans text-[#411F0F]">
       <AdminSidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-center z-10 shrink-0">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-[#0c1929]">Cancellation Policies</h1>
-            <p className="text-sm text-[#0c1929] mt-1">Manage refund windows, grace periods, and non-refundable discounts.</p>
+            <h1 className="text-2xl font-bold tracking-tight text-[#411F0F]">Cancellation Policies</h1>
+            <p className="text-sm text-[#411F0F] mt-1">Manage refund windows, grace periods, and non-refundable discounts.</p>
           </div>
           <button
             onClick={handleCreate}
-            className="flex items-center gap-2 bg-[#0c1929] hover:bg-[#0c1929] text-white px-5 py-2.5 rounded-xl font-medium transition-colors shadow-sm"
+            className="flex items-center gap-2 bg-[#411F0F] hover:bg-[#411F0F] text-white px-5 py-2.5 rounded-xl font-medium transition-colors shadow-sm"
           >
             <Plus className="w-4 h-4" />
             New Policy
@@ -235,19 +235,19 @@ export default function CancellationPoliciesPage() {
               {/* Global Booking Preferences */}
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8">
                 <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
-                  <h3 className="text-lg font-semibold text-[#0c1929]">Global Booking Preferences</h3>
+                  <h3 className="text-lg font-semibold text-[#411F0F]">Global Booking Preferences</h3>
                 </div>
                 <div className="p-6">
                   <div className="flex items-center gap-6">
                     <div className="flex-1 max-w-md">
-                      <label className="block text-sm font-medium text-[#0c1929] mb-1.5">Direct Booking Discount (%)</label>
+                      <label className="block text-sm font-medium text-[#411F0F] mb-1.5">Direct Booking Discount (%)</label>
                       <input
                         type="number"
                         min="0"
                         max="100"
                         value={discount}
                         onChange={(e) => setDiscount(e.target.value)}
-                        className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0c1929] text-sm"
+                        className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#411F0F] text-sm"
                       />
                       <p className="mt-1.5 text-xs text-slate-500">Automatically applied to all direct bookings across all properties.</p>
                     </div>
@@ -255,7 +255,7 @@ export default function CancellationPoliciesPage() {
                       <button
                         onClick={handleSaveDiscount}
                         disabled={savingDiscount}
-                        className="flex items-center gap-2 bg-[#0c1929] hover:bg-[#152b47] text-white px-5 py-2.5 rounded-xl font-medium transition-colors shadow-sm disabled:opacity-70"
+                        className="flex items-center gap-2 bg-[#411F0F] hover:bg-[#472312] text-white px-5 py-2.5 rounded-xl font-medium transition-colors shadow-sm disabled:opacity-70"
                       >
                         {savingDiscount ? <RefreshCw className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
                         {savingDiscount ? "Saving..." : "Save Discount"}
@@ -268,24 +268,24 @@ export default function CancellationPoliciesPage() {
               {/* Short Term Table */}
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
-                  <h3 className="text-lg font-semibold text-[#0c1929]">Short-Term Policies (&lt; 28 nights)</h3>
+                  <h3 className="text-lg font-semibold text-[#411F0F]">Short-Term Policies (&lt; 28 nights)</h3>
                 </div>
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b border-slate-200 bg-white">
-                      <th className="px-6 py-4 text-xs font-semibold text-[#0c1929] uppercase tracking-wider">Policy Name</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-[#0c1929] uppercase tracking-wider">Full Refund</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-[#0c1929] uppercase tracking-wider">Partial Refund</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-[#0c1929] uppercase tracking-wider">Grace Period</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-[#0c1929] uppercase tracking-wider">Non-Refundable Var</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-[#0c1929] uppercase tracking-wider text-right">Actions</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-[#411F0F] uppercase tracking-wider">Policy Name</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-[#411F0F] uppercase tracking-wider">Full Refund</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-[#411F0F] uppercase tracking-wider">Partial Refund</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-[#411F0F] uppercase tracking-wider">Grace Period</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-[#411F0F] uppercase tracking-wider">Non-Refundable Var</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-[#411F0F] uppercase tracking-wider text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 bg-white">
                     {policies.filter(p => p.type === 'SHORT_TERM').length === 0 ? (
                       <tr>
-                        <td colSpan="6" className="px-6 py-12 text-center text-[#0c1929]">
-                          <AlertCircle className="w-6 h-6 mx-auto mb-3 text-[#0c1929]" />
+                        <td colSpan="6" className="px-6 py-12 text-center text-[#411F0F]">
+                          <AlertCircle className="w-6 h-6 mx-auto mb-3 text-[#411F0F]" />
                           No short-term policies found.
                         </td>
                       </tr>
@@ -294,7 +294,7 @@ export default function CancellationPoliciesPage() {
                         const isShortActive = activeShortTermPolicyId === p.id;
                         return (
                           <tr key={p.id} className={`transition-all cursor-pointer border-l-4 ${isShortActive ? 'bg-emerald-50/50 border-emerald-500' : 'border-transparent hover:bg-slate-50'}`} onClick={() => handleRowClick(p)}>
-                            <td className="px-6 py-4 whitespace-nowrap font-medium text-[#0c1929]">
+                            <td className="px-6 py-4 whitespace-nowrap font-medium text-[#411F0F]">
                               <div className="flex flex-col gap-1">
                                 <span className="flex items-center gap-2">{p.name}</span>
                                 {isShortActive && (
@@ -306,18 +306,18 @@ export default function CancellationPoliciesPage() {
                                 )}
                               </div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#0c1929]">≥ {p.fullRefundDaysPrior} days</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#0c1929]">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#411F0F]">≥ {p.fullRefundDaysPrior} days</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#411F0F]">
                               {p.partialRefundDaysPrior > 0 ? `≥ ${p.partialRefundDaysPrior} days (${p.partialRefundPercentage}%)` : "None"}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#0c1929]">{p.bookingGracePeriodHours} hrs</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#411F0F]">{p.bookingGracePeriodHours} hrs</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                               {p.offerNonRefundableDiscount ? (
                                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                   Yes ({p.nonRefundableDiscountPercentage}%)
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-[#0c1929]">
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-[#411F0F]">
                                   No
                                 </span>
                               )}
@@ -341,24 +341,24 @@ export default function CancellationPoliciesPage() {
               {/* Long Term Table */}
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
-                  <h3 className="text-lg font-semibold text-[#0c1929]">Long-Term Policies (≥ 28 nights)</h3>
+                  <h3 className="text-lg font-semibold text-[#411F0F]">Long-Term Policies (≥ 28 nights)</h3>
                 </div>
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b border-slate-200 bg-white">
-                      <th className="px-6 py-4 text-xs font-semibold text-[#0c1929] uppercase tracking-wider">Policy Name</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-[#0c1929] uppercase tracking-wider">Full Refund</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-[#0c1929] uppercase tracking-wider">Partial Refund</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-[#0c1929] uppercase tracking-wider">Grace Period</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-[#0c1929] uppercase tracking-wider">Non-Refundable Var</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-[#0c1929] uppercase tracking-wider text-right">Actions</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-[#411F0F] uppercase tracking-wider">Policy Name</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-[#411F0F] uppercase tracking-wider">Full Refund</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-[#411F0F] uppercase tracking-wider">Partial Refund</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-[#411F0F] uppercase tracking-wider">Grace Period</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-[#411F0F] uppercase tracking-wider">Non-Refundable Var</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-[#411F0F] uppercase tracking-wider text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 bg-white">
                     {policies.filter(p => p.type === 'LONG_TERM').length === 0 ? (
                       <tr>
-                        <td colSpan="6" className="px-6 py-12 text-center text-[#0c1929]">
-                          <AlertCircle className="w-6 h-6 mx-auto mb-3 text-[#0c1929]" />
+                        <td colSpan="6" className="px-6 py-12 text-center text-[#411F0F]">
+                          <AlertCircle className="w-6 h-6 mx-auto mb-3 text-[#411F0F]" />
                           No long-term policies found.
                         </td>
                       </tr>
@@ -367,7 +367,7 @@ export default function CancellationPoliciesPage() {
                         const isLongActive = activeLongTermPolicyId === p.id;
                         return (
                           <tr key={p.id} className={`transition-all cursor-pointer border-l-4 ${isLongActive ? 'bg-emerald-50/50 border-emerald-500' : 'border-transparent hover:bg-slate-50'}`} onClick={() => handleRowClick(p)}>
-                            <td className="px-6 py-4 whitespace-nowrap font-medium text-[#0c1929]">
+                            <td className="px-6 py-4 whitespace-nowrap font-medium text-[#411F0F]">
                               <div className="flex flex-col gap-1">
                                 <span className="flex items-center gap-2">{p.name}</span>
                                 {isLongActive && (
@@ -379,18 +379,18 @@ export default function CancellationPoliciesPage() {
                                 )}
                               </div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#0c1929]">≥ {p.fullRefundDaysPrior} days</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#0c1929]">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#411F0F]">≥ {p.fullRefundDaysPrior} days</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#411F0F]">
                               {p.partialRefundDaysPrior > 0 ? `≥ ${p.partialRefundDaysPrior} days (${p.partialRefundPercentage}%)` : "None"}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#0c1929]">{p.bookingGracePeriodHours} hrs</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#411F0F]">{p.bookingGracePeriodHours} hrs</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                               {p.offerNonRefundableDiscount ? (
                                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                   Yes ({p.nonRefundableDiscountPercentage}%)
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-[#0c1929]">
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-[#411F0F]">
                                   No
                                 </span>
                               )}
@@ -418,69 +418,69 @@ export default function CancellationPoliciesPage() {
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
-          <div className="absolute inset-0 bg-[#0c1929]/60 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
+          <div className="absolute inset-0 bg-[#411F0F]/60 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
           <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-lg flex flex-col max-h-[90vh]">
             <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-              <h3 className="text-lg font-semibold text-[#0c1929]">
+              <h3 className="text-lg font-semibold text-[#411F0F]">
                 {editingPolicy ? "Edit Policy" : "Create Policy"}
               </h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-[#0c1929] hover:text-[#0c1929]">
+              <button onClick={() => setIsModalOpen(false)} className="text-[#411F0F] hover:text-[#411F0F]">
                 <X className="w-5 h-5" />
               </button>
             </div>
             
             <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
               <div>
-                <label className="block text-sm font-medium text-[#0c1929] mb-1">Policy Name</label>
+                <label className="block text-sm font-medium text-[#411F0F] mb-1">Policy Name</label>
                 <input
                   type="text"
                   required
                   value={formData.name}
                   onChange={e => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0c1929] focus:border-transparent text-sm"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#411F0F] focus:border-transparent text-sm"
                   placeholder="e.g., Strict, Moderate"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#0c1929] mb-1">Full Refund Days</label>
+                  <label className="block text-sm font-medium text-[#411F0F] mb-1">Full Refund Days</label>
                   <input
                     type="number"
                     min="0"
                     required
                     value={formData.fullRefundDaysPrior}
                     onChange={e => setFormData({ ...formData, fullRefundDaysPrior: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0c1929] text-sm"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#411F0F] text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#0c1929] mb-1">Grace Period (Hours)</label>
+                  <label className="block text-sm font-medium text-[#411F0F] mb-1">Grace Period (Hours)</label>
                   <input
                     type="number"
                     min="0"
                     required
                     value={formData.bookingGracePeriodHours}
                     onChange={e => setFormData({ ...formData, bookingGracePeriodHours: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0c1929] text-sm"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#411F0F] text-sm"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4 border-t border-slate-100 pt-5">
                 <div>
-                  <label className="block text-sm font-medium text-[#0c1929] mb-1">Partial Refund Days</label>
+                  <label className="block text-sm font-medium text-[#411F0F] mb-1">Partial Refund Days</label>
                   <input
                     type="number"
                     min="0"
                     required
                     value={formData.partialRefundDaysPrior}
                     onChange={e => setFormData({ ...formData, partialRefundDaysPrior: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0c1929] text-sm"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#411F0F] text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#0c1929] mb-1">Partial Refund %</label>
+                  <label className="block text-sm font-medium text-[#411F0F] mb-1">Partial Refund %</label>
                   <input
                     type="number"
                     min="0"
@@ -488,7 +488,7 @@ export default function CancellationPoliciesPage() {
                     required
                     value={formData.partialRefundPercentage}
                     onChange={e => setFormData({ ...formData, partialRefundPercentage: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0c1929] text-sm"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#411F0F] text-sm"
                   />
                 </div>
               </div>
@@ -499,21 +499,21 @@ export default function CancellationPoliciesPage() {
                     type="checkbox"
                     checked={formData.offerNonRefundableDiscount}
                     onChange={e => setFormData({ ...formData, offerNonRefundableDiscount: e.target.checked })}
-                    className="h-4 w-4 text-[#0c1929] focus:ring-[#0c1929] border-slate-300 rounded"
+                    className="h-4 w-4 text-[#411F0F] focus:ring-[#411F0F] border-slate-300 rounded"
                   />
-                  <span className="text-sm font-medium text-[#0c1929]">Offer Non-Refundable Discount Option</span>
+                  <span className="text-sm font-medium text-[#411F0F]">Offer Non-Refundable Discount Option</span>
                 </label>
 
                 {formData.offerNonRefundableDiscount && (
                   <div>
-                    <label className="block text-sm font-medium text-[#0c1929] mb-1">Discount %</label>
+                    <label className="block text-sm font-medium text-[#411F0F] mb-1">Discount %</label>
                     <input
                       type="number"
                       min="0"
                       max="100"
                       value={formData.nonRefundableDiscountPercentage}
                       onChange={e => setFormData({ ...formData, nonRefundableDiscountPercentage: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0c1929] text-sm"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#411F0F] text-sm"
                     />
                   </div>
                 )}
@@ -524,13 +524,13 @@ export default function CancellationPoliciesPage() {
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 text-sm font-medium text-[#0c1929] hover:text-[#0c1929] transition-colors"
+                className="px-4 py-2 text-sm font-medium text-[#411F0F] hover:text-[#411F0F] transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmit}
-                className="px-5 py-2 text-sm font-medium text-white bg-[#0c1929] hover:bg-[#0c1929] rounded-xl transition-colors shadow-sm"
+                className="px-5 py-2 text-sm font-medium text-white bg-[#411F0F] hover:bg-[#411F0F] rounded-xl transition-colors shadow-sm"
               >
                 {editingPolicy ? "Save Changes" : "Create Policy"}
               </button>
@@ -542,7 +542,7 @@ export default function CancellationPoliciesPage() {
       {/* Apply Policy Modal */}
       {isApplyModalOpen && policyToApply && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-0">
-          <div className="absolute inset-0 bg-[#0c1929]/60 backdrop-blur-sm" onClick={() => setIsApplyModalOpen(false)} />
+          <div className="absolute inset-0 bg-[#411F0F]/60 backdrop-blur-sm" onClick={() => setIsApplyModalOpen(false)} />
           <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-lg flex flex-col">
             <div className="flex items-center justify-between px-6 py-5 border-b border-emerald-100 bg-emerald-50 rounded-t-2xl">
               <h3 className="text-lg font-bold text-emerald-900">
@@ -554,13 +554,13 @@ export default function CancellationPoliciesPage() {
             </div>
             
             <div className="p-6 space-y-4">
-              <p className="text-[#0c1929] font-medium">
-                You are about to apply the <strong className="text-[#0c1929]">{policyToApply.name}</strong> policy to <strong className="text-[#0c1929]">all</strong> of your active listings.
+              <p className="text-[#411F0F] font-medium">
+                You are about to apply the <strong className="text-[#411F0F]">{policyToApply.name}</strong> policy to <strong className="text-[#411F0F]">all</strong> of your active listings.
               </p>
               
               <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <h4 className="font-semibold text-[#0c1929] mb-2">Policy Details:</h4>
-                <ul className="list-disc list-inside space-y-1.5 text-sm text-[#0c1929]">
+                <h4 className="font-semibold text-[#411F0F] mb-2">Policy Details:</h4>
+                <ul className="list-disc list-inside space-y-1.5 text-sm text-[#411F0F]">
                   <li>Full Refund until <strong>{policyToApply.fullRefundDaysPrior} days</strong> before check-in.</li>
                   {policyToApply.partialRefundDaysPrior > 0 ? (
                     <li><strong>{policyToApply.partialRefundPercentage}% Refund</strong> between {policyToApply.fullRefundDaysPrior} and {policyToApply.partialRefundDaysPrior} days.</li>
@@ -588,7 +588,7 @@ export default function CancellationPoliciesPage() {
               <button
                 type="button"
                 onClick={() => setIsApplyModalOpen(false)}
-                className="px-4 py-2 text-sm font-medium text-[#0c1929] hover:text-[#0c1929] hover:bg-slate-200 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-medium text-[#411F0F] hover:text-[#411F0F] hover:bg-slate-200 rounded-lg transition-colors"
               >
                 Cancel
               </button>
@@ -606,14 +606,14 @@ export default function CancellationPoliciesPage() {
       {/* Delete Confirmation Modal */}
       {deletePolicyId && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-0">
-          <div className="absolute inset-0 bg-[#0c1929]/60 backdrop-blur-sm" onClick={() => setDeletePolicyId(null)} />
+          <div className="absolute inset-0 bg-[#411F0F]/60 backdrop-blur-sm" onClick={() => setDeletePolicyId(null)} />
           <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-sm flex flex-col overflow-hidden text-center">
             <div className="p-8 pb-6">
               <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Trash2 className="w-6 h-6 text-red-600" />
               </div>
-              <h3 className="text-xl font-bold text-[#0c1929] mb-2">Delete Policy</h3>
-              <p className="text-sm text-[#0c1929] leading-snug">
+              <h3 className="text-xl font-bold text-[#411F0F] mb-2">Delete Policy</h3>
+              <p className="text-sm text-[#411F0F] leading-snug">
                 Are you sure you want to delete this policy? This action cannot be undone.
               </p>
             </div>
@@ -621,7 +621,7 @@ export default function CancellationPoliciesPage() {
             <div className="bg-slate-50 px-6 py-4 flex gap-3 border-t border-slate-100">
               <button 
                 onClick={() => setDeletePolicyId(null)}
-                className="flex-1 py-2.5 bg-white border border-slate-200 text-[#0c1929] rounded-xl font-medium shadow-sm hover:bg-slate-50 transition"
+                className="flex-1 py-2.5 bg-white border border-slate-200 text-[#411F0F] rounded-xl font-medium shadow-sm hover:bg-slate-50 transition"
               >
                 Cancel
               </button>
@@ -639,7 +639,7 @@ export default function CancellationPoliciesPage() {
       {/* Toast Notification */}
       {toast && (
         <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 px-5 py-3 rounded-full text-sm font-medium shadow-xl z-[100] transition-all flex items-center gap-2.5 ${
-          toast.type === 'success' ? 'bg-[#0c1929] text-white ring-1 ring-[#0c1929]' : 'bg-red-600 text-white ring-1 ring-red-700'
+          toast.type === 'success' ? 'bg-[#411F0F] text-white ring-1 ring-[#411F0F]' : 'bg-red-600 text-white ring-1 ring-red-700'
         }`}>
           {toast.type === 'success' ? <CheckCircle className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
           {toast.message}

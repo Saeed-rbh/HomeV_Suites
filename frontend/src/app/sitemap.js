@@ -2,7 +2,7 @@ const BASE_URL = "https://homev.ca";
 
 /**
  * Next.js dynamic sitemap — automatically discovered at /sitemap.xml
- * Includes the home page and all active listing detail pages.
+ * Includes the landing, stays and owner pages and all active listing detail pages.
  */
 export default async function sitemap() {
   // Static routes
@@ -12,6 +12,18 @@ export default async function sitemap() {
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 1.0,
+    },
+    {
+      url: `${BASE_URL}/stays`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/owners`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
     },
     {
       url: `${BASE_URL}/search`,

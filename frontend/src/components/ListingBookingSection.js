@@ -256,13 +256,13 @@ export default function ListingBookingSection({
     <div className="flex flex-col gap-4 relative">
 
       {!isCheckout && hasBooking && unlocksNewDiscount && (
-        <div className="relative rounded-[16px] bg-white border border-slate-100 shadow-[0_8px_30px_rgba(12,25,41,0.08)] px-5 py-4 flex items-start gap-4">
+        <div className="relative rounded-[16px] bg-white border border-slate-100 shadow-[0_8px_30px_rgba(65, 31, 15,0.08)] px-5 py-4 flex items-start gap-4">
           <div className="relative shrink-0 pt-0.5">
             <Tag className="h-6 w-6 text-emerald-600 fill-emerald-500" />
           </div>
           <div className="flex flex-col">
-            <p className="text-[15px] font-semibold text-[#0c1929] tracking-tight">Add a night for {formatCurrency(extensionPriceDiff)}</p>
-            <p className="text-[13px] text-[#0c1929] mt-0.5">
+            <p className="text-[15px] font-semibold text-[#411F0F] tracking-tight">Add a night for {formatCurrency(extensionPriceDiff)}</p>
+            <p className="text-[13px] text-[#411F0F] mt-0.5">
               Extend to {new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(new Date(new Date(checkOut).setDate(new Date(checkOut).getDate() + 1)))} with this special offer.
             </p>
             <button 
@@ -271,7 +271,7 @@ export default function ListingBookingSection({
                 nextDay.setDate(nextDay.getDate() + 1);
                 setCheckOut(nextDay.toISOString().split("T")[0]);
               }} 
-              className="mt-1 w-max text-left text-[14px] font-semibold text-[#0c1929] underline decoration-[#0c1929] underline-offset-2 hover:text-[#0c1929] transition"
+              className="mt-1 w-max text-left text-[14px] font-semibold text-[#411F0F] underline decoration-[#411F0F] underline-offset-2 hover:text-[#411F0F] transition"
             >
               Add 1 night
             </button>
@@ -280,7 +280,7 @@ export default function ListingBookingSection({
       )}
 
       {/* Main sidebar card */}
-      <div className="rounded-[24px] border border-slate-200 bg-white p-7 md:p-8 shadow-[0_8px_40px_rgba(12,25,41,0.04)]">
+      <div className="rounded-[24px] border border-slate-200 bg-white p-7 md:p-8 shadow-[0_8px_40px_rgba(65, 31, 15,0.04)]">
 
       {/* Checkout-only Header Thumbnail */}
       {isCheckout && (
@@ -290,7 +290,7 @@ export default function ListingBookingSection({
           </div>
           <div className="flex flex-col mt-0.5">
             <h2 className="text-[17px] font-semibold leading-snug tracking-tight line-clamp-2">{listing.title}</h2>
-            <div className="mt-1 flex items-center gap-1.5 text-sm font-medium tracking-tight text-[#0c1929]">
+            <div className="mt-1 flex items-center gap-1.5 text-sm font-medium tracking-tight text-[#411F0F]">
               {listing.neighborhood || listing.location || "Toronto, Canada"}
             </div>
           </div>
@@ -302,16 +302,16 @@ export default function ListingBookingSection({
         {hasBooking ? (
           <>
             <div className={`relative group inline-block ${isCheckout ? "" : "cursor-help"} w-full`}>
-              <h2 className={`text-[22px] font-semibold text-[#0c1929] ${isCheckout ? "" : "underline decoration-[#0c1929] underline-offset-2"}`}>
+              <h2 className={`text-[22px] font-semibold text-[#411F0F] ${isCheckout ? "" : "underline decoration-[#411F0F] underline-offset-2"}`}>
                 {formatCurrency(displayedTotal)} total
               </h2>
 
               {/* Tooltip vs Inline Breakdown */}
               <div className={`transition-all duration-200 ${isCheckout ? "mt-4 block" : "invisible absolute top-full left-0 mt-3 w-max min-w-[280px] z-50 opacity-0 group-hover:visible group-hover:opacity-100"}`}>
-                <div className={`${isCheckout ? "" : "rounded-2xl bg-white p-5 shadow-[0_10px_40px_rgba(12,25,41,0.2)] ring-1 ring-slate-200"} text-sm font-normal text-[#0c1929] space-y-3 cursor-default`}>
+                <div className={`${isCheckout ? "" : "rounded-2xl bg-white p-5 shadow-[0_10px_40px_rgba(65, 31, 15,0.2)] ring-1 ring-slate-200"} text-sm font-normal text-[#411F0F] space-y-3 cursor-default`}>
                   <div className="flex items-center justify-between gap-6">
                     <span>{formatCurrency(breakdown.avgNightlyRate)} × {breakdown.nights} night{breakdown.nights !== 1 ? "s" : ""}</span>
-                    <span className={breakdown.discountAmount > 0 ? "text-[#0c1929]" : ""}>{formatCurrency(breakdown.nightlySubtotal)}</span>
+                    <span className={breakdown.discountAmount > 0 ? "text-[#411F0F]" : ""}>{formatCurrency(breakdown.nightlySubtotal)}</span>
                   </div>
                   {breakdown.discountAmount > 0 && (
                     <div className="flex items-center justify-between text-emerald-600 font-medium gap-6">
@@ -348,7 +348,7 @@ export default function ListingBookingSection({
                     <span>{formatCurrency(breakdown.taxes)}</span>
                   </div>
                   {!isCheckout && (
-                    <div className="flex items-center justify-between font-semibold text-[#0c1929] text-[15px] pt-1 gap-6">
+                    <div className="flex items-center justify-between font-semibold text-[#411F0F] text-[15px] pt-1 gap-6">
                       <span>Total before taxes</span>
                       <span>{formatCurrency(displayedTotal)}</span>
                     </div>
@@ -372,7 +372,7 @@ export default function ListingBookingSection({
             )}
           </>
         ) : (
-          <h2 className="text-[20px] font-semibold text-[#0c1929]">Add dates for prices</h2>
+          <h2 className="text-[20px] font-semibold text-[#411F0F]">Add dates for prices</h2>
         )}
       </div>
 
@@ -384,15 +384,15 @@ export default function ListingBookingSection({
             onClick={() => setCalendarOpen(true)}
             className="flex-1 px-3 py-3 text-left hover:bg-slate-50 transition group cursor-pointer"
           >
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[#0c1929]">Check-in</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[#411F0F]">Check-in</p>
             <div className="flex items-center justify-between mt-0.5">
-              <p className={`text-sm ${checkIn ? "text-[#0c1929] font-medium" : "text-[#0c1929]"}`}>
+              <p className={`text-sm ${checkIn ? "text-[#411F0F] font-medium" : "text-[#411F0F]"}`}>
                 {checkIn ? formatIso(checkIn) : "Add date"}
               </p>
               {checkIn && (
                 <button
                   onClick={(e) => { e.stopPropagation(); clearCheckIn(); }}
-                  className="ml-1 rounded-full p-0.5 hover:bg-slate-200 text-[#0c1929] hover:text-[#0c1929] transition"
+                  className="ml-1 rounded-full p-0.5 hover:bg-slate-200 text-[#411F0F] hover:text-[#411F0F] transition"
                 >
                   <X className="h-3.5 w-3.5" strokeWidth={2.5} />
                 </button>
@@ -405,15 +405,15 @@ export default function ListingBookingSection({
             onClick={() => setCalendarOpen(true)}
             className="flex-1 px-3 py-3 text-left hover:bg-slate-50 transition cursor-pointer"
           >
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[#0c1929]">Checkout</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[#411F0F]">Checkout</p>
             <div className="flex items-center justify-between mt-0.5">
-              <p className={`text-sm ${checkOut ? "text-[#0c1929] font-medium" : "text-[#0c1929]"}`}>
+              <p className={`text-sm ${checkOut ? "text-[#411F0F] font-medium" : "text-[#411F0F]"}`}>
                 {checkOut ? formatIso(checkOut) : "Add date"}
               </p>
               {checkOut && (
                 <button
                   onClick={(e) => { e.stopPropagation(); clearCheckOut(); }}
-                  className="ml-1 rounded-full p-0.5 hover:bg-slate-200 text-[#0c1929] hover:text-[#0c1929] transition"
+                  className="ml-1 rounded-full p-0.5 hover:bg-slate-200 text-[#411F0F] hover:text-[#411F0F] transition"
                 >
                   <X className="h-3.5 w-3.5" strokeWidth={2.5} />
                 </button>
@@ -437,17 +437,17 @@ export default function ListingBookingSection({
               }
               setGuestOpen(!guestOpen);
             }}
-            className={`w-full px-3 py-3 text-left hover:bg-slate-50 transition flex items-center justify-between rounded-b-[12px] ${guestOpen ? "ring-2 ring-[#0c1929] ring-inset" : ""}`}
+            className={`w-full px-3 py-3 text-left hover:bg-slate-50 transition flex items-center justify-between rounded-b-[12px] ${guestOpen ? "ring-2 ring-[#411F0F] ring-inset" : ""}`}
           >
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#0c1929]">Guests</p>
-              <p className="mt-0.5 text-sm text-[#0c1929] font-medium">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#411F0F]">Guests</p>
+              <p className="mt-0.5 text-sm text-[#411F0F] font-medium">
                 {totalGuests} guest{totalGuests !== 1 ? "s" : ""}
                 {infants > 0 ? `, ${infants} infant${infants !== 1 ? "s" : ""}` : ""}
                 {pets > 0 ? `, ${pets} pet${pets !== 1 ? "s" : ""}` : ""}
               </p>
             </div>
-            <ChevronDown className={`h-4 w-4 text-[#0c1929] transition-transform ${guestOpen ? "rotate-180" : ""}`} />
+            <ChevronDown className={`h-4 w-4 text-[#411F0F] transition-transform ${guestOpen ? "rotate-180" : ""}`} />
           </button>
 
           {/* Click-away backdrop */}
@@ -456,17 +456,17 @@ export default function ListingBookingSection({
               <div className="fixed inset-0 z-[9998]" onClick={() => setGuestOpen(false)} />
               <div
                 style={guestPopupStyle}
-                className="fixed z-[9999] w-[320px] rounded-[16px] bg-white shadow-[0_8px_40px_rgba(12,25,41,0.18)] ring-1 ring-slate-200 px-4 pt-2 pb-4"
+                className="fixed z-[9999] w-[320px] rounded-[16px] bg-white shadow-[0_8px_40px_rgba(65, 31, 15,0.18)] ring-1 ring-slate-200 px-4 pt-2 pb-4"
               >
                 <GuestRow label="Adults" sublabel="Age 13+" value={adults} onDecrement={() => setAdults(Math.max(1, adults - 1))} onIncrement={() => setAdults(Math.min(maxGuests - children, adults + 1))} canDecrement={adults > 1} canIncrement={adults + children < maxGuests} />
                 <GuestRow label="Children" sublabel="Ages 2–12" value={children} onDecrement={() => setChildren(Math.max(0, children - 1))} onIncrement={() => setChildren(Math.min(maxGuests - adults, children + 1))} canDecrement={children > 0} canIncrement={adults + children < maxGuests} />
                 <GuestRow label="Infants" sublabel="Under 2" value={infants} onDecrement={() => setInfants(Math.max(0, infants - 1))} onIncrement={() => setInfants(infants + 1)} canDecrement={infants > 0} canIncrement={true} />
                 <GuestRow label="Pets" sublabel={<span className="underline cursor-pointer">Bringing a service animal?</span>} value={pets} onDecrement={() => setPets(Math.max(0, pets - 1))} onIncrement={() => setPets(pets + 1)} canDecrement={pets > 0} canIncrement={true} />
-                <p className="mt-4 text-xs text-[#0c1929] leading-5 border-t border-slate-100 pt-3">
+                <p className="mt-4 text-xs text-[#411F0F] leading-5 border-t border-slate-100 pt-3">
                   This place has a maximum of {maxGuests} guests, not including infants. Pets aren&apos;t allowed.
                 </p>
                 <div className="mt-3 flex justify-end">
-                  <button onClick={() => setGuestOpen(false)} className="text-sm font-semibold text-[#0c1929] underline hover:text-[#0c1929] transition">Close</button>
+                  <button onClick={() => setGuestOpen(false)} className="text-sm font-semibold text-[#411F0F] underline hover:text-[#411F0F] transition">Close</button>
                 </div>
               </div>
             </>,
@@ -483,23 +483,23 @@ export default function ListingBookingSection({
           {activeCancellationPolicy?.offerNonRefundableDiscount ? (
              <div className="rounded-[16px] border border-slate-200 overflow-hidden divide-y divide-slate-100 bg-white">
                 <label className={`flex items-start gap-3 p-4 cursor-pointer transition ${!nonRefundable ? "bg-slate-50" : ""}`}>
-                  <input type="radio" name="refundability" className="mt-1 w-4 h-4 text-[#0c1929]" checked={!nonRefundable} onChange={() => { setNonRefundable(false); updateUrlParams(checkIn, checkOut, false); if(typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('syncNonRefundable', { detail: false })); }} />
+                  <input type="radio" name="refundability" className="mt-1 w-4 h-4 text-[#411F0F]" checked={!nonRefundable} onChange={() => { setNonRefundable(false); updateUrlParams(checkIn, checkOut, false); if(typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('syncNonRefundable', { detail: false })); }} />
                   <div className="flex flex-col">
-                    <span className="font-semibold text-[#0c1929] text-[15px]">Standard: {formatCurrency(standardBreakdown.total)}</span>
-                    <span className="text-sm text-[#0c1929] mt-1">{cancellationText}</span>
-                    {partialCancellationText && <span className="text-sm text-[#0c1929] font-medium mt-0.5">{partialCancellationText}</span>}
+                    <span className="font-semibold text-[#411F0F] text-[15px]">Standard: {formatCurrency(standardBreakdown.total)}</span>
+                    <span className="text-sm text-[#411F0F] mt-1">{cancellationText}</span>
+                    {partialCancellationText && <span className="text-sm text-[#411F0F] font-medium mt-0.5">{partialCancellationText}</span>}
                   </div>
                 </label>
                 <label className={`flex items-start gap-3 p-4 cursor-pointer transition ${nonRefundable ? "bg-slate-50" : ""}`}>
-                  <input type="radio" name="refundability" className="mt-1 w-4 h-4 text-[#0c1929]" checked={nonRefundable} onChange={() => { setNonRefundable(true); updateUrlParams(checkIn, checkOut, true); if(typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('syncNonRefundable', { detail: true })); }} />
+                  <input type="radio" name="refundability" className="mt-1 w-4 h-4 text-[#411F0F]" checked={nonRefundable} onChange={() => { setNonRefundable(true); updateUrlParams(checkIn, checkOut, true); if(typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('syncNonRefundable', { detail: true })); }} />
                   <div className="flex flex-col">
-                    <span className="font-semibold text-[#0c1929] text-[15px]">Non-refundable: {formatCurrency(nonRefBreakdown.total)}</span>
-                    <span className="text-sm text-[#0c1929] mt-1">Save {nonRefBreakdown.nonRefundableDiscountPercentage}% but cancel without a refund.</span>
+                    <span className="font-semibold text-[#411F0F] text-[15px]">Non-refundable: {formatCurrency(nonRefBreakdown.total)}</span>
+                    <span className="text-sm text-[#411F0F] mt-1">Save {nonRefBreakdown.nonRefundableDiscountPercentage}% but cancel without a refund.</span>
                   </div>
                 </label>
              </div>
           ) : (
-            <div className="text-center text-sm font-semibold text-[#0c1929] mt-2 mb-1 px-2">
+            <div className="text-center text-sm font-semibold text-[#411F0F] mt-2 mb-1 px-2">
               <span className="font-semibold text-[15px]">{cancellationText}</span>
               {partialCancellationText && <div className="text-[14px] font-normal mt-1">{partialCancellationText}</div>}
             </div>
@@ -515,14 +515,14 @@ export default function ListingBookingSection({
           ref={reserveBtnRef}
           onClick={handleReserve}
           disabled={!hasBooking}
-          className="mt-6 w-full rounded-full bg-gradient-to-r from-[#0c1929] to-[#152b47] py-4 text-[15px] font-bold tracking-wide text-white shadow-[0_8px_20px_rgba(12,25,41,0.2)] transition hover:from-[#152b47] hover:to-[#0c1929] active:scale-[0.98] disabled:opacity-50"
+          className="mt-6 w-full rounded-full bg-gradient-to-r from-[#411F0F] to-[#472312] py-4 text-[15px] font-bold tracking-wide text-white shadow-[0_8px_20px_rgba(65, 31, 15,0.2)] transition hover:from-[#472312] hover:to-[#411F0F] active:scale-[0.98] disabled:opacity-50"
         >
           {hasBooking ? "Reserve" : "Check availability"}
         </button>
       )}
 
       {hasBooking && (
-        <p className="mt-3 text-center text-sm text-[#0c1929]">You won&apos;t be charged yet</p>
+        <p className="mt-3 text-center text-sm text-[#411F0F]">You won&apos;t be charged yet</p>
       )}
 
       </div>
@@ -541,36 +541,36 @@ export default function ListingBookingSection({
 
   // ── CALENDAR POPUP over the listing area when triggered from sidebar ──────
   const calendarPopup = calendarOpen && mountedPortal ? createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-start justify-center pt-[80px] px-4 bg-[#0c1929]/30">
+    <div className="fixed inset-0 z-[9999] flex items-start justify-center pt-[80px] px-4 bg-[#411F0F]/30">
       <div className="absolute inset-0" onClick={() => setCalendarOpen(false)} />
       <div className="relative w-full max-w-[860px] rounded-[24px] bg-white shadow-2xl ring-1 ring-slate-100 overflow-hidden animate-in zoom-in-95 duration-200">
         {/* Top bar with date fields and Close */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 border-b border-slate-200 px-6 py-4">
           {hasBooking && (
             <div className="text-left hidden sm:block mr-4">
-              <p className="text-lg font-bold text-[#0c1929]">{breakdown.nights} night{breakdown.nights !== 1 ? "s" : ""}</p>
-              <p className="text-xs text-[#0c1929]">{formatNightLabel(checkIn, checkOut)}</p>
+              <p className="text-lg font-bold text-[#411F0F]">{breakdown.nights} night{breakdown.nights !== 1 ? "s" : ""}</p>
+              <p className="text-xs text-[#411F0F]">{formatNightLabel(checkIn, checkOut)}</p>
             </div>
           )}
           <div className="flex flex-1 rounded-[10px] border border-slate-300 overflow-hidden divide-x divide-slate-300">
             <div className="flex-1 px-3 py-2">
-              <p className="text-[9px] font-bold uppercase tracking-wider text-[#0c1929]">Check-in</p>
+              <p className="text-[9px] font-bold uppercase tracking-wider text-[#411F0F]">Check-in</p>
               <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-[#0c1929]">{checkIn || "Add date"}</p>
-                {checkIn && <button onClick={clearCheckIn} className="text-[#0c1929] hover:text-[#0c1929]"><X className="h-3.5 w-3.5" /></button>}
+                <p className="text-sm font-medium text-[#411F0F]">{checkIn || "Add date"}</p>
+                {checkIn && <button onClick={clearCheckIn} className="text-[#411F0F] hover:text-[#411F0F]"><X className="h-3.5 w-3.5" /></button>}
               </div>
             </div>
             <div className="flex-1 px-3 py-2">
-              <p className="text-[9px] font-bold uppercase tracking-wider text-[#0c1929]">Checkout</p>
+              <p className="text-[9px] font-bold uppercase tracking-wider text-[#411F0F]">Checkout</p>
               <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-[#0c1929]">{checkOut || "Add date"}</p>
-                {checkOut && <button onClick={clearCheckOut} className="text-[#0c1929] hover:text-[#0c1929]"><X className="h-3.5 w-3.5" /></button>}
+                <p className="text-sm font-medium text-[#411F0F]">{checkOut || "Add date"}</p>
+                {checkOut && <button onClick={clearCheckOut} className="text-[#411F0F] hover:text-[#411F0F]"><X className="h-3.5 w-3.5" /></button>}
               </div>
             </div>
           </div>
           <button
             onClick={() => setCalendarOpen(false)}
-            className="rounded-xl bg-[#0c1929] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#0c1929] transition shrink-0"
+            className="rounded-xl bg-[#411F0F] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#411F0F] transition shrink-0"
           >
             Close
           </button>
@@ -616,9 +616,9 @@ export default function ListingBookingSection({
 
       {/* Mobile Sticky Bottom Bar */}
       {!isCheckout && mountedPortal && (layout === "both" || layout === "mobile") && createPortal(
-        <div className="fixed bottom-0 left-0 right-0 z-40 flex lg:hidden items-center justify-between border-t border-slate-200 bg-white px-5 py-4 shadow-[0_-8px_20px_rgba(12,25,41,0.05)] pb-safe">
+        <div className="fixed bottom-0 left-0 right-0 z-40 flex lg:hidden items-center justify-between border-t border-slate-200 bg-white px-5 py-4 shadow-[0_-8px_20px_rgba(65, 31, 15,0.05)] pb-safe">
           <button onClick={() => { if (hasBooking) setPriceSheetOpen(true); }} className="flex flex-col items-start text-left">
-            <span className={`text-[17px] font-bold text-[#0c1929] ${hasBooking ? "underline decoration-[#0c1929] underline-offset-2" : ""}`}>
+            <span className={`text-[17px] font-bold text-[#411F0F] ${hasBooking ? "underline decoration-[#411F0F] underline-offset-2" : ""}`}>
               {formatCurrency(displayedTotal)} total
             </span>
             <span className="text-sm font-semibold text-emerald-600">
@@ -630,7 +630,7 @@ export default function ListingBookingSection({
               if (hasBooking) handleReserve();
               else setMobileSheetOpen(true);
             }}
-            className="rounded-full bg-[#0c1929] px-8 py-3.5 text-sm font-bold text-white shadow-lg transition active:scale-[0.98]"
+            className="rounded-full bg-[#411F0F] px-8 py-3.5 text-sm font-bold text-white shadow-lg transition active:scale-[0.98]"
           >
             {hasBooking ? "Reserve" : "Check availability"}
           </button>
@@ -641,18 +641,18 @@ export default function ListingBookingSection({
       {/* Mobile Price Details Sheet Modal */}
       {!isCheckout && (priceSheetOpen || closingPriceSheet) && mountedPortal && (layout === "both" || layout === "mobile") && createPortal(
         <>
-          <div className={`fixed inset-0 bg-[#0c1929]/40 z-[9998] lg:hidden ${closingPriceSheet ? "mobile-backdrop-close" : "mobile-backdrop-animate"}`} onClick={handleClosePriceSheet} />
+          <div className={`fixed inset-0 bg-[#411F0F]/40 z-[9998] lg:hidden ${closingPriceSheet ? "mobile-backdrop-close" : "mobile-backdrop-animate"}`} onClick={handleClosePriceSheet} />
           <div className={`fixed inset-x-0 bottom-0 top-[120px] z-[9999] lg:hidden bg-white flex flex-col rounded-t-[24px] ${closingPriceSheet ? "mobile-modal-close" : "mobile-modal-animate"}`}>
             <div className="flex justify-start px-4 pt-4 mb-2">
               <button type="button" onClick={handleClosePriceSheet} className="p-2 rounded-full hover:bg-slate-100 transition">
-                <X className="h-5 w-5 text-[#0c1929]" />
+                <X className="h-5 w-5 text-[#411F0F]" />
               </button>
             </div>
             
             <div className="flex-1 overflow-y-auto px-6 pb-32 hide-scrollbar">
-              <h2 className="text-[24px] font-bold text-[#0c1929] mb-6">Price details</h2>
+              <h2 className="text-[24px] font-bold text-[#411F0F] mb-6">Price details</h2>
               
-              <div className="space-y-4 text-[15px] text-[#0c1929]">
+              <div className="space-y-4 text-[15px] text-[#411F0F]">
                 <div className="flex justify-between items-center">
                   <span>{breakdown.nights} nights x {formatCurrency(breakdown.avgNightlyRate)} CAD</span>
                   <span>{formatCurrency(breakdown.nightlySubtotal)} CAD</span>
@@ -699,25 +699,25 @@ export default function ListingBookingSection({
 
               <div className="mt-8 pt-6 border-t border-slate-200 flex items-start justify-between">
                 <div>
-                  <h3 className="text-[17px] font-bold text-[#0c1929] mb-1">Dates</h3>
-                  <p className="text-[15px] text-[#0c1929] font-medium">{formatNightLabel(checkIn, checkOut)}</p>
+                  <h3 className="text-[17px] font-bold text-[#411F0F] mb-1">Dates</h3>
+                  <p className="text-[15px] text-[#411F0F] font-medium">{formatNightLabel(checkIn, checkOut)}</p>
                   <p className="text-[13px] text-slate-500 mt-0.5">{cancellationText}</p>
                 </div>
                 <button 
                   type="button" 
                   onClick={() => { handleClosePriceSheet(); setTimeout(() => setMobileSheetOpen(true), 150); }}
-                  className="rounded-[10px] bg-slate-100 px-4 py-2 text-[14px] font-semibold text-[#0c1929] transition hover:bg-slate-200"
+                  className="rounded-[10px] bg-slate-100 px-4 py-2 text-[14px] font-semibold text-[#411F0F] transition hover:bg-slate-200"
                 >
                   Change
                 </button>
               </div>
             </div>
 
-            <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-slate-200 z-10 rounded-t-[24px] shadow-[0_-4px_20px_rgba(12,25,41,0.05)] pb-safe">
+            <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-slate-200 z-10 rounded-t-[24px] shadow-[0_-4px_20px_rgba(65, 31, 15,0.05)] pb-safe">
               <button 
                 type="button" 
                 onClick={(e) => { handleClosePriceSheet(); handleReserve(e); }} 
-                className="w-full rounded-full bg-[#0c1929] py-4 text-base font-bold text-white shadow-lg transition active:scale-[0.98]"
+                className="w-full rounded-full bg-[#411F0F] py-4 text-base font-bold text-white shadow-lg transition active:scale-[0.98]"
               >
                 Reserve
               </button>
@@ -730,7 +730,7 @@ export default function ListingBookingSection({
       {/* Mobile Booking Sheet Modal */}
       {!isCheckout && (mobileSheetOpen || closingPanel) && mountedPortal && (layout === "both" || layout === "mobile") && createPortal(
         <>
-          <div className={`fixed inset-0 bg-[#0c1929]/40 z-[9998] lg:hidden ${closingPanel ? "mobile-backdrop-close" : "mobile-backdrop-animate"}`} onClick={handleClosePanel} />
+          <div className={`fixed inset-0 bg-[#411F0F]/40 z-[9998] lg:hidden ${closingPanel ? "mobile-backdrop-close" : "mobile-backdrop-animate"}`} onClick={handleClosePanel} />
           <div className={`fixed inset-x-0 bottom-0 top-[100px] z-[9999] lg:hidden bg-white flex flex-col rounded-t-[32px] ${closingPanel ? "mobile-modal-close" : "mobile-modal-animate"}`}>
              <div className="flex-1 overflow-y-auto p-0 pb-32">
                <div className="flex justify-between items-center px-5 pt-6 mb-4">
@@ -774,23 +774,23 @@ export default function ListingBookingSection({
                    {activeCancellationPolicy?.offerNonRefundableDiscount ? (
                      <div className="rounded-[24px] border border-slate-200 overflow-hidden divide-y divide-slate-100 bg-white shadow-sm">
                         <label className={`flex items-start gap-3 p-4 cursor-pointer transition ${!nonRefundable ? "bg-slate-50" : ""}`}>
-                          <input type="radio" name="mobile-refundability" className="mt-1 w-4 h-4 text-[#0c1929]" checked={!nonRefundable} onChange={() => { setNonRefundable(false); updateUrlParams(checkIn, checkOut, false); if(typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('syncNonRefundable', { detail: false })); }} />
+                          <input type="radio" name="mobile-refundability" className="mt-1 w-4 h-4 text-[#411F0F]" checked={!nonRefundable} onChange={() => { setNonRefundable(false); updateUrlParams(checkIn, checkOut, false); if(typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('syncNonRefundable', { detail: false })); }} />
                           <div className="flex flex-col">
-                            <span className="font-semibold text-[#0c1929] text-[15px]">Standard: {formatCurrency(standardBreakdown.total)}</span>
-                            <span className="text-sm text-[#0c1929] mt-1">{cancellationText}</span>
-                            {partialCancellationText && <span className="text-sm text-[#0c1929] font-medium mt-0.5">{partialCancellationText}</span>}
+                            <span className="font-semibold text-[#411F0F] text-[15px]">Standard: {formatCurrency(standardBreakdown.total)}</span>
+                            <span className="text-sm text-[#411F0F] mt-1">{cancellationText}</span>
+                            {partialCancellationText && <span className="text-sm text-[#411F0F] font-medium mt-0.5">{partialCancellationText}</span>}
                           </div>
                         </label>
                         <label className={`flex items-start gap-3 p-4 cursor-pointer transition ${nonRefundable ? "bg-slate-50" : ""}`}>
-                          <input type="radio" name="mobile-refundability" className="mt-1 w-4 h-4 text-[#0c1929]" checked={nonRefundable} onChange={() => { setNonRefundable(true); updateUrlParams(checkIn, checkOut, true); if(typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('syncNonRefundable', { detail: true })); }} />
+                          <input type="radio" name="mobile-refundability" className="mt-1 w-4 h-4 text-[#411F0F]" checked={nonRefundable} onChange={() => { setNonRefundable(true); updateUrlParams(checkIn, checkOut, true); if(typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('syncNonRefundable', { detail: true })); }} />
                           <div className="flex flex-col">
-                            <span className="font-semibold text-[#0c1929] text-[15px]">Non-refundable: {formatCurrency(nonRefBreakdown.total)}</span>
-                            <span className="text-sm text-[#0c1929] mt-1">Save {nonRefBreakdown.nonRefundableDiscountPercentage}% but cancel without a refund.</span>
+                            <span className="font-semibold text-[#411F0F] text-[15px]">Non-refundable: {formatCurrency(nonRefBreakdown.total)}</span>
+                            <span className="text-sm text-[#411F0F] mt-1">Save {nonRefBreakdown.nonRefundableDiscountPercentage}% but cancel without a refund.</span>
                           </div>
                         </label>
                      </div>
                    ) : (
-                     <div className="rounded-[24px] border border-slate-200 p-4 bg-slate-50 shadow-sm text-sm text-[#0c1929]">
+                     <div className="rounded-[24px] border border-slate-200 p-4 bg-slate-50 shadow-sm text-sm text-[#411F0F]">
                        <span className="font-semibold text-[15px] block mb-1">{cancellationText}</span>
                        {partialCancellationText && <span className="block mt-1">{partialCancellationText}</span>}
                      </div>
@@ -800,7 +800,7 @@ export default function ListingBookingSection({
              </div>
 
              {/* Sticky Bottom Action Bar inside the sheet */}
-             <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-slate-200 flex justify-between items-center z-10 rounded-t-[24px] shadow-[0_-4px_20px_rgba(12,25,41,0.05)] pb-safe">
+             <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-slate-200 flex justify-between items-center z-10 rounded-t-[24px] shadow-[0_-4px_20px_rgba(65, 31, 15,0.05)] pb-safe">
                <button type="button" onClick={() => { setCheckIn(""); setCheckOut(""); }} className="text-base font-semibold underline decoration-2 underline-offset-2">
                  Clear dates
                </button>
@@ -808,7 +808,7 @@ export default function ListingBookingSection({
                  type="button" 
                  disabled={!hasBooking}
                  onClick={() => handleClosePanel()} 
-                 className="rounded-full bg-[#0c1929] px-8 py-4 text-base font-bold text-white shadow-lg transition flex items-center gap-2 hover:scale-[1.02] disabled:opacity-50"
+                 className="rounded-full bg-[#411F0F] px-8 py-4 text-base font-bold text-white shadow-lg transition flex items-center gap-2 hover:scale-[1.02] disabled:opacity-50"
                >
                  Apply
                </button>
@@ -833,14 +833,14 @@ function GuestRow({ label, sublabel, value, onDecrement, onIncrement, canDecreme
   return (
     <div className="flex items-center justify-between py-2">
       <div>
-        <h4 className="font-semibold text-[#0c1929]">{label}</h4>
-        <p className="text-sm text-[#0c1929]">{sublabel}</p>
+        <h4 className="font-semibold text-[#411F0F]">{label}</h4>
+        <p className="text-sm text-[#411F0F]">{sublabel}</p>
       </div>
       <div className="flex items-center gap-3">
         <button
           onClick={onDecrement}
           disabled={!canDecrement}
-          className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-[#0c1929] hover:border-[#0c1929] hover:text-[#0c1929] disabled:opacity-30 disabled:cursor-not-allowed transition"
+          className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-[#411F0F] hover:border-[#411F0F] hover:text-[#411F0F] disabled:opacity-30 disabled:cursor-not-allowed transition"
         >
           <Minus className="h-4 w-4" />
         </button>
@@ -848,7 +848,7 @@ function GuestRow({ label, sublabel, value, onDecrement, onIncrement, canDecreme
         <button
           onClick={onIncrement}
           disabled={!canIncrement}
-          className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-[#0c1929] hover:border-[#0c1929] hover:text-[#0c1929] disabled:opacity-30 disabled:cursor-not-allowed transition"
+          className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-[#411F0F] hover:border-[#411F0F] hover:text-[#411F0F] disabled:opacity-30 disabled:cursor-not-allowed transition"
         >
           <Plus className="h-4 w-4" />
         </button>

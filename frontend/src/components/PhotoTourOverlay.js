@@ -44,14 +44,14 @@ export default function PhotoTourOverlay({ tourData, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-[#f3f5f8]">
+    <div className="fixed inset-0 z-50 flex flex-col bg-[#FBF6EC]">
       {/* Header — matches main NavBar style */}
       <div className="sticky top-0 z-20 w-full px-3 pt-3 md:px-6">
         <div className="mx-auto flex w-full max-w-[1600px] items-center gap-4 rounded-[30px] glass-panel px-5 py-4 md:px-6">
           {/* Back / close button */}
           <button
             onClick={onClose}
-            className="inline-flex items-center gap-2 text-sm font-medium text-[#0c1929] hover:text-[#0c1929] shrink-0 transition"
+            className="inline-flex items-center gap-2 text-sm font-medium text-[#411F0F] hover:text-[#411F0F] shrink-0 transition"
             aria-label="Close tour"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -60,11 +60,11 @@ export default function PhotoTourOverlay({ tourData, onClose }) {
 
           {/* Divider + Logo */}
           <div className="hidden h-8 w-px bg-slate-200 md:block shrink-0" />
-          <div className="hidden items-center gap-2 text-[#0c1929] md:flex shrink-0">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-[#0c1929] to-[#24456e] text-lg font-black text-white shadow-md shadow-[#0c1929]/30">
+          <div className="hidden items-center gap-2 text-[#411F0F] md:flex shrink-0">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-[#411F0F] to-[#8A6A4E] text-lg font-black text-white shadow-md shadow-[#411F0F]/30">
               H
             </span>
-            <p className="text-base font-medium tracking-[0.18em] text-[#0c1929] uppercase">HomEV</p>
+            <p className="text-base font-medium tracking-[0.18em] text-[#411F0F] uppercase">HomEV</p>
           </div>
 
           {/* Divider */}
@@ -97,7 +97,7 @@ export default function PhotoTourOverlay({ tourData, onClose }) {
               </div>
               <span
                 className={`text-[13px] font-semibold tracking-tight whitespace-nowrap ${
-                  activeSection === section.space ? "text-[#0c1929]" : "text-[#0c1929] group-hover:text-[#0c1929]"
+                  activeSection === section.space ? "text-[#411F0F]" : "text-[#411F0F] group-hover:text-[#411F0F]"
                 }`}
               >
                 {section.space}
@@ -118,7 +118,7 @@ export default function PhotoTourOverlay({ tourData, onClose }) {
               ref={(el) => (sectionRefs.current[section.space] = el)}
               className="scroll-mt-24"
             >
-              <h2 className="mb-6 text-2xl font-bold tracking-tight text-[#0c1929] md:text-3xl">
+              <h2 className="mb-6 text-2xl font-bold tracking-tight text-[#411F0F] md:text-3xl">
                 {section.space}
               </h2>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

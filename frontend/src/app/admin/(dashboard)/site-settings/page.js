@@ -97,7 +97,7 @@ export default function SiteSettingsPage() {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <LoaderCircle className="h-8 w-8 animate-spin text-[#0c1929]" />
+                <LoaderCircle className="h-8 w-8 animate-spin text-[#411F0F]" />
             </div>
         );
     }
@@ -105,42 +105,42 @@ export default function SiteSettingsPage() {
     return (
         <div className="max-w-3xl mx-auto space-y-6">
             <div className="mb-8">
-                <h1 className="text-2xl font-bold text-[#0c1929]">Contact & Social Settings</h1>
+                <h1 className="text-2xl font-bold text-[#411F0F]">Contact & Social Settings</h1>
                 <p className="mt-1 text-sm text-slate-600">Update the public contact information and social media links displayed on the website.</p>
             </div>
 
             {/* Contact Info */}
             <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                <h2 className="text-lg font-semibold text-[#0c1929] mb-4">Contact Information</h2>
+                <h2 className="text-lg font-semibold text-[#411F0F] mb-4">Contact Information</h2>
                 <div className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-[#0c1929] mb-1.5">Public Email Address</label>
+                        <label className="block text-sm font-medium text-[#411F0F] mb-1.5">Public Email Address</label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="support@homev.ca"
-                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-[#0c1929] focus:ring-1 focus:ring-[#0c1929] transition"
+                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-[#411F0F] focus:ring-1 focus:ring-[#411F0F] transition"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-[#0c1929] mb-1.5">Public Phone Number</label>
+                        <label className="block text-sm font-medium text-[#411F0F] mb-1.5">Public Phone Number</label>
                         <input
                             type="text"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
                             placeholder="+1 (888) 123-4567"
-                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-[#0c1929] focus:ring-1 focus:ring-[#0c1929] transition"
+                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-[#411F0F] focus:ring-1 focus:ring-[#411F0F] transition"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-[#0c1929] mb-1.5">Physical Address / Location</label>
+                        <label className="block text-sm font-medium text-[#411F0F] mb-1.5">Physical Address / Location</label>
                         <input
                             type="text"
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
                             placeholder="Toronto, ON, Canada"
-                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-[#0c1929] focus:ring-1 focus:ring-[#0c1929] transition"
+                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-[#411F0F] focus:ring-1 focus:ring-[#411F0F] transition"
                         />
                     </div>
                 </div>
@@ -149,10 +149,10 @@ export default function SiteSettingsPage() {
             {/* Social Links */}
             <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold text-[#0c1929]">Social Media Links</h2>
+                    <h2 className="text-lg font-semibold text-[#411F0F]">Social Media Links</h2>
                     <button
                         onClick={addSocialLink}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-[#0c1929] bg-slate-100 rounded-lg hover:bg-slate-200 transition"
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-[#411F0F] bg-slate-100 rounded-lg hover:bg-slate-200 transition"
                     >
                         <Plus className="w-4 h-4" /> Add Link
                     </button>
@@ -165,14 +165,14 @@ export default function SiteSettingsPage() {
                         socialLinks.map((link, idx) => (
                             <div key={idx} className="flex items-start gap-3 p-4 border border-slate-100 rounded-xl bg-slate-50/50">
                                 <div className="flex flex-col gap-1 pt-1">
-                                    <button onClick={() => moveSocialLink(idx, -1)} disabled={idx === 0} className="text-slate-400 hover:text-[#0c1929] disabled:opacity-30">▲</button>
-                                    <button onClick={() => moveSocialLink(idx, 1)} disabled={idx === socialLinks.length - 1} className="text-slate-400 hover:text-[#0c1929] disabled:opacity-30">▼</button>
+                                    <button onClick={() => moveSocialLink(idx, -1)} disabled={idx === 0} className="text-slate-400 hover:text-[#411F0F] disabled:opacity-30">▲</button>
+                                    <button onClick={() => moveSocialLink(idx, 1)} disabled={idx === socialLinks.length - 1} className="text-slate-400 hover:text-[#411F0F] disabled:opacity-30">▼</button>
                                 </div>
                                 <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3">
                                     <select
                                         value={link.platform}
                                         onChange={(e) => updateSocialLink(idx, "platform", e.target.value)}
-                                        className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-[#0c1929]"
+                                        className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-[#411F0F]"
                                     >
                                         {PLATFORMS.map(p => <option key={p} value={p}>{p}</option>)}
                                     </select>
@@ -181,14 +181,14 @@ export default function SiteSettingsPage() {
                                         value={link.label}
                                         onChange={(e) => updateSocialLink(idx, "label", e.target.value)}
                                         placeholder="Display Label (e.g. @homev)"
-                                        className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-[#0c1929]"
+                                        className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-[#411F0F]"
                                     />
                                     <input
                                         type="url"
                                         value={link.url}
                                         onChange={(e) => updateSocialLink(idx, "url", e.target.value)}
                                         placeholder="https://..."
-                                        className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-[#0c1929]"
+                                        className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-[#411F0F]"
                                     />
                                 </div>
                                 <button
@@ -208,7 +208,7 @@ export default function SiteSettingsPage() {
                 <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#0c1929] px-8 py-3 text-sm font-semibold text-white shadow-md shadow-[#0c1929]/20 transition hover:bg-[#152b47] disabled:opacity-60"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#411F0F] px-8 py-3 text-sm font-semibold text-white shadow-md shadow-[#411F0F]/20 transition hover:bg-[#472312] disabled:opacity-60"
                 >
                     {saving ? (
                         <><LoaderCircle className="h-4 w-4 animate-spin" /> Saving...</>

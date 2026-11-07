@@ -91,18 +91,18 @@ export default function GuestsModule() {
     <div className="h-full flex flex-col">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-[#0c1929] tracking-tight">Guest Directory</h1>
-          <p className="mt-1 text-sm text-[#0c1929] font-medium">A secure repository of every individual who has submitted their contact information and stayed with us.</p>
+          <h1 className="text-3xl font-bold text-[#411F0F] tracking-tight">Guest Directory</h1>
+          <p className="mt-1 text-sm text-[#411F0F] font-medium">A secure repository of every individual who has submitted their contact information and stayed with us.</p>
         </div>
         <div className="flex gap-4">
           <div className="relative w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#0c1929]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#411F0F]" />
             <input
               type="text"
               placeholder="Search by name, email, or phone..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white border border-slate-300 placeholder:text-[#0c1929] text-sm text-[#0c1929] focus:outline-none focus:ring-2 focus:ring-[#0c1929] transition-all shadow-[0_2px_10px_rgba(12,25,41,0.02)]"
+              className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white border border-slate-300 placeholder:text-[#411F0F] text-sm text-[#411F0F] focus:outline-none focus:ring-2 focus:ring-[#411F0F] transition-all shadow-[0_2px_10px_rgba(65, 31, 15,0.02)]"
             />
           </div>
         </div>
@@ -113,24 +113,24 @@ export default function GuestsModule() {
           Error: {error}
         </div>
       ) : loading ? (
-        <div className="flex flex-col items-center justify-center flex-1 bg-white rounded-[24px] border border-slate-100 shadow-[0_4px_30px_rgba(12,25,41,0.02)]">
+        <div className="flex flex-col items-center justify-center flex-1 bg-white rounded-[24px] border border-slate-100 shadow-[0_4px_30px_rgba(65, 31, 15,0.02)]">
           <LoaderCircle className="w-8 h-8 text-slate-300 animate-spin" />
-          <p className="mt-4 text-sm text-[#0c1929] font-medium tracking-wide">Decrypting directory records...</p>
+          <p className="mt-4 text-sm text-[#411F0F] font-medium tracking-wide">Decrypting directory records...</p>
         </div>
       ) : (
-        <div className="bg-white rounded-[24px] overflow-hidden flex-1 border border-slate-200 shadow-[0_4px_30px_rgba(12,25,41,0.02)]">
+        <div className="bg-white rounded-[24px] overflow-hidden flex-1 border border-slate-200 shadow-[0_4px_30px_rgba(65, 31, 15,0.02)]">
           <div className="px-6 py-5 border-b border-slate-200 bg-slate-50/50 flex justify-between items-center">
-            <h3 className="text-xs font-bold tracking-widest uppercase text-[#0c1929] flex items-center gap-2">
-              <Users className="w-4 h-4 text-[#0c1929]" /> Validated Records
+            <h3 className="text-xs font-bold tracking-widest uppercase text-[#411F0F] flex items-center gap-2">
+              <Users className="w-4 h-4 text-[#411F0F]" /> Validated Records
             </h3>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#0c1929] bg-white shadow-sm border border-slate-200 py-1.5 px-3 rounded-full">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#411F0F] bg-white shadow-sm border border-slate-200 py-1.5 px-3 rounded-full">
               {filteredGuests.length} Total
             </span>
           </div>
           <div className="overflow-x-auto h-[calc(100vh-280px)]">
             <table className="w-full text-left border-collapse relative">
               <thead className="sticky top-0 z-10">
-                <tr className="border-b border-slate-100 text-[10px] text-[#0c1929] uppercase tracking-widest bg-white">
+                <tr className="border-b border-slate-100 text-[10px] text-[#411F0F] uppercase tracking-widest bg-white">
                   <th className="px-6 py-4 font-bold">Guest Identity</th>
                   <th className="px-6 py-4 font-bold">Contact Intelligence</th>
                   <th className="px-6 py-4 font-bold text-center">Account Created</th>
@@ -138,7 +138,7 @@ export default function GuestsModule() {
                   <th className="px-6 py-4 font-bold text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-sm text-[#0c1929] bg-white">
+              <tbody className="divide-y divide-slate-100 text-sm text-[#411F0F] bg-white">
                 {filteredGuests.length > 0 ? filteredGuests.map(guest => (
                   <tr key={guest.id} onClick={() => router.push(`/admin/guests/${guest.id}`)} className="hover:bg-slate-50 transition-colors group cursor-pointer">
                     <td className="px-4 py-4">
@@ -147,35 +147,35 @@ export default function GuestsModule() {
                           {guest.firstName ? guest.firstName.charAt(0).toUpperCase() : 'G'}
                         </div>
                         <div>
-                          <p className="font-bold text-[#0c1929] group-hover:text-blue-700 transition-colors">
+                          <p className="font-bold text-[#411F0F] group-hover:text-blue-700 transition-colors">
                             {guest.firstName} {guest.lastName}
                           </p>
-                          <p className="text-[10px] font-mono text-[#0c1929] mt-0.5 tracking-wider uppercase">ID: {guest.id.split('-')[0]}</p>
+                          <p className="text-[10px] font-mono text-[#411F0F] mt-0.5 tracking-wider uppercase">ID: {guest.id.split('-')[0]}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <div className="flex flex-col gap-1.5 text-xs text-[#0c1929] font-medium">
+                      <div className="flex flex-col gap-1.5 text-xs text-[#411F0F] font-medium">
                         {guest.email && !guest.email.includes('@placeholder.com') && (
                           <div className="flex items-center gap-2">
-                            <Mail className="w-3.5 h-3.5 text-[#0c1929]" />
+                            <Mail className="w-3.5 h-3.5 text-[#411F0F]" />
                             {guest.email}
                           </div>
                         )}
                         {guest.phone && (
                           <div className="flex items-center gap-2">
-                            <Phone className="w-3.5 h-3.5 text-[#0c1929]" />
+                            <Phone className="w-3.5 h-3.5 text-[#411F0F]" />
                             {formatPhone(guest.phone)}
                           </div>
                         )}
                         {(!guest.email || guest.email.includes('@placeholder.com')) && !guest.phone && (
-                          <span className="text-[#0c1929] italic">No direct contact available</span>
+                          <span className="text-[#411F0F] italic">No direct contact available</span>
                         )}
                       </div>
                     </td>
                     <td className="px-4 py-4 text-center">
-                      <span className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-[#0c1929] uppercase tracking-wider">
-                        <Calendar className="w-3.5 h-3.5 text-[#0c1929]" />
+                      <span className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-[#411F0F] uppercase tracking-wider">
+                        <Calendar className="w-3.5 h-3.5 text-[#411F0F]" />
                         {new Date(guest.createdAt).toLocaleDateString([], { month: 'short', day: '2-digit', year: 'numeric' })}
                       </span>
                     </td>
@@ -185,7 +185,7 @@ export default function GuestsModule() {
                           {guest._count.reservations}
                         </span>
                       ) : (
-                        <span className="inline-flex items-center justify-center px-3 py-1 bg-slate-100 text-[#0c1929] rounded-full text-xs font-semibold ring-1 ring-inset ring-slate-200">
+                        <span className="inline-flex items-center justify-center px-3 py-1 bg-slate-100 text-[#411F0F] rounded-full text-xs font-semibold ring-1 ring-inset ring-slate-200">
                           Zero
                         </span>
                       )}
@@ -209,7 +209,7 @@ export default function GuestsModule() {
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan="5" className="px-6 py-16 text-center text-[#0c1929] font-medium text-sm">
+                    <td colSpan="5" className="px-6 py-16 text-center text-[#411F0F] font-medium text-sm">
                       {search ? "No guests match your search sequence." : "The guest database is currently empty."}
                     </td>
                   </tr>

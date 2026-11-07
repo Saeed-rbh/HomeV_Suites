@@ -1,6 +1,6 @@
 export default function ListingLoading() {
   return (
-    <div className="min-h-screen bg-[#f3f5f8] px-4 pb-16 pt-6 md:px-6">
+    <div className="min-h-screen bg-[#FBF6EC] px-4 pb-16 pt-6 md:px-6">
       <div className="mx-auto max-w-[1600px]">
         <div className="skeleton-pulse skeleton-surface h-5 w-40 rounded-full" />
         <div className="mt-5 space-y-3">

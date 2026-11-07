@@ -42,19 +42,19 @@ export default function ReceiptPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#f3f5f8]">
-        <LoaderCircle className="h-8 w-8 animate-spin text-[#0c1929]" />
+      <div className="flex min-h-screen items-center justify-center bg-[#FBF6EC]">
+        <LoaderCircle className="h-8 w-8 animate-spin text-[#411F0F]" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-[#f3f5f8] px-4">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-[#FBF6EC] px-4">
         <div className="rounded-[28px] bg-white p-8 shadow-sm text-center max-w-md w-full border border-slate-100">
-            <h2 className="text-xl font-bold text-[#0c1929] mb-3">Unable to load receipt</h2>
-            <p className="text-[#0c1929] text-sm mb-6">{error}</p>
-            <Link href="/trips" className="inline-flex w-full items-center justify-center rounded-full bg-[#0c1929] py-3.5 text-sm font-semibold text-white transition hover:bg-[#152b47]">
+            <h2 className="text-xl font-bold text-[#411F0F] mb-3">Unable to load receipt</h2>
+            <p className="text-[#411F0F] text-sm mb-6">{error}</p>
+            <Link href="/trips" className="inline-flex w-full items-center justify-center rounded-full bg-[#411F0F] py-3.5 text-sm font-semibold text-white transition hover:bg-[#472312]">
                 Return to Trips
             </Link>
         </div>
@@ -78,30 +78,30 @@ export default function ReceiptPage() {
       <div className="w-full max-w-[800px] flex items-center justify-between mb-8 print:hidden">
         <Link 
             href="/trips" 
-            className="flex items-center gap-2 text-sm font-semibold text-[#0c1929] hover:bg-slate-200 px-4 py-2 rounded-full transition"
+            className="flex items-center gap-2 text-sm font-semibold text-[#411F0F] hover:bg-slate-200 px-4 py-2 rounded-full transition"
         >
             <ArrowLeft className="h-4 w-4" /> Back to dashboard
         </Link>
         <button 
             onClick={() => window.print()} 
-            className="flex items-center gap-2 text-sm font-semibold text-white bg-[#0c1929] hover:bg-[#152b47] px-6 py-2.5 rounded-full transition shadow-md"
+            className="flex items-center gap-2 text-sm font-semibold text-white bg-[#411F0F] hover:bg-[#472312] px-6 py-2.5 rounded-full transition shadow-md"
         >
             <Download className="h-4 w-4" /> Download PDF / Print
         </button>
       </div>
 
       {/* Actual Receipt Page */}
-      <div className="w-full max-w-[800px] bg-white rounded-[24px] print:rounded-none border border-slate-200 print:border-none shadow-[0_8px_30px_rgba(12,25,41,0.04)] print:shadow-none overflow-hidden">
+      <div className="w-full max-w-[800px] bg-white rounded-[24px] print:rounded-none border border-slate-200 print:border-none shadow-[0_8px_30px_rgba(65, 31, 15,0.04)] print:shadow-none overflow-hidden">
         
         {/* Header */}
-        <div className="bg-[#0c1929] text-white px-8 py-10 flex items-center justify-between print:bg-[#0c1929] print:text-black print:border-b-4 print:border-slate-800">
+        <div className="bg-[#411F0F] text-white px-8 py-10 flex items-center justify-between print:bg-[#411F0F] print:text-black print:border-b-4 print:border-slate-800">
             <div>
-                <h1 className="text-3xl font-black tracking-tight mb-1 print:text-[#0c1929]">HomEV.</h1>
+                <h1 className="text-3xl font-black tracking-tight mb-1 print:text-[#411F0F]">HomEV.</h1>
                 <p className="text-white/70 text-sm font-medium tracking-wide print:text-slate-600">Official Receipt</p>
             </div>
             <div className="text-right">
                 <p className="text-sm text-white/80 font-medium mb-0.5 print:text-slate-600">Receipt ID</p>
-                <p className="text-base font-bold uppercase tracking-wider print:text-[#0c1929]">{reservation.id.split("-")[0]}</p>
+                <p className="text-base font-bold uppercase tracking-wider print:text-[#411F0F]">{reservation.id.split("-")[0]}</p>
             </div>
         </div>
 
@@ -109,24 +109,24 @@ export default function ReceiptPage() {
             <div className="grid sm:grid-cols-2 gap-10 border-b border-slate-100 pb-10">
                 {/* Guest Details */}
                 <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#0c1929] mb-3">Billed To</p>
-                    <p className="text-lg font-bold text-[#0c1929]">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#411F0F] mb-3">Billed To</p>
+                    <p className="text-lg font-bold text-[#411F0F]">
                         {reservation.guest ? `${reservation.guest.firstName || ""} ${reservation.guest.lastName || ""}`.trim() || "Guest" : "Guest"}
                     </p>
-                    {reservation.guest?.email && <p className="text-sm text-[#0c1929] mt-1">{reservation.guest.email}</p>}
-                    <p className="text-sm text-[#0c1929] mt-3 font-medium bg-slate-50 inline-block px-3 py-1 rounded-md border border-slate-200">
+                    {reservation.guest?.email && <p className="text-sm text-[#411F0F] mt-1">{reservation.guest.email}</p>}
+                    <p className="text-sm text-[#411F0F] mt-3 font-medium bg-slate-50 inline-block px-3 py-1 rounded-md border border-slate-200">
                         Paid via Secure Checkout
                     </p>
                 </div>
 
                 {/* Property Details */}
                 <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#0c1929] mb-3">Booking Details</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#411F0F] mb-3">Booking Details</p>
                     <div className="flex items-start gap-3">
-                        <Home className="h-5 w-5 text-[#0c1929] shrink-0 mt-0.5" />
+                        <Home className="h-5 w-5 text-[#411F0F] shrink-0 mt-0.5" />
                         <div>
-                            <p className="text-base font-bold text-[#0c1929]">{property.title || "HomEV Stay"}</p>
-                            <p className="text-sm text-[#0c1929] mt-0.5 leading-snug">{property.address || property.location || "Location on file"}</p>
+                            <p className="text-base font-bold text-[#411F0F]">{property.title || "HomEV Stay"}</p>
+                            <p className="text-sm text-[#411F0F] mt-0.5 leading-snug">{property.address || property.location || "Location on file"}</p>
                         </div>
                     </div>
                 </div>
@@ -135,29 +135,29 @@ export default function ReceiptPage() {
             {/* Dates */}
             <div className="py-8 border-b border-slate-100 flex items-center justify-between gap-4 flex-wrap">
                 <div className="flex items-center gap-3 bg-slate-50 px-5 py-4 rounded-xl border border-slate-100 flex-1 min-w-[200px]">
-                    <Calendar className="h-6 w-6 text-[#0c1929]" />
+                    <Calendar className="h-6 w-6 text-[#411F0F]" />
                     <div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-[#0c1929]">Check-in</p>
-                        <p className="text-base font-bold text-[#0c1929]">{fmtDate(start)}</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-[#411F0F]">Check-in</p>
+                        <p className="text-base font-bold text-[#411F0F]">{fmtDate(start)}</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3 bg-slate-50 px-5 py-4 rounded-xl border border-slate-100 flex-1 min-w-[200px]">
-                    <Calendar className="h-6 w-6 text-[#0c1929]" />
+                    <Calendar className="h-6 w-6 text-[#411F0F]" />
                     <div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-[#0c1929]">Checkout</p>
-                        <p className="text-base font-bold text-[#0c1929]">{fmtDate(end)}</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-[#411F0F]">Checkout</p>
+                        <p className="text-base font-bold text-[#411F0F]">{fmtDate(end)}</p>
                     </div>
                 </div>
                 <div className="px-4 py-2">
-                    <p className="text-lg font-black text-[#0c1929] text-center">{nights} Night{nights !== 1 ? 's' : ''}</p>
+                    <p className="text-lg font-black text-[#411F0F] text-center">{nights} Night{nights !== 1 ? 's' : ''}</p>
                 </div>
             </div>
 
             {/* Breakdown */}
             <div className="py-8">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#0c1929] mb-5">Charges Breakdown</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#411F0F] mb-5">Charges Breakdown</p>
                 <div className="space-y-4">
-                    <div className="flex justify-between text-sm font-medium text-[#0c1929]">
+                    <div className="flex justify-between text-sm font-medium text-[#411F0F]">
                         <span>Accommodation ({nights} nights)</span>
                         <span>{formatCurrency(total)}</span>
                     </div>
@@ -167,7 +167,7 @@ export default function ReceiptPage() {
                             <span>Included</span>
                         </div>
                     )}
-                    <div className="flex justify-between text-sm font-medium text-[#0c1929]">
+                    <div className="flex justify-between text-sm font-medium text-[#411F0F]">
                         <span>Taxes & Fees</span>
                         <span>Included</span>
                     </div>
@@ -177,19 +177,19 @@ export default function ReceiptPage() {
             {/* Total */}
             <div className="mt-4 bg-slate-50 rounded-2xl p-6 border border-slate-200 flex items-center justify-between print:border-black print:bg-transparent print:border-2">
                 <div>
-                    <p className="text-sm font-bold text-[#0c1929]">Amount Paid</p>
-                    <p className="text-[11px] font-medium text-[#0c1929] mt-0.5 flex items-center gap-1">
+                    <p className="text-sm font-bold text-[#411F0F]">Amount Paid</p>
+                    <p className="text-[11px] font-medium text-[#411F0F] mt-0.5 flex items-center gap-1">
                         <CreditCard className="h-3.5 w-3.5" /> Charged to card
                     </p>
                 </div>
-                <p className="text-3xl font-black text-[#0c1929]">{formatCurrency(total)}</p>
+                <p className="text-3xl font-black text-[#411F0F]">{formatCurrency(total)}</p>
             </div>
 
             {/* Footer */}
             <div className="mt-12 text-center border-t border-slate-100 pt-8">
-                <p className="text-xs font-semibold text-[#0c1929] mb-1">Thank you for booking with HomEV!</p>
-                <p className="text-[10px] font-medium text-[#0c1929]/70">If you have any questions about this receipt, please contact your host or HomEV support.</p>
-                <p className="text-[10px] font-medium text-[#0c1929]/50 mt-4">Issued on {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
+                <p className="text-xs font-semibold text-[#411F0F] mb-1">Thank you for booking with HomEV!</p>
+                <p className="text-[10px] font-medium text-[#411F0F]/70">If you have any questions about this receipt, please contact your host or HomEV support.</p>
+                <p className="text-[10px] font-medium text-[#411F0F]/50 mt-4">Issued on {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
             </div>
         </div>
 

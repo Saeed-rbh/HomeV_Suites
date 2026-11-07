@@ -11,7 +11,7 @@ export const metadata = {
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={<div className="flex-1 bg-[#f3f5f8]" />}>
+    <Suspense fallback={<div className="flex-1 bg-[#FBF6EC]" />}>
       <DiscoveryView />
     </Suspense>
   );

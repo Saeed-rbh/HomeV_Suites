@@ -60,19 +60,19 @@ export default async function CheckoutPage({ searchParams }) {
   const serverTotal = serverPrice?.total ?? 0;
 
   return (
-    <div className="min-h-screen bg-[#f3f5f8] px-4 pb-16 pt-6 md:px-6">
+    <div className="min-h-screen bg-[#FBF6EC] px-4 pb-16 pt-6 md:px-6">
       <div className="mx-auto max-w-5xl">
 
         <div className="mt-2 mb-8">
-          <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#0c1929]">Checkout</p>
-          <h2 className="mt-2 text-3xl font-medium tracking-tight text-[#0c1929]">Confirm your {listing.city || listing.location || "Toronto"} stay</h2>
-          <p className="mt-3 max-w-2xl text-base leading-7 text-[#0c1929]">
+          <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#411F0F]">Checkout</p>
+          <h2 className="mt-2 text-3xl font-medium tracking-tight text-[#411F0F]">Confirm your {listing.city || listing.location || "Toronto"} stay</h2>
+          <p className="mt-3 max-w-2xl text-base leading-7 text-[#411F0F]">
             Complete your booking in just a few steps.
           </p>
         </div>
 
         <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_430px]">
-          <section className="rounded-[30px] bg-white border border-slate-100 shadow-[0_4px_30px_rgba(12,25,41,0.03)] p-4 sm:p-7 md:p-8 self-start">
+          <section className="rounded-[30px] bg-white border border-slate-100 shadow-[0_4px_30px_rgba(65, 31, 15,0.03)] p-4 sm:p-7 md:p-8 self-start">
             {/* CheckoutClient is a client component — it owns StripeWrapper + CheckoutForm.
                 initialTotal comes from the server; it updates itself once the payment intent
                 confirms the exact charge via onAmountConfirmed. */}

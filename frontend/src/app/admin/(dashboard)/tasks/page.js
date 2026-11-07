@@ -53,9 +53,9 @@ export default function TasksModule() {
 
         return (
             <div className={`glass-panel p-6 flex flex-col overflow-hidden ${colorTheme}`}>
-                <h3 className="font-bold text-[#0c1929] uppercase tracking-widest text-xs mb-4 flex justify-between relative z-10">
+                <h3 className="font-bold text-[#411F0F] uppercase tracking-widest text-xs mb-4 flex justify-between relative z-10">
                     {title} 
-                    <span className="glass-chip text-[#0c1929] px-2 py-0.5 rounded-full bg-white/60 border-white/80 shadow-sm">{columnTasks.length}</span>
+                    <span className="glass-chip text-[#411F0F] px-2 py-0.5 rounded-full bg-white/60 border-white/80 shadow-sm">{columnTasks.length}</span>
                 </h3>
                 
                 <Droppable droppableId={statusFilter}>
@@ -84,12 +84,12 @@ export default function TasksModule() {
                                                 ) : (
                                                     <span className="text-[10px] font-bold text-blue-600 bg-blue-100/60 px-2 py-1 rounded-md flex items-center gap-1 shadow-sm"><Wrench className="w-3 h-3" /> {t.type}</span>
                                                 )}
-                                                <span className={`text-[10px] font-semibold flex items-center gap-1 ${t.status === 'Completed' ? 'text-emerald-600/70' : 'text-[#0c1929]'}`}>
+                                                <span className={`text-[10px] font-semibold flex items-center gap-1 ${t.status === 'Completed' ? 'text-emerald-600/70' : 'text-[#411F0F]'}`}>
                                                     {t.status !== 'Completed' && <Clock className="w-3 h-3" />} {t.time}
                                                 </span>
                                             </div>
-                                            <h4 className={`font-bold mb-1 ${t.status === 'Completed' ? 'text-[#0c1929] line-through decoration-[#0c1929]' : 'text-[#0c1929]'}`}>{t.property}</h4>
-                                            <p className="text-xs text-[#0c1929] mb-4">{t.desc}</p>
+                                            <h4 className={`font-bold mb-1 ${t.status === 'Completed' ? 'text-[#411F0F] line-through decoration-[#411F0F]' : 'text-[#411F0F]'}`}>{t.property}</h4>
+                                            <p className="text-xs text-[#411F0F] mb-4">{t.desc}</p>
                                             
                                             <div className="flex justify-between items-center bg-white/40 p-2 rounded-xl border border-white/60">
                                                 <div className="w-6 h-6 rounded-full bg-slate-300 flex items-center justify-center text-[10px] font-bold text-white shadow-sm border border-white">JD</div>
@@ -110,7 +110,7 @@ export default function TasksModule() {
                             ))}
                             {provided.placeholder}
                             {columnTasks.length === 0 && !snapshot.isDraggingOver && (
-                                <div className="p-8 mt-4 rounded-xl border border-dashed border-white/50 text-center text-[#0c1929] text-xs font-bold uppercase tracking-wider bg-white/20 pointer-events-none">Empty Grid</div>
+                                <div className="p-8 mt-4 rounded-xl border border-dashed border-white/50 text-center text-[#411F0F] text-xs font-bold uppercase tracking-wider bg-white/20 pointer-events-none">Empty Grid</div>
                             )}
                         </div>
                     )}
@@ -124,7 +124,7 @@ export default function TasksModule() {
     return (
         <div className="h-full flex flex-col relative w-full overflow-hidden">
             <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-bold text-[#0c1929] tracking-tight">Tasks & Operations</h1>
+                <h1 className="text-3xl font-bold text-[#411F0F] tracking-tight">Tasks & Operations</h1>
                 <button 
                     onClick={() => setShowModal(true)}
                     className="glass-button rounded-xl px-5 py-2.5 text-sm font-bold transition-all flex items-center gap-2 hover:shadow-md hover:bg-white/80 active:bg-white/50 border border-white/60"
@@ -144,24 +144,24 @@ export default function TasksModule() {
             {/* Modal Overlay leveraging Z-index physics */}
             {showModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8">
-                    <div className="absolute inset-0 bg-[#0c1929]/60 backdrop-blur-md" onClick={() => setShowModal(false)}></div>
+                    <div className="absolute inset-0 bg-[#411F0F]/60 backdrop-blur-md" onClick={() => setShowModal(false)}></div>
                     <div className="glass-panel-strong w-full h-full max-w-[1600px] p-8 md:p-12 relative z-10 shadow-2xl animate-in zoom-in-95 duration-200 bg-white/95 overflow-y-auto flex flex-col">
                         <div className="flex justify-between items-center mb-10 pb-6 border-b border-slate-200/50">
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-blue-500 rounded-xl text-white shadow-md"><Sparkles className="w-6 h-6" /></div>
                                 <div>
-                                  <h2 className="text-3xl font-bold text-[#0c1929] tracking-tight">Assign New Task</h2>
-                                  <p className="text-[#0c1929] font-semibold mt-1">Determine operational properties and execution windows.</p>
+                                  <h2 className="text-3xl font-bold text-[#411F0F] tracking-tight">Assign New Task</h2>
+                                  <p className="text-[#411F0F] font-semibold mt-1">Determine operational properties and execution windows.</p>
                                 </div>
                             </div>
-                            <button onClick={() => setShowModal(false)} className="text-[#0c1929] hover:text-[#0c1929] transition bg-slate-100 hover:bg-slate-200 rounded-full p-3 shadow-inner"><X className="w-6 h-6" /></button>
+                            <button onClick={() => setShowModal(false)} className="text-[#411F0F] hover:text-[#411F0F] transition bg-slate-100 hover:bg-slate-200 rounded-full p-3 shadow-inner"><X className="w-6 h-6" /></button>
                         </div>
                         
                         <div className="flex-1 max-w-2xl mx-auto w-full pt-4">
                         
                         <form onSubmit={handleCreateTask} className="space-y-4">
                             <div>
-                                <label className="block text-xs font-bold text-[#0c1929] uppercase tracking-wider mb-2">Property Identity</label>
+                                <label className="block text-xs font-bold text-[#411F0F] uppercase tracking-wider mb-2">Property Identity</label>
                                 <select 
                                     value={newTask.property}
                                     onChange={(e) => setNewTask({...newTask, property: e.target.value})}
@@ -173,7 +173,7 @@ export default function TasksModule() {
                             
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-xs font-bold text-[#0c1929] uppercase tracking-wider mb-2">Task Type</label>
+                                    <label className="block text-xs font-bold text-[#411F0F] uppercase tracking-wider mb-2">Task Type</label>
                                     <select 
                                         value={newTask.type}
                                         onChange={(e) => setNewTask({...newTask, type: e.target.value})}
@@ -185,29 +185,29 @@ export default function TasksModule() {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-[#0c1929] uppercase tracking-wider mb-2">Due Frame</label>
+                                    <label className="block text-xs font-bold text-[#411F0F] uppercase tracking-wider mb-2">Due Frame</label>
                                     <input 
                                         type="text" 
                                         value={newTask.time}
                                         onChange={(e) => setNewTask({...newTask, time: e.target.value})}
                                         placeholder="e.g. Due 4:00 PM"
-                                        className="glass-input w-full px-4 py-3 rounded-xl text-sm outline-none font-medium text-[#0c1929]"
+                                        className="glass-input w-full px-4 py-3 rounded-xl text-sm outline-none font-medium text-[#411F0F]"
                                     />
                                 </div>
                             </div>
                             
                             <div>
-                                <label className="block text-xs font-bold text-[#0c1929] uppercase tracking-wider mb-2">Operational Instructions</label>
+                                <label className="block text-xs font-bold text-[#411F0F] uppercase tracking-wider mb-2">Operational Instructions</label>
                                 <textarea 
                                     required
                                     value={newTask.desc}
                                     onChange={(e) => setNewTask({...newTask, desc: e.target.value})}
-                                    className="glass-input w-full px-4 py-3 rounded-xl text-sm outline-none resize-none h-28 font-medium text-[#0c1929]"
+                                    className="glass-input w-full px-4 py-3 rounded-xl text-sm outline-none resize-none h-28 font-medium text-[#411F0F]"
                                     placeholder="Enter requirements or gate-codes..."
                                 ></textarea>
                             </div>
                             
-                            <button type="submit" className="glass-button w-full rounded-xl px-5 py-4 text-base font-bold shadow-md transition-all mt-8 hover:bg-white/80 hover:shadow-lg active:bg-white/40 text-[#0c1929] border border-white/80">
+                            <button type="submit" className="glass-button w-full rounded-xl px-5 py-4 text-base font-bold shadow-md transition-all mt-8 hover:bg-white/80 hover:shadow-lg active:bg-white/40 text-[#411F0F] border border-white/80">
                                 Establish Task
                             </button>
                         </form>

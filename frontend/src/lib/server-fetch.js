@@ -195,3 +195,21 @@ export async function getListingByIdDynamic(id) {
     return null;
   }
 }
+
+// Photos and headline numbers from the live portfolio, for the landing and owner pages
+export async function getPortfolioSnapshot() {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/properties`, { next: { revalidate: 3600 } });
+    if (!res.ok) return { photos: [], count: 0, rating: null };
+
+    const payload = await res.json();
+    const properties = payload.data || [];
+    const photos = properties.map(p => p.images?.[0]).filter(Boolean);
+    const rated = properties.filter(p => p.rating);
+    const rating = rated.length ? rated.reduce((sum, p) => sum + p.rating, 0) / rated.length : null;
+
+    return { photos, count: properties.length, rating };
+  } catch (e) {
+    return { photos: [], count: 0, rating: null };
+  }
+}
