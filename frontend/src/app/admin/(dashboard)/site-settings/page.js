@@ -119,7 +119,7 @@ export default function SiteSettingsPage() {
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="support@homev.ca"
+                            placeholder="farshad@homevsuites.com"
                             className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-[#411F0F] focus:ring-1 focus:ring-[#411F0F] transition"
                         />
                     </div>
@@ -129,7 +129,7 @@ export default function SiteSettingsPage() {
                             type="text"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
-                            placeholder="+1 (888) 123-4567"
+                            placeholder="(365) 351-4030"
                             className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-[#411F0F] focus:ring-1 focus:ring-[#411F0F] transition"
                         />
                     </div>

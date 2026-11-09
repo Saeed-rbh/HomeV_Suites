@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Send } from "lucide-react";
+import { CONTACT_EMAIL } from "@/lib/contact";
 
 const PROPERTY_TYPES = ["Condo", "House", "Townhouse", "Other"];
 const SIZES = ["Studio", "1 bedroom", "1 bedroom + den", "2 bedrooms", "3+ bedrooms"];
@@ -68,7 +69,7 @@ function initialForm(config) {
 export default function OwnerInquiryForm({ variant = "owner" }) {
   const config = VARIANTS[variant];
   const [form, setForm] = useState(() => initialForm(config));
-  const [targetEmail, setTargetEmail] = useState("support@homev.ca");
+  const [targetEmail, setTargetEmail] = useState(CONTACT_EMAIL);
   const [sent, setSent] = useState(false);
 
   useEffect(() => {

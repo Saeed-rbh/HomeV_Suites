@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Mail, Phone, MapPin, MessageCircle, Link as LinkIcon, Send, Globe } from "lucide-react";
 import Link from "next/link";
+import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_ADDRESS, telHref } from "@/lib/contact";
 
 // Helper to render an icon for social platforms
 const getSocialIcon = (platform) => {
@@ -37,7 +38,7 @@ export default function ContactPage() {
         e.preventDefault();
         setSending(true);
         // Simple mailto fallback since no API endpoint for generic contact form yet
-        const targetEmail = settings?.contact_email || "support@homev.ca";
+        const targetEmail = settings?.contact_email || CONTACT_EMAIL;
         window.location.href = `mailto:${targetEmail}?subject=Contact from ${name}&body=${encodeURIComponent(message)}%0D%0A%0D%0AReply to: ${email}`;
         setTimeout(() => {
             setSending(false);
@@ -55,9 +56,9 @@ export default function ContactPage() {
         </div>;
     }
 
-    const emailAddress = settings?.contact_email || "support@homev.ca";
-    const phoneNumber = settings?.contact_phone || "+1 (888) 123-4567";
-    const address = settings?.contact_address || "Toronto, ON, Canada";
+    const emailAddress = settings?.contact_email || CONTACT_EMAIL;
+    const phoneNumber = settings?.contact_phone || CONTACT_PHONE;
+    const address = settings?.contact_address || CONTACT_ADDRESS;
     const socialLinks = Array.isArray(settings?.social_links) ? settings.social_links : [];
 
     return (
@@ -91,7 +92,7 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <p className="text-sm font-medium text-slate-500">Phone</p>
-                                        <a href={`tel:${phoneNumber}`} className="text-[#411F0F] hover:underline font-medium">{phoneNumber}</a>
+                                        <a href={telHref(phoneNumber)} className="text-[#411F0F] hover:underline font-medium">{phoneNumber}</a>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-4">
