@@ -3,17 +3,39 @@
 import { useEffect, useState } from "react";
 import { Send } from "lucide-react";
 
-const EMPTY_FORM = {
-  name: "",
-  email: "",
-  phone: "",
-  address: "",
-  propertyType: "Condo",
-  bedrooms: "1 bedroom",
-  furnished: "Yes",
-  status: "Vacant",
-  timeline: "As soon as possible",
-  message: "",
+const PROPERTY_TYPES = ["Condo", "House", "Townhouse", "Other"];
+const SIZES = ["Studio", "1 bedroom", "1 bedroom + den", "2 bedrooms", "3+ bedrooms"];
+
+// Owners already have a property; investors may still be shopping for one
+const VARIANTS = {
+  owner: {
+    subject: "Property management inquiry",
+    addressLabel: "Property address",
+    addressPlaceholder: "Street, unit number, city",
+    addressRequired: true,
+    planLabel: "What are you looking for?",
+    plans: ["Long-term tenant management", "Furnished mid-term rentals (28+ nights)", "Short-term rental management", "Not sure, help me choose"],
+    extras: [
+      { key: "furnished", label: "Is it furnished?", options: ["Yes", "Partially", "No"] },
+      { key: "status", label: "Right now it is", options: ["Vacant", "Tenant in place", "Rented short-term by me", "My own residence"] },
+      { key: "timeline", label: "When would you like to start?", options: ["As soon as possible", "In 1–3 months", "In 3+ months", "Just exploring"], wide: true },
+    ],
+    messagePlaceholder: "Building amenities, parking, your goals…",
+    button: "Request my free assessment",
+  },
+  investor: {
+    subject: "Investor inquiry",
+    addressLabel: "Property address or listing link",
+    addressPlaceholder: "If you have one in mind",
+    addressRequired: false,
+    planLabel: "What can we help with?",
+    plans: ["Pre-purchase rental analysis", "BRRRR: renovate, rent and refinance", "Adding a unit (basement, garden or laneway suite)", "Management after I buy", "Not sure yet"],
+    extras: [
+      { key: "stage", label: "Where are you in buying?", options: ["Just researching", "Looking at specific properties", "Offer in progress", "Already bought"], wide: true },
+    ],
+    messagePlaceholder: "Target areas, budget range, what you want the property to do for you…",
+    button: "Request my analysis",
+  },
 };
 
 const inputClass =
@@ -37,8 +59,15 @@ function Select({ value, onChange, options }) {
   );
 }
 
-export default function OwnerInquiryForm() {
-  const [form, setForm] = useState(EMPTY_FORM);
+function initialForm(config) {
+  const form = { name: "", email: "", phone: "", address: "", plan: config.plans[0], propertyType: PROPERTY_TYPES[0], bedrooms: SIZES[1], message: "" };
+  config.extras.forEach(({ key, options }) => { form[key] = options[0]; });
+  return form;
+}
+
+export default function OwnerInquiryForm({ variant = "owner" }) {
+  const config = VARIANTS[variant];
+  const [form, setForm] = useState(() => initialForm(config));
   const [targetEmail, setTargetEmail] = useState("support@homev.ca");
   const [sent, setSent] = useState(false);
 
@@ -60,16 +89,15 @@ export default function OwnerInquiryForm() {
       `Name: ${form.name}`,
       `Email: ${form.email}`,
       `Phone: ${form.phone}`,
-      `Property address: ${form.address}`,
+      `${config.addressLabel}: ${form.address || "-"}`,
+      `${config.planLabel} ${form.plan}`,
       `Property type: ${form.propertyType}`,
       `Size: ${form.bedrooms}`,
-      `Furnished: ${form.furnished}`,
-      `Currently: ${form.status}`,
-      `Looking to start: ${form.timeline}`,
+      ...config.extras.map(({ key, label }) => `${label} ${form[key]}`),
       "",
       form.message,
     ].join("\n");
-    const subject = `Property management inquiry - ${form.address || form.name}`;
+    const subject = `${config.subject} - ${form.address || form.name}`;
     window.location.href = `mailto:${targetEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     setSent(true);
     setTimeout(() => setSent(false), 5000);
@@ -89,30 +117,31 @@ export default function OwnerInquiryForm() {
         </Field>
       </div>
       <div className="sm:col-span-2">
-        <Field label="Property address">
-          <input type="text" required value={form.address} onChange={update("address")} className={inputClass} placeholder="Street, unit number, city" />
+        <Field label={config.addressLabel}>
+          <input type="text" required={config.addressRequired} value={form.address} onChange={update("address")} className={inputClass} placeholder={config.addressPlaceholder} />
+        </Field>
+      </div>
+      <div className="sm:col-span-2">
+        <Field label={config.planLabel}>
+          <Select value={form.plan} onChange={update("plan")} options={config.plans} />
         </Field>
       </div>
       <Field label="Property type">
-        <Select value={form.propertyType} onChange={update("propertyType")} options={["Condo", "House", "Townhouse", "Other"]} />
+        <Select value={form.propertyType} onChange={update("propertyType")} options={PROPERTY_TYPES} />
       </Field>
       <Field label="Size">
-        <Select value={form.bedrooms} onChange={update("bedrooms")} options={["Studio", "1 bedroom", "1 bedroom + den", "2 bedrooms", "3+ bedrooms"]} />
+        <Select value={form.bedrooms} onChange={update("bedrooms")} options={SIZES} />
       </Field>
-      <Field label="Is it furnished?">
-        <Select value={form.furnished} onChange={update("furnished")} options={["Yes", "Partially", "No"]} />
-      </Field>
-      <Field label="Right now it is">
-        <Select value={form.status} onChange={update("status")} options={["Vacant", "Rented long-term", "Rented short-term by me", "My own residence"]} />
-      </Field>
-      <div className="sm:col-span-2">
-        <Field label="When would you like to start?">
-          <Select value={form.timeline} onChange={update("timeline")} options={["As soon as possible", "In 1–3 months", "In 3+ months", "Just exploring"]} />
-        </Field>
-      </div>
+      {config.extras.map(({ key, label, options, wide }) => (
+        <div key={key} className={wide ? "sm:col-span-2" : ""}>
+          <Field label={label}>
+            <Select value={form[key]} onChange={update(key)} options={options} />
+          </Field>
+        </div>
+      ))}
       <div className="sm:col-span-2">
         <Field label="Anything else we should know?">
-          <textarea rows={4} value={form.message} onChange={update("message")} className={`${inputClass} resize-none`} placeholder="Building amenities, parking, your goals…" />
+          <textarea rows={4} value={form.message} onChange={update("message")} className={`${inputClass} resize-none`} placeholder={config.messagePlaceholder} />
         </Field>
       </div>
       <button
@@ -120,7 +149,7 @@ export default function OwnerInquiryForm() {
         disabled={sent}
         className="sm:col-span-2 w-full py-4 rounded-[20px] bg-[#411F0F] text-white font-bold flex items-center justify-center gap-2 hover:bg-[#472312] transition-all disabled:opacity-70 mt-2"
       >
-        {sent ? "Opened your email app" : <><Send className="w-4 h-4" /> Request my free assessment</>}
+        {sent ? "Opened your email app" : <><Send className="w-4 h-4" /> {config.button}</>}
       </button>
     </form>
   );

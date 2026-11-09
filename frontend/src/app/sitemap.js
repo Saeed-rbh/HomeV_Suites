@@ -1,3 +1,5 @@
+import { ARTICLES } from "@/lib/articles";
+
 const BASE_URL = "https://homev.ca";
 
 /**
@@ -31,6 +33,24 @@ export default async function sitemap() {
       changeFrequency: "daily",
       priority: 0.8,
     },
+    {
+      url: `${BASE_URL}/owners/investors`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/owners/articles`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    ...ARTICLES.map((article) => ({
+      url: `${BASE_URL}/owners/articles/${article.slug}`,
+      lastModified: new Date(`${article.date}T12:00:00`),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    })),
   ];
 
   // Dynamic listing routes — fetched from backend

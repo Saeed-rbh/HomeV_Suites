@@ -489,7 +489,7 @@ export default function NavBar() {
     return null;
   }
 
-  const isDiscovery = pathname === "/" || pathname === "/stays" || pathname === "/search" || pathname === "/owners";
+  const isDiscovery = pathname === "/" || pathname === "/stays" || pathname === "/search" || pathname?.startsWith("/owners");
   const isListing = pathname?.startsWith("/listing/");
   const showStickyReserve = isListing && reserveInfo && !reserveInfo.visible;
 

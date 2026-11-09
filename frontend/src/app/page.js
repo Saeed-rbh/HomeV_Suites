@@ -31,7 +31,7 @@ export default async function LandingPage({ searchParams }) {
       icon: Building2,
       eyebrow: "For property owners",
       title: "I want my property managed",
-      body: "Full-service short and mid-term rental management that earns more from your unit.",
+      body: "Full-service management for long-term tenants, furnished stays and short-term rentals.",
       cta: "Explore management services",
     },
   ];
